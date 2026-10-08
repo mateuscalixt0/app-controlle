@@ -6,7 +6,7 @@ Atualizado em 08/10/2026.
 
 - Protótipo navegável: [docs/d02/prototipo.html](d02/prototipo.html).
 - Fluxos, estados, limites e roteiro de aceite: [EXPERIENCIA_MOBILE.md](d02/EXPERIENCIA_MOBILE.md).
-- Visual inicial rejeitado por Mateus. Nova proposta clara com botões grandes aplicada às quatro telas.
+- Visual inicial rejeitado por Mateus. Mateus confirmou visual claro com botões grandes e enviou referência. Quatro telas adaptadas com fundo branco, cartões arredondados, ações rosa escuro e navegação com ícones.
 - Cadastro prioriza Enviar arquivo e Tirar foto; seleção local e prévia de imagem disponíveis no protótipo. Manual permanece como alternativa.
 - Exemplo de leitura demonstra revisão de beneficiário, fornecedor, código, valor e vencimento; não extrai informações reais do arquivo.
 - Inclusão de extração/OCR no escopo registrada em DECISOES.md, AGENTS.md e plano. Custos, serviço e esforço da implementação ainda não definidos.
@@ -30,7 +30,7 @@ Preparação documental de D01 pronta; confirmação da loja piloto e validaçã
 
 ## Próximo passo
 
-Validar o novo visual e o fluxo arquivo/foto → leitura → revisão. Confirmar formatos habituais com a loja. Conferir em 375px e câmera no celular; registrar ajustes e aceite. Após validar D02, seguir com D03: projeto executável, verificações automáticas, ambientes, versões e custos. Não provisionar serviços pagos sem decisão do gestor.
+Validar o novo visual e o fluxo arquivo/foto → leitura → revisão. Formatos habituais confirmados por Mateus: PDF de boleto e fotos. Conferir em 375px e câmera no celular; registrar ajustes e aceite. Após validar D02, seguir com D03: projeto executável, verificações automáticas, ambientes, versões e custos. Não provisionar serviços pagos sem decisão do gestor.
 
 ## Integrações e limitações
 
