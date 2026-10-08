@@ -53,7 +53,7 @@ Revisar este desenho com Mateus e a loja, registrar ajustes/aceite e executar a 
 
 ## Novo visual e entrada por documento
 
-Visual claro, fundo neutro, cartões brancos e destaque violeta, com botões grandes para as duas entradas. Esta é uma proposta, não um aceite do gestor. As quatro telas receberam a nova aparência; o cadastro recebeu a mudança principal.
+Direção confirmada por Mateus: claro e simples, com botões grandes. A referência enviada orienta fundo branco, cartões de bordas suaves e cantos arredondados, ações rosa escuro e navegação inferior com ícones e indicador. Enviar arquivo e Tirar foto aparecem lado a lado como ações principais. Aceite das telas finais ainda pendente. As quatro telas receberam a nova aparência; o cadastro recebeu a mudança principal.
 
 ### Extração a implementar em cartões posteriores
 - PDF textual: tentar extrair texto; PDF escaneado e imagem: usar OCR; confrontar texto e código reconhecidos antes de sugerir campos.
@@ -69,3 +69,6 @@ Visual claro, fundo neutro, cartões brancos e destaque violeta, com botões gra
 
 ### Evidências da revisão
 JavaScript revisado passou em node --check. O navegador Chromium alternativo do Playwright não está instalado; permanece a restrição anterior do Chromium do sistema. Captura real em celular, layout em 375px e interações continuam pendentes. Não foram executados testes de extração, pois ela ainda não existe. A mudança de escopo foi registrada em DECISOES.md, AGENTS.md e no plano; custo e prazo precisam ser reavaliados antes da implementação.
+
+## Retorno do gestor — referência visual
+Mateus confirmou PDF de boleto e fotos como entradas habituais. O visual foi atualizado conforme a imagem enviada, adaptando a linguagem visual ao controle de boletos/compras. Não há saldos bancários, promoções ou pagamento de boleto no escopo. Sintaxe JavaScript conferida novamente com node --check; verificação visual em 375px e câmera continuam pendentes.
