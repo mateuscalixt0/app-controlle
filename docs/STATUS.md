@@ -35,5 +35,15 @@ Mateus conferir o HTML no navegador, especialmente casa central, painel, consult
 - D03: projeto executável, ambientes, versões, custos e verificações automáticas ainda pendentes.
 - Branch: `d02-experiencia-mobile`; PR em rascunho #1.
 - Trello não movimentado nesta revisão.
-- Sem publicação, contratação de serviços ou dados reais.
+- Protótipo estático publicado na Vercel a pedido de Mateus; sem backend ou dados reais.
 - Regras de extração/OCR definidas anteriormente continuam documentadas; não implementadas nesta tarefa.
+
+## Publicação para conferir no celular — 08/10/2026
+
+- URL: https://app-controlle-layout.vercel.app
+- Projeto Vercel: `app-controlle-layout` (`prj_xsN35L4kWRUWvbvt9xsicKI2J9Lh`).
+- Deployment: `dpl_B1yzecJTP9zBf96f2FbpdECsxRtx`, estado READY.
+- Publicado somente o HTML de `docs/d02/prototipo.html` como `index.html`, mais robots.txt com orientação para não indexar. Documentos internos não foram enviados.
+- Publicação por envio direto de arquivos: não configura deploy automático do GitHub. Próximas revisões precisam de nova publicação.
+- Verificado HTTP 200 sem autenticação na URL principal e presença do conteúdo esperado. Alias com sufixo de conta exige autenticação; usar a URL principal acima.
+- Hospedagem do desenho não conclui D03 nem D30. Dados permanecem fictícios e as funcionalidades continuam demonstrativas. Validação visual no celular depende do aceite de Mateus.
