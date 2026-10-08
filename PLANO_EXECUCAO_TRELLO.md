@@ -79,8 +79,8 @@ PWA inicialmente depende de conexão para operações financeiras; falha de rede
 Essas são decisões e critérios de implementação; não são uma afirmação de que o aplicativo já existe ou está seguro.
 
 ## Escopo preservado
-Dentro: login/loja, fornecedores, boletos, painel, anexos e comprovantes, lembretes por e-mail, produtos, lista de compras, preços manuais, comparação e XML com vínculo manual lembrado.
-Fora: pagamento bancário no app, DDA, OCR, ERP, estoque, emissão fiscal, conciliação, IA para associação automática, app nativo, cobrança de assinatura automatizada, push e WhatsApp.
+Dentro: cadastro prioritário de boletos por PDF/imagem ou foto, extração assistida e revisão obrigatória (incluído por Mateus em 08/10/2026); manual como alternativa; login/loja, fornecedores, boletos, painel, anexos e comprovantes, lembretes por e-mail, produtos, lista de compras, preços manuais, comparação e XML com vínculo manual lembrado.
+Fora: pagamento bancário no app, DDA, ERP, estoque, emissão fiscal, conciliação, IA para associação automática, app nativo, cobrança de assinatura automatizada, push e WhatsApp.
 Não chamar o sistema de ERP nem acrescentar estoque porque a etiqueta se chama Gestão de Produtos.
 
 ## Cartões por dia
@@ -100,7 +100,7 @@ Dependência geral: o cartão anterior deve estar suficientemente concluído par
 - **Etiquetas:** Gestão de Boletos + Gestão de Produtos.
 - **Responsável técnico:** Codex. **Validação de produto:** Mateus.
 - **Prioridade:** P1; qualquer falha crítica identificada vira P0.
-- **Trabalho e entrega:** Preparar telas de vencimentos, cadastro de boleto, lista de compras e comparação.
+- **Trabalho e entrega:** Preparar telas de vencimentos, cadastro de boleto prioritariamente por arquivo/foto com revisão e alternativa manual, lista de compras e comparação. Visual inicial rejeitado pelo gestor; validar versão revisada.
 - **Critério de conclusão:** Fluxos compreensíveis em 375px; estados vazios e erros previstos.
 - **Sua participação:** Validar os fluxos e pedir exemplos à loja.
 - **Dependência:** D01 e informações da loja piloto.
@@ -167,6 +167,9 @@ Dependência geral: o cartão anterior deve estar suficientemente concluído par
 - **Checklist do cartão:** [ ] Implementar/preparar; [ ] Verificar critérios; [ ] Registrar evidências e limitações; [ ] Validar produto quando aplicável; [ ] Atualizar documentação e próximo passo.
 
 ### [D09] Interpretar linha digitável
+
+> Revisão solicitada pelo gestor em 08/10/2026: incluir captura por arquivo/câmera e extração assistida de PDF/imagem. Dividir esta etapa em entregas verificáveis: entrada privada de documentos; extração de texto/OCR; validação e revisão; duplicidade e recuperação. Antes de implementar, definir limites, serviço/custo e atualizar estimativa. OCR não está implementado; gastos continuam sujeitos à aprovação. Nenhuma tarefa adicional foi criada no Trello.
+
 - **Etiquetas:** Gestão de Boletos.
 - **Responsável técnico:** Codex. **Validação de produto:** Mateus.
 - **Prioridade:** P1; qualquer falha crítica identificada vira P0.
