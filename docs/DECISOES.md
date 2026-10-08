@@ -37,3 +37,16 @@ Proposta inicial de formatos: PDF, JPG e PNG, um documento por vez, até 10 MB. 
 O protótipo atualizado seleciona arquivo local e oferece captura via navegador compatível. Não executa OCR, upload para servidor ou gravação. Exemplos de leitura são fictícios e acionados separadamente. Mateus confirmou visual claro e simples com botões grandes e enviou referência: fundo branco, cartões arredondados, bordas suaves, ações rosa escuro e navegação inferior com ícones. Protótipo adaptado a essa direção; aceite da tela final ainda pendente.
 
 Antes de implementar extração: definir leitor de PDF textual e OCR de imagens/PDF digitalizado, custo por documento, privacidade/retensão, limites de páginas/resolução e testes com exemplos anonimizados. Seleção de serviço pago exige aprovação de custo. Replanejar esforço dos cartões de captura/parser antes de assumir prazo. Limites financeiros, validação de códigos e segurança continuam obrigatórios.
+
+## Revisão de layout — navegação e painel, 08/10/2026
+
+Pedido atual de Mateus: alterar apenas o layout; funcionalidades serão implementadas depois. Esta revisão substitui a navegação anterior por quatro destinos: Adicionar boleto, Boletos a pagar, Início (casa central) e Lista de faltas. Com quatro acessos, a casa ocupa a coluna central, dois botões ficam à esquerda e Lista de faltas ocupa a área à direita.
+
+- Início: próximos boletos, total pago por semana/mês/ano e colunas de valores pagos por empresa. Contas a pagar e atrasadas são indicadores separados dos pagamentos realizados.
+- Adicionar boleto: preservar visual e fluxo de arquivo/foto, com alternativa manual.
+- Boletos a pagar: lista com empresa, valor, vencimento, código e ação de baixar documento. Códigos mascarados no protótipo; download real ainda ausente.
+- Lista de faltas: anotação com quantidade/unidade/categoria e empresa opcional; botão na mesma tela para consultar faltantes com filtros combinados por empresa e categoria, além de busca.
+- XML: acesso dentro de Produtos, associado à compra e ao histórico de preços, sem acrescentar outro destino ao rodapé. A importação já prevista no MVP permanece futura; não há leitura de arquivo ou persistência de XML nesta revisão.
+- Histórico: exemplo de gráfico de preços por produto/unidade, comparação por fornecedor e origem/data. Exemplos não são cotações nem economia realizada.
+
+A navegação, troca de período e filtros apenas demonstram a apresentação com dados fixos. Não adicionar backend, integração, gravação ou novos gastos nesta tarefa.
