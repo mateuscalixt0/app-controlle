@@ -32,8 +32,8 @@ Mateus rejeitou o visual inicial e solicitou cadastro prioritário por arquivo o
 
 Fluxo: enviar documento ou fotografar → leitura → conferir/editar informações → confirmar cadastro. Dados ausentes, divergentes ou ambíguos nunca são inventados. Beneficiário do boleto é distinto da loja usuária; vínculo ao fornecedor deve ser conferido. Documento não prova pagamento.
 
-Proposta inicial de formatos: PDF, JPG e PNG, um documento por vez, até 10 MB. Limite e suporte real serão confirmados na implementação; formato habitual da loja ainda não informado. XML de NF-e permanece em fluxo próprio e não fornece linha digitável.
+Proposta inicial de formatos: PDF, JPG e PNG, um documento por vez, até 10 MB. Limite e suporte real serão confirmados na implementação; Mateus confirmou PDF de boleto e fotos como formatos habituais. XML de NF-e permanece em fluxo próprio e não fornece linha digitável.
 
-O protótipo atualizado seleciona arquivo local e oferece captura via navegador compatível. Não executa OCR, upload para servidor ou gravação. Exemplos de leitura são fictícios e acionados separadamente. Visual claro com botões grandes é proposta ainda sem aceite.
+O protótipo atualizado seleciona arquivo local e oferece captura via navegador compatível. Não executa OCR, upload para servidor ou gravação. Exemplos de leitura são fictícios e acionados separadamente. Mateus confirmou visual claro e simples com botões grandes e enviou referência: fundo branco, cartões arredondados, bordas suaves, ações rosa escuro e navegação inferior com ícones. Protótipo adaptado a essa direção; aceite da tela final ainda pendente.
 
 Antes de implementar extração: definir leitor de PDF textual e OCR de imagens/PDF digitalizado, custo por documento, privacidade/retensão, limites de páginas/resolução e testes com exemplos anonimizados. Seleção de serviço pago exige aprovação de custo. Replanejar esforço dos cartões de captura/parser antes de assumir prazo. Limites financeiros, validação de códigos e segurança continuam obrigatórios.
