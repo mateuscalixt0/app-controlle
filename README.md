@@ -53,7 +53,7 @@ npm run typecheck
 npm run build
 ```
 
-O arquivo `.env.local` é ignorado pelo Git. As migrações versionadas do banco e as políticas RLS iniciais ficam em `supabase/migrations`. Para preparar o banco local com exemplos fictícios, instale o [Supabase CLI](https://supabase.com/docs/guides/cli), execute `supabase init` caso ainda não exista configuração e depois `supabase start` e `supabase db reset`. O `db reset` aplica as migrações e o `supabase/seed.sql`; os dados são somente de demonstração e não devem ser aplicados em produção. O backend já possui o esquema e a autorização por loja, mas login e criação segura da loja entram em D05; a interface ainda não grava esses dados.
+O arquivo `.env.local` é ignorado pelo Git. As migrações versionadas do banco e as políticas RLS ficam em `supabase/migrations`. Para preparar o banco local com exemplos fictícios, instale o [Supabase CLI](https://supabase.com/docs/guides/cli), execute `supabase init` caso ainda não exista configuração e depois `supabase start` e `supabase db reset`. O `db reset` aplica migrações e o `supabase/seed.sql`; os dados são somente de demonstração e não devem ser aplicados em produção. Login, cadastro de loja, anotação de faltas e cadastro manual/listagem paginada de boletos usam o Supabase. OCR, arquivos, histórico de preços e dashboard ainda são etapas futuras.
 
 ## Ritmo de entrega
 

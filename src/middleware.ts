@@ -4,7 +4,14 @@ import { createServerClient } from "@supabase/ssr";
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return NextResponse.next();
+  if (!url || !key) {
+    if (request.nextUrl.pathname !== "/configurar-supabase") {
+      const destination = request.nextUrl.clone();
+      destination.pathname = "/configurar-supabase";
+      return NextResponse.redirect(destination);
+    }
+    return NextResponse.next();
+  }
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, key, {

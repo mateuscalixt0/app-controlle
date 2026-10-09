@@ -9,8 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const isConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
+  const supabase = isConfigured ? await createClient() : null;
+  const { data: { user } = { user: null } } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
   return (
     <html lang="pt-BR">
       <body>

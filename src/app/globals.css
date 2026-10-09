@@ -61,6 +61,7 @@ h3 { margin:0; font-size:15px; line-height:1.25; }
 .filter-row { display:flex; gap:8px; margin:12px 0 18px; overflow-x:auto; padding:2px 2px 5px; }
 .filter-chip { flex:0 0 auto; padding:9px 13px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:#fff; font-size:12px; font-weight:700; }
 .filter-chip.active { border-color:var(--pink); color:var(--pink); background:var(--pink-soft); }
+.pagination { display:flex; justify-content:space-between; gap:12px; margin-top:18px; }
 .bill-card h2 { margin-top:2px; font-size:17px; }
 .bill-card p { margin:8px 0 14px; color:var(--muted); font-size:13px; }
 .amount { flex:0 0 auto; font-size:16px; }
@@ -129,6 +130,10 @@ h3 { margin:0; font-size:15px; line-height:1.25; }
 .history-list strong { font-size:12px; }
 .history-list small { display:block; margin-top:6px; color:var(--muted); font-size:10px; }
 .form-card { display:grid; gap:18px; }
+.manual-entry { margin-top:18px; }
+.manual-entry summary { width:100%; cursor:pointer; list-style:none; }
+.manual-entry summary::-webkit-details-marker { display:none; }
+.manual-form { margin-top:18px; }
 .form-card>label { color:var(--foreground); font-size:12px; font-weight:800; }
 .form-card>label span { color:var(--pink); }
 .form-card input:not([type="radio"]) { width:100%; height:48px; margin-top:7px; padding:0 13px; border:1px solid var(--line); border-radius:13px; background:#faf8f9; }
