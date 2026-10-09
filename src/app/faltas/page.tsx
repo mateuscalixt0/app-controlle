@@ -11,7 +11,7 @@ export default async function MissingItemsPage({ searchParams }: { searchParams:
   const params = await searchParams;
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const queryText = (params.q ?? "").trim().slice(0, 100);
-  const priority = ["normal", "media", "urgente"].includes(params.priority ?? "") ? params.priority : "";
+  const priority = ["normal", "media", "urgente"].includes(params.priority ?? "") ? params.priority ?? "" : "";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");

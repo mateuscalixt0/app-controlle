@@ -19,12 +19,18 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
   const { data: member } = await supabase.from("store_members").select("store_id").eq("user_id", user.id).limit(1).maybeSingle();
   if (!member) redirect("/configurar-loja");
 
-  let request = supabase.from("bills").select("id,description,amount_cents,due_date,status,suppliers(name)", { count: "exact" }).eq("store_id", member.store_id).order("due_date", { ascending: true }).order("id");
+  let request = supabase.from("bills").select("id,supplier_id,description,amount_cents,due_date,status", { count: "exact" }).eq("store_id", member.store_id).order("due_date", { ascending: true }).order("id");
   if (queryText) request = request.ilike("description", `%${queryText.replace(/[%_]/g, "\\$&")}%`);
   if (status) request = request.eq("status", status as "pending" | "paid" | "cancelled");
   const { data, count, error } = await request.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
   if (error) throw new Error("Não foi possível carregar os boletos.");
   const bills = data ?? [];
+  const supplierIds = [...new Set(bills.flatMap((bill) => bill.supplier_id ? [bill.supplier_id] : []))];
+  const { data: suppliers, error: suppliersError } = supplierIds.length
+    ? await supabase.from("suppliers").select("id,name").eq("store_id", member.store_id).in("id", supplierIds)
+    : { data: [], error: null };
+  if (suppliersError) throw new Error("Não foi possível carregar os fornecedores dos boletos.");
+  const supplierNames = new Map((suppliers ?? []).map((supplier) => [supplier.id, supplier.name]));
   const total = count ?? 0;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const paramsForPages = new URLSearchParams();
@@ -49,7 +55,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
       <p className="results-count">{total} {total === 1 ? "boleto" : "boletos"} · página {page} de {pageCount}</p>
       <section className="stack" aria-label="Boletos">
         {bills.map((bill) => {
-          const supplier = Array.isArray(bill.suppliers) ? bill.suppliers[0]?.name : bill.suppliers?.name;
+          const supplier = bill.supplier_id ? supplierNames.get(bill.supplier_id) : undefined;
           return <article className="card bill-card" key={bill.id}>
             <div className="row"><div><p className="eyebrow">VENCIMENTO {new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(new Date(`${bill.due_date}T00:00:00Z`))}</p><h2>{supplier ?? "Fornecedor removido"}</h2></div><strong className="amount">{brl.format(bill.amount_cents / 100)}</strong></div>
             <p>{bill.description}</p><span className="status-pill">{bill.status === "pending" ? "Em aberto" : bill.status === "paid" ? "Pago" : "Cancelado"}</span>
