@@ -1,6 +1,16 @@
 # Andamento
 
-Atualizado em 08/10/2026.
+Atualizado em 09/10/2026.
+
+## Ajuste pontual — Lista de faltas, 09/10/2026
+
+- Removidos apenas os campos Tipo de produto e Empresa de referência de Anotar produto; preservados Produto, Quantidade, Unidade e os botões existentes.
+- Ver faltantes mantém busca, filtros, ícones, nomes, empresas e quantidades. Acrescentadas faixas laterais vermelha, laranja e azul-claro conforme a referência e preços unitários fictícios em reais.
+- Conferido no Chromium com Playwright em 375px: campos removidos, quatro preços, ausência de rolagem horizontal, troca de abas, filtros combinados e busca sem resultados. Nenhum erro JavaScript observado. Captura da consulta inspecionada visualmente.
+- Alteração disponível no HTML local. Publicação pendente: ambiente sem credencial Vercel e com política de rede restrita sem endpoints Vercel liberados. A URL publicada anteriormente ainda não recebeu esta revisão.
+- Próximo passo: publicar quando o acesso estiver disponível e obter o aceite visual de Mateus. Não conclui D02 nem implementa gravação real.
+
+O registro abaixo descreve a revisão anterior e suas verificações na época.
 
 ## Entrega atual — D02, revisão exclusiva de layout
 

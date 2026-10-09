@@ -13,6 +13,7 @@ As instruções atuais do usuário prevalecem. Para decisões de produto já reg
 - Mudanças de escopo, novos gastos e liberação do piloto são decisões do gestor. Prepare o resultado concreto antes de solicitar uma decisão necessária.
 - Corrija primeiro falhas de acesso, dinheiro incorreto, perda de dados e bloqueios de uso.
 - Preserve alterações existentes. Use commits pequenos e descritivos em português; após a preparação inicial, prefira uma branch por tarefa e PR com evidências.
+- A pedido de Mateus, todo commit deve incluir uma descrição em português explicando o que mudou, o motivo e as verificações realizadas, além do título.
 - Não presuma acesso ao histórico do ChatGPT ou ao Trello. Use os documentos do repositório e as integrações realmente disponíveis. Se não puder atualizar um cartão, informe o status a registrar sem afirmar que o moveu.
 - Ao terminar, atualize `docs/STATUS.md` com entrega, verificações executadas, limitações, validação pendente e próximo passo. Não confunda documentação com funcionalidade implementada.
 

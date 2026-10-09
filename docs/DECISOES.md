@@ -1,5 +1,9 @@
 # Decisões do projeto
 
+## Ajuste pontual de lista — 09/10/2026
+
+Pedido de Mateus: preservar o layout da Lista de faltas, retirando Tipo de produto e Empresa de referência somente do formulário Anotar produto. Na consulta Ver faltantes, manter os filtros e a disposição existente, acrescentando cores laterais conforme a referência e preços. Preços do protótipo são exemplos fictícios por unidade de compra; cores são detalhes visuais, sem regra de prioridade definida. Esta decisão substitui os campos de categoria/empresa antes previstos no formulário do protótipo.
+
 Registro inicial: 08/10/2026. Base: plano original, plano de execução e orientações de Mateus.
 
 | Assunto | Decisão atual |
