@@ -8,7 +8,7 @@ Atualizado em 09/10/2026.
 - A causa é a consulta aninhada numa relação de FK composta, com cliente Supabase sem tipos gerados. A listagem agora busca a página de boletos e consulta os fornecedores referenciados separadamente, sempre filtrando ambos pelo `store_id` da sessão; associa os nomes pelo `supplier_id` e mantém o estado de fornecedor removido.
 - Também foi corrigida a inferência opcional do filtro de prioridade em `src/app/faltas/page.tsx`, erro de tipo adicional que impedia a validação completa.
 - Validação na branch `fix/bill-supplier-relation`, baseada no commit `c0f94bf4f089011341b276c3904417bd286ccfcd`: `npm run typecheck` e `npm run build` aprovados. `git diff --check` aprovado.
-- A alteração ainda não foi enviada ao GitHub nem aplicada ao PR. Próximo passo: revisar e integrar o patch da branch na `work`; então a Vercel poderá executar um novo deploy de preview.
+- Correção enviada à branch `work` no commit `132b734`. Próximo passo: aguardar o novo deploy de preview na Vercel e confirmar que o build publicado passou.
 
 ## Ajuste pontual do protótipo HTML — Lista de faltas, 09/10/2026
 
