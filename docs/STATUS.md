@@ -41,7 +41,27 @@ O ajuste acima refere-se somente ao HTML. A aplicação Next.js e suas verifica�
 
 ## Próxima tarefa
 
-Após o aceite visual de D02, construir D04 e D05 (banco/RLS e login/loja) para então implementar a anotação simplificada com persistência, prioridades e filtros. IA de classificação permanece explicitamente pendente.
+Integrar as telas aos dados reais (começando por lista de faltas) e testar isolamento com duas lojas. IA de classificação permanece explicitamente pendente.
+
+## Entrega atual — esquema inicial Supabase (D04, parcial)
+
+- Criadas migrações reproduzíveis para lojas, membros, fornecedores, boletos, produtos, faltas e histórico de preços.
+- Valores de boletos usam centavos inteiros; preços unitários usam decimal fixo; vencimento/preço são datas civis.
+- Chaves estrangeiras compostas evitam vínculos de negócio entre lojas. RLS habilitado nas tabelas e operações de negócio limitadas a membros autenticados da loja.
+- Seed SQL contém somente registros sintéticos, identificados como demonstração.
+- Nenhuma migração foi aplicada ao projeto remoto; `.env.local`/segredos não foram acessados ou gravados.
+
+**Limitações na entrega inicial:** a função de cadastro da loja, autenticação e testes de isolamento ainda não existiam. A atualização abaixo registra o que foi implementado desde então.
+
+**Verificações desta entrega:** não executadas nesta sessão; Supabase CLI e ambiente com credenciais locais não foram conferidos. Próximo passo é validar migração/seed em Supabase local, corrigir eventuais erros e então testar as políticas.
+
+## Atualização — Supabase e autenticação
+
+- Aplicadas ao projeto Supabase de desenvolvimento `nmuiczryoqcospdithdx` as migrações de esquema/RLS, criação segura de owner e restrição de execução RPC pública. Tabelas confirmadas com RLS habilitado; dados ainda vazios.
+- Criada tela de login por e-mail/senha e primeiro cadastro de loja após autenticação. O usuário não pode escolher seu UUID ou atribuir a si mesmo um papel via formulário.
+- `.env.local` local foi preenchido com URL e chave publicável do projeto; arquivo ignorado pelo Git. Não publicar `service_role`.
+- Pendências: conta Auth precisa ser criada pelo titular; habilitar proteção contra senhas vazadas (o advisor avisou que está desligada); testes de login/RLS ainda não rodaram; UI de produtos/boletos/lista continua com exemplos em memória.
+- Lint/typecheck/build não executados: dependência `zod-validation-error` não estava disponível no cache offline e npm não conseguiu baixar sem rede. Push não foi feito.
 
 ## Integrações e limitações
 
