@@ -1,8 +1,10 @@
 import { DemoNotice } from "@/components/demo-notice";
 import { Icon } from "@/components/icons";
 import { PageHeading } from "@/components/page-heading";
+import { addBill } from "./actions";
 
-export default function NewBillPage() {
+export default async function NewBillPage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
+  const { erro } = await searchParams;
   return (
     <>
       <PageHeading eyebrow="NOVO BOLETO" title="Como deseja adicionar?" description="Envie o documento, confira cada informação e só então confirme o cadastro." />
@@ -31,7 +33,16 @@ export default function NewBillPage() {
         <div className="field-skeleton"><span>Beneficiário/fornecedor</span><div /></div>
         <div className="two-columns"><div className="field-skeleton"><span>Valor</span><div /></div><div className="field-skeleton warning"><span>Vencimento — conferir</span><div /></div></div>
       </section>
-      <button className="secondary-action full-action" disabled type="button">Preencher manualmente</button>
+      <details className="card manual-entry"><summary className="secondary-action">Preencher manualmente</summary>
+        <form action={addBill} className="form-card manual-form">
+          <label>Fornecedor <span aria-hidden="true">*</span><input name="supplier" required maxLength={160} /></label>
+          <label>Descrição <span aria-hidden="true">*</span><input name="description" required maxLength={240} /></label>
+          <label>Valor (R$) <span aria-hidden="true">*</span><input name="amount" required inputMode="decimal" placeholder="Ex.: 486,20" /></label>
+          <label>Vencimento <span aria-hidden="true">*</span><input name="due_date" required type="date" /></label>
+          {erro && <p className="form-error" role="alert">Não foi possível salvar. Confira os dados e tente novamente.</p>}
+          <button className="primary-action" type="submit">Salvar boleto</button>
+        </form>
+      </details>
     </>
   );
 }

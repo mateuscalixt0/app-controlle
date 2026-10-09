@@ -2,6 +2,14 @@
 
 Atualizado em 09/10/2026.
 
+## Diagnóstico do build do PR — 09/10/2026
+
+- A captura da Vercel identifica erro de TypeScript em `src/app/boletos/page.tsx:52`: o tipo de `bill.suppliers` foi inferido como `never` e a leitura de `.name` falhava.
+- A causa é a consulta aninhada numa relação de FK composta, com cliente Supabase sem tipos gerados. A listagem agora busca a página de boletos e consulta os fornecedores referenciados separadamente, sempre filtrando ambos pelo `store_id` da sessão; associa os nomes pelo `supplier_id` e mantém o estado de fornecedor removido.
+- Também foi corrigida a inferência opcional do filtro de prioridade em `src/app/faltas/page.tsx`, erro de tipo adicional que impedia a validação completa.
+- Validação na branch `fix/bill-supplier-relation`, baseada no commit `c0f94bf4f089011341b276c3904417bd286ccfcd`: `npm run typecheck` e `npm run build` aprovados. `git diff --check` aprovado.
+- Correção enviada à branch `work` no commit `132b734`. Próximo passo: aguardar o novo deploy de preview na Vercel e confirmar que o build publicado passou.
+
 ## Ajuste pontual do protótipo HTML — Lista de faltas, 09/10/2026
 
 - Removidos apenas os campos Tipo de produto e Empresa de referência de Anotar produto; preservados Produto, Quantidade, Unidade e os botões existentes.
@@ -41,7 +49,31 @@ O ajuste acima refere-se somente ao HTML. A aplicação Next.js e suas verifica�
 
 ## Próxima tarefa
 
-Após o aceite visual de D02, construir D04 e D05 (banco/RLS e login/loja) para então implementar a anotação simplificada com persistência, prioridades e filtros. IA de classificação permanece explicitamente pendente.
+Executar validações com dependências instaladas; configurar variáveis do Supabase na hospedagem; cadastrar conta Auth, habilitar proteção contra senhas vazadas e testar isolamento. Depois habilitar upload privado/OCR e histórico de preços conforme prioridade.
+
+## Entrega atual — esquema inicial Supabase (D04, parcial)
+
+- Criadas migrações reproduzíveis para lojas, membros, fornecedores, boletos, produtos, faltas e histórico de preços.
+- Valores de boletos usam centavos inteiros; preços unitários usam decimal fixo; vencimento/preço são datas civis.
+- Chaves estrangeiras compostas evitam vínculos de negócio entre lojas. RLS habilitado nas tabelas e operações de negócio limitadas a membros autenticados da loja.
+- Seed SQL contém somente registros sintéticos, identificados como demonstração.
+- Nenhuma migração foi aplicada ao projeto remoto; `.env.local`/segredos não foram acessados ou gravados.
+
+**Limitações na entrega inicial:** a função de cadastro da loja, autenticação e testes de isolamento ainda não existiam. A atualização abaixo registra o que foi implementado desde então.
+
+**Verificações desta entrega:** não executadas nesta sessão; Supabase CLI e ambiente com credenciais locais não foram conferidos. Próximo passo é validar migração/seed em Supabase local, corrigir eventuais erros e então testar as políticas.
+
+## Atualização — Supabase e autenticação
+
+- Aplicadas ao projeto Supabase de desenvolvimento `nmuiczryoqcospdithdx` as migrações de esquema/RLS, criação segura de owner e restrição de execução RPC pública. Tabelas confirmadas com RLS habilitado; dados ainda vazios.
+- Criada tela de login por e-mail/senha e primeiro cadastro de loja após autenticação. O usuário não pode escolher seu UUID ou atribuir a si mesmo um papel via formulário.
+- Integradas anotações e consulta paginada da lista de faltas, com busca e filtro por prioridade aplicados na consulta do servidor.
+- Integrados cadastro manual e consulta paginada de boletos, com valores em centavos no banco e busca/status no servidor.
+- Branch enviada ao GitHub: `work`; commits `a741cd7` e `da97dd0`. Não foi aberto PR porque a autenticação do GitHub CLI está inválida; a URL de criação é https://github.com/mateuscalixt0/app-controle/pull/new/work.
+- `.env.local` local foi preenchido com URL e chave publicável do projeto; arquivo ignorado pelo Git. Não publicar `service_role`.
+- Pendências: conta Auth precisa ser criada pelo titular; variáveis precisam estar no ambiente da hospedagem; habilitar proteção contra senhas vazadas; painel inicial, anexos/OCR e histórico de preços ainda não estão implementados.
+- Migrações confirmadas no projeto remoto: esquema, loja/owner e endurecimento das funções/políticas; RLS está habilitado. Arquivos locais usam as mesmas versões registradas pelo Supabase. Não foram criados dados fictícios no banco remoto para não deixar uma loja sem owner acessível.
+- Lint/typecheck/build não executados: npm não conseguiu instalar as dependências de forma íntegra no ambiente; o cache/registry retornou tarballs corrompidos. `git diff --check` aprovado.
 
 ## Integrações e limitações
 
