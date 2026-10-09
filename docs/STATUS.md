@@ -41,7 +41,7 @@ O ajuste acima refere-se somente ao HTML. A aplicação Next.js e suas verifica�
 
 ## Próxima tarefa
 
-Integrar as telas aos dados reais (começando por lista de faltas) e testar isolamento com duas lojas. IA de classificação permanece explicitamente pendente.
+Executar validações com dependências instaladas; configurar variáveis do Supabase na hospedagem; cadastrar conta Auth, habilitar proteção contra senhas vazadas e testar isolamento. Depois habilitar upload privado/OCR e histórico de preços conforme prioridade.
 
 ## Entrega atual — esquema inicial Supabase (D04, parcial)
 
@@ -59,9 +59,13 @@ Integrar as telas aos dados reais (começando por lista de faltas) e testar isol
 
 - Aplicadas ao projeto Supabase de desenvolvimento `nmuiczryoqcospdithdx` as migrações de esquema/RLS, criação segura de owner e restrição de execução RPC pública. Tabelas confirmadas com RLS habilitado; dados ainda vazios.
 - Criada tela de login por e-mail/senha e primeiro cadastro de loja após autenticação. O usuário não pode escolher seu UUID ou atribuir a si mesmo um papel via formulário.
+- Integradas anotações e consulta paginada da lista de faltas, com busca e filtro por prioridade aplicados na consulta do servidor.
+- Integrados cadastro manual e consulta paginada de boletos, com valores em centavos no banco e busca/status no servidor.
+- Branch enviada ao GitHub: `work`; commits `a741cd7` e `da97dd0`. Não foi aberto PR porque a autenticação do GitHub CLI está inválida; a URL de criação é https://github.com/mateuscalixt0/app-controle/pull/new/work.
 - `.env.local` local foi preenchido com URL e chave publicável do projeto; arquivo ignorado pelo Git. Não publicar `service_role`.
-- Pendências: conta Auth precisa ser criada pelo titular; habilitar proteção contra senhas vazadas (o advisor avisou que está desligada); testes de login/RLS ainda não rodaram; UI de produtos/boletos/lista continua com exemplos em memória.
-- Lint/typecheck/build não executados: dependência `zod-validation-error` não estava disponível no cache offline e npm não conseguiu baixar sem rede. Push não foi feito.
+- Pendências: conta Auth precisa ser criada pelo titular; variáveis precisam estar no ambiente da hospedagem; habilitar proteção contra senhas vazadas; UI inicial ainda não consulta o banco; anexos/OCR e preços ainda não estão implementados.
+- Migrações confirmadas no projeto remoto: esquema, loja/owner e endurecimento das funções/políticas; RLS está habilitado. Não foram criados dados fictícios no banco remoto para não deixar uma loja sem owner acessível.
+- Lint/typecheck/build não executados: npm não conseguiu instalar as dependências de forma íntegra no ambiente; o cache/registry retornou tarballs corrompidos. `git diff --check` aprovado.
 
 ## Integrações e limitações
 
