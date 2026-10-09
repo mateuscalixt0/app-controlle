@@ -2,7 +2,9 @@
 
 Aplicativo para pequenos lojistas de material de construção organizarem boletos e planejarem compras com histórico de preços por fornecedor.
 
-**Estado:** preparação documental. Ainda não existe aplicação executável, banco configurado ou publicação.
+**Estado:** base Next.js executável e conectada ao projeto Supabase de desenvolvimento. Os fluxos do produto, o modelo de dados e a publicação ainda não foram implementados.
+
+As telas mobile de D02 estão disponíveis como protótipo de validação, com dados fictícios identificados. Upload, salvamento e importação permanecem desativados até existirem banco, login e regras de acesso.
 
 ## Gestão e desenvolvimento
 
@@ -30,11 +32,28 @@ Comparações exibem **economia potencial**. Gestão de produtos não inclui est
 
 ## Arquitetura de referência
 
-Next.js, TypeScript e Tailwind; Supabase para banco, autenticação e arquivos; Vercel para hospedagem; Resend para e-mails; Vitest para lógica. Compatibilidade, versões, custos e limites serão verificados em D03. Nenhum serviço foi contratado ou conectado nesta preparação.
+Next.js 16, React 19, TypeScript 6 e Tailwind 4; Supabase para banco, autenticação e arquivos; Vercel para hospedagem; Resend para e-mails; Vitest para lógica. As dependências instaladas usam versões fixas e o `package-lock.json` deve permanecer versionado.
+
+O projeto Supabase conectado usa a chave publicável moderna. Chaves secretas e `service_role` não são necessárias nesta base e nunca devem ser adicionadas a variáveis `NEXT_PUBLIC_*`.
 
 ## Como executar
 
-Ainda não há `package.json` nem comandos de aplicação. D03 criará o projeto e documentará os comandos realmente disponíveis. D02 prepara antes a experiência mobile para validação.
+Requer Node.js 20.9 ou superior. Copie `.env.example` para `.env.local` e preencha somente a URL e a chave publicável do projeto Supabase. Depois execute:
+
+```bash
+npm install
+npm run dev
+```
+
+Verificações disponíveis:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
+O arquivo `.env.local` é ignorado pelo Git. O modelo de tabelas, as políticas RLS e o login serão implementados nos cartões D04 e D05, respectivamente.
 
 ## Ritmo de entrega
 

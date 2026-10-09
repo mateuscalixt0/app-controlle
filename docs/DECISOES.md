@@ -19,6 +19,12 @@ Registro inicial: 08/10/2026. Base: plano original, plano de execução e orient
 | PWA | Uso conectado para operações financeiras. Sem promessa de edição offline. |
 | Autonomia | Codex executa decisões técnicas rotineiras dentro da tarefa autorizada; gestor decide escopo, gasto e liberação do piloto. |
 | Segurança | Isolamento por loja no servidor, banco e arquivos; precisa de testes para ser considerado verificado. |
+| Cadastro assistido de boleto | Fluxo enviar/fotografar → ler → conferir/corrigir → salvar. OCR nunca confirma sozinho, não completa dados por suposição e qualquer serviço externo exige proposta de custo e tratamento documental antes da contratação. |
+| Lista de faltas | Cadastro principal pede somente produto, quantidade e prioridade opcional; Normal é o padrão. Categoria, unidade e empresa podem permanecer vazias. |
+| Prioridades | Normal azul; Média laranja; Precisa comprar vermelha. Nome sempre acompanha a cor. |
+| Classificação por IA | Explicitamente pendente; não implementar nem inferir categoria, unidade ou fornecedor nesta fase. |
+| Navegação mobile | Cinco destinos: Adicionar boleto, Boletos a pagar, Início central, Lista de faltas e Compras e preços. |
+| Compras e preços | Área própria para XML, histórico, consultas, gráficos e comparações; reimportação não pode duplicar registros e vínculos sem correspondência exigem confirmação. |
 
 ## Pendências de produto e acesso
 

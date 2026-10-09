@@ -2,58 +2,66 @@
 
 Atualizado em 09/10/2026.
 
-## Ajuste pontual — Lista de faltas, 09/10/2026
+## Ajuste pontual do protótipo HTML — Lista de faltas, 09/10/2026
 
 - Removidos apenas os campos Tipo de produto e Empresa de referência de Anotar produto; preservados Produto, Quantidade, Unidade e os botões existentes.
 - Ver faltantes mantém busca, filtros, ícones, nomes, empresas e quantidades. Acrescentadas faixas laterais vermelha, laranja e azul-claro conforme a referência e preços unitários fictícios em reais.
 - Conferido no Chromium com Playwright em 375px: campos removidos, quatro preços, ausência de rolagem horizontal, troca de abas, filtros combinados e busca sem resultados. Nenhum erro JavaScript observado. Captura da consulta inspecionada visualmente.
-- Alteração disponível no HTML local. Publicação pendente: ambiente sem credencial Vercel e com política de rede restrita sem endpoints Vercel liberados. A URL publicada anteriormente ainda não recebeu esta revisão.
-- Próximo passo: publicar quando o acesso estiver disponível e obter o aceite visual de Mateus. Não conclui D02 nem implementa gravação real.
+- Alteração enviada ao GitHub no PR #2. Mateus fará a publicação manual na Vercel usando `docs/d02/prototipo.html` como `index.html`. A publicação desta revisão ainda não foi confirmada.
+- Próximo passo: publicação manual e aceite visual de Mateus. Não conclui D02 nem implementa gravação real.
 
-O registro abaixo descreve a revisão anterior e suas verificações na época.
+O ajuste acima refere-se somente ao HTML. A aplicação Next.js e suas verificações registradas abaixo foram preservadas na integração; seus componentes não foram alterados neste PR.
 
-## Entrega atual — D02, revisão exclusiva de layout
+## Entrega atual — telas e navegação mobile para validação (D02)
 
-- [Protótipo navegável](d02/prototipo.html) atualizado conforme o pedido de Mateus; [roteiro de aceite](d02/EXPERIENCIA_MOBILE.md).
-- Rodapé com quatro destinos: Adicionar boleto, Boletos a pagar, casa central (Início) e Lista de faltas.
-- Início com próximos boletos, total pago por semana/mês/ano e colunas por empresa.
-- Cadastro por arquivo/foto e alternativa manual preservados.
-- Boletos individuais com vencimento, valor, código mascarado e ações de copiar/baixar demonstrativas.
-- Lista com anotação, consulta na mesma tela, busca e filtros combinados por empresa/categoria.
-- Área de importação XML e histórico de preços como subtelas de Produtos.
-- Somente dados fictícios e interações de apresentação. Sem backend, gravação, OCR real, importação ou download real.
+- Design mobile preservado: fundo claro, cartões arredondados, ações em rosa e largura máxima de 480px.
+- Rodapé reorganizado com cinco destinos: Adicionar boleto, Boletos a pagar, Início central, Lista de faltas e Compras e preços.
+- Telas de validação criadas para início, boletos, envio por foto/documento, lista de faltas, anotação simplificada e compras/preços.
+- Lista fictícia demonstra prioridades com cor e texto, menor preço registrado, ausência de histórico, busca e filtros combinados em memória.
+- Detalhes fictícios abrem em modal mobile, recebem foco no fechamento, fecham com `Esc`, têm rolagem e mostram estados com zero, um ou mais registros sem inventar tendência.
+- Todos os dados de exemplo e interações sem persistência estão identificados como protótipo. Upload e botões de gravação permanecem desativados.
 
-**D02 aguarda validação visual e aceite de Mateus.** Nenhuma funcionalidade de aplicação foi declarada concluída.
+**Status de D02:** telas prontas para validação de produto por Mateus. Não considerar anotação, filtros, histórico, OCR, XML ou cadastro de boleto concluídos: ainda não existe persistência, login, banco de negócio ou processamento de arquivos.
 
-## Verificações executadas
+## Verificações desta entrega
 
-- Leitura da versão atual da branch, AGENTS.md, decisões, status, protótipo e cartão D02.
-- `node --check`: sintaxe JavaScript aprovada.
-- Verificação estática do HTML: IDs únicos, quatro botões principais, seis telas, destinos válidos, labels vinculados, seletores JS existentes e painel de estados em todas as telas.
-- Conferência da soma dos exemplos de pagamentos e separação das contas abertas/atrasadas.
-- Protótipo autônomo sem scripts/fontes/estilos externos.
-- **Não executada verificação visual/interativa no navegador:** Chromium indisponível; instalação tentou baixar arquivo, mas recebeu ZIP inválido. O roteiro Playwright não chegou a abrir a página. Não alegar layout em 375px, teclado ou interações testados em navegador.
-- Sem build de aplicativo, testes de banco, parser ou segurança: esses componentes ainda não existem.
+- `npm run lint` e `npm run typecheck`: aprovados.
+- Navegador Chromium em 375×812: seis rotas responderam HTTP 200, exibiram os cinco itens de navegação, não apresentaram rolagem horizontal nem erros no console.
+- Modal: abriu pelo cartão, colocou foco no botão “Fechar detalhes” e fechou com `Esc`.
+- Busca e filtros combinados foram exercitados apenas sobre dados fictícios em memória; recarregar restaura os exemplos.
+- `npm run build`: aprovado com webpack; oito rotas estáticas geradas. O build usa webpack porque o Turbopack deste ambiente não consegue abrir a porta interna usada pelo processador CSS.
 
-## Próximo passo
+## Como conferir esta entrega
 
-Mateus conferir o HTML no navegador, especialmente casa central, painel, consulta de faltantes e posição do XML. Corrigir o visual conforme retorno e executar a conferência em celular/375px. Funcionalidades ficam para depois da validação, conforme pedido atual.
+1. Execute `npm run dev` e abra `http://localhost:3000`.
+2. Percorra os cinco destinos do rodapé, mantendo Início no centro.
+3. Em Lista de faltas, combine busca, prioridade e “Sem classificação”; toque em um item e teste o fechamento do modal.
+4. Confira a ordem visual enviar → ler → conferir → salvar em Adicionar boleto.
+5. Valide textos, campos e organização. Nenhuma ação desta entrega deve ser usada para cadastrar dados reais.
 
-## Dependências e limitações preservadas
+## Próxima tarefa
 
-- D01: confirmar disponibilidade da loja piloto e obter exemplos anonimizados.
-- D03: projeto executável, ambientes, versões, custos e verificações automáticas ainda pendentes.
-- Branch: `d02-experiencia-mobile`; PR em rascunho #1.
-- Trello não movimentado nesta revisão.
-- Protótipo estático publicado na Vercel a pedido de Mateus; sem backend ou dados reais.
-- Regras de extração/OCR definidas anteriormente continuam documentadas; não implementadas nesta tarefa.
+Após o aceite visual de D02, construir D04 e D05 (banco/RLS e login/loja) para então implementar a anotação simplificada com persistência, prioridades e filtros. IA de classificação permanece explicitamente pendente.
 
-## Publicação para conferir no celular — 08/10/2026
+## Integrações e limitações
 
-- URL: https://app-controlle-layout.vercel.app
-- Projeto Vercel: `app-controlle-layout` (`prj_xsN35L4kWRUWvbvt9xsicKI2J9Lh`).
-- Deployment: `dpl_B1yzecJTP9zBf96f2FbpdECsxRtx`, estado READY.
-- Publicado somente o HTML de `docs/d02/prototipo.html` como `index.html`, mais robots.txt com orientação para não indexar. Documentos internos não foram enviados.
-- Publicação por envio direto de arquivos: não configura deploy automático do GitHub. Próximas revisões precisam de nova publicação.
-- Verificado HTTP 200 sem autenticação na URL principal e presença do conteúdo esperado. Alias com sufixo de conta exige autenticação; usar a URL principal acima.
-- Hospedagem do desenho não conclui D03 nem D30. Dados permanecem fictícios e as funcionalidades continuam demonstrativas. Validação visual no celular depende do aceite de Mateus.
+- Quadro de referência: https://trello.com/b/gY23LQ8z.
+- Os cartões não foram atualizados nesta entrega; status do arquivo não implica movimentação no Trello.
+- Supabase conectado; Vercel e Resend ainda não foram conectados a este repositório.
+- Existe somente o projeto principal informado pelo titular; ambiente Supabase separado para testes ainda não foi definido.
+- Existe um layout anterior na Vercel, mas esta versão não foi publicada.
+- Sem tabelas de negócio, login, persistência, leitura OCR/XML ou dados reais no repositório ou banco.
+
+## Entrega anterior — integração inicial com Supabase (parte de D03)
+
+- Projeto Next.js 16 com TypeScript estrito, React 19 e Tailwind 4.
+- Projeto Supabase `nmuiczryoqcospdithdx` ativo e conectado por chave publicável moderna; banco vazio, PostgreSQL 17.11.
+- Clientes separados para navegador e servidor; `.env.local` ignorado pelo Git.
+- Build, consulta autenticada e advisors do Supabase aprovados na entrega.
+
+## Sincronização com GitHub — 09/10/2026
+
+- Integrado o histórico remoto até `bd4583a`, incluindo o protótipo HTML anterior e suas decisões.
+- O site https://app-controlle-layout.vercel.app foi publicado por envio direto de arquivos, conforme registro remoto. Não há deploy automático do GitHub configurado nessa publicação.
+- Publicação da aplicação Next.js continua pendente de acesso à Vercel; salvar no GitHub não confirma atualização do site.
+- `.env.local` permanece fora do Git. No Mac, clonar o repositório e executar os comandos do README dentro da pasta clonada.
