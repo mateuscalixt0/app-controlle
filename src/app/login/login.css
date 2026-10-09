@@ -1,0 +1,77 @@
+.auth-page {
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100dvh;
+  padding: clamp(28px, 8vh, 72px) clamp(20px, 7vw, 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-inline: auto;
+  background: var(--surface);
+}
+
+.auth-page h1 {
+  max-width: 14ch;
+  margin: 3px 0 0;
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.auth-description {
+  max-width: 38ch;
+  margin: 12px 0 clamp(24px, 5vh, 40px);
+  color: var(--muted);
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+  line-height: 1.5;
+}
+
+.auth-form {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+}
+
+.auth-form label {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.auth-form input {
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--foreground);
+  background: #faf8f9;
+  font-size: 16px;
+}
+
+.auth-form .primary-action {
+  min-height: 54px;
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.auth-page > .helper-box {
+  margin-top: 24px;
+}
+
+@media (min-width: 600px) {
+  .auth-page {
+    max-width: 560px;
+    min-height: min(100dvh, 820px);
+    padding: 48px clamp(36px, 7vw, 64px);
+  }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .auth-page {
+    min-height: 100dvh;
+    justify-content: flex-start;
+    padding-block: 24px;
+  }
+}

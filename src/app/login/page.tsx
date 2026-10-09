@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { signIn } from "./actions";
 import { createClient } from "@/lib/supabase/server";
+import "./login.css";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
   const supabase = await createClient();
@@ -13,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const { erro } = await searchParams;
 
   return (
-    <section className="auth-page">
+    <main id="conteudo" className="auth-page">
       <p className="eyebrow">APP CONTROLE</p>
       <h1>Entre na sua conta</h1>
       <p className="auth-description">Acesse os dados da sua loja com segurança.</p>
@@ -26,6 +27,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <button className="primary-action full-action" type="submit">Entrar</button>
       </form>
       <p className="helper-box">A conta é criada pelo Supabase Auth. Não existe senha compartilhada nem usuário administrativo fixo.</p>
-    </section>
+    </main>
   );
 }
