@@ -1,6 +1,6 @@
 # Andamento
 
-Atualizado em 08/10/2026.
+Atualizado em 09/10/2026.
 
 ## Entrega atual — telas e navegação mobile para validação (D02)
 
@@ -48,3 +48,10 @@ Após o aceite visual de D02, construir D04 e D05 (banco/RLS e login/loja) para 
 - Projeto Supabase `nmuiczryoqcospdithdx` ativo e conectado por chave publicável moderna; banco vazio, PostgreSQL 17.11.
 - Clientes separados para navegador e servidor; `.env.local` ignorado pelo Git.
 - Build, consulta autenticada e advisors do Supabase aprovados na entrega.
+
+## Sincronização com GitHub — 09/10/2026
+
+- Integrado o histórico remoto até `bd4583a`, incluindo o protótipo HTML anterior e suas decisões.
+- O site https://app-controlle-layout.vercel.app foi publicado por envio direto de arquivos, conforme registro remoto. Não há deploy automático do GitHub configurado nessa publicação.
+- Publicação da aplicação Next.js continua pendente de acesso à Vercel; salvar no GitHub não confirma atualização do site.
+- `.env.local` permanece fora do Git. No Mac, clonar o repositório e executar os comandos do README dentro da pasta clonada.

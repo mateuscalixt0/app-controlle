@@ -20,9 +20,11 @@ As instruções atuais do usuário prevalecem. Para decisões de produto já reg
 
 SaaS web mobile-first, preparado para PWA, para pequenos lojistas de material de construção. Dois módulos: Gestão de Boletos e Gestão de Produtos; login, loja e fornecedores compartilhados.
 
-Dentro: boletos, painel por vencimento, anexos e comprovantes, lembretes por e-mail, produtos, listas, preços, comparação e XML com vínculo manual lembrado.
+Dentro: cadastro de boletos prioritariamente por arquivo (PDF/imagem) e foto com extração assistida e revisão obrigatória; preenchimento manual como alternativa; boletos, painel por vencimento, anexos e comprovantes, lembretes por e-mail, produtos, listas, preços, comparação e XML com vínculo manual lembrado.
 
-Fora do MVP: pagamentos bancários, DDA, OCR, ERP, estoque, emissão fiscal, conciliação, associação automática por IA, app nativo, cobrança automática de assinatura, push e WhatsApp.
+Fora do MVP: pagamentos bancários, DDA, ERP, estoque, emissão fiscal, conciliação, associação automática por IA, app nativo, cobrança automática de assinatura, push e WhatsApp.
+
+Atualização de produto em 08/10/2026: Mateus incluiu leitura de documentos/fotos (OCR) no escopo, substituindo a exclusão anterior. A orientação não autoriza gastos nem afirma que a extração já existe. Conferir docs/DECISOES.md e docs/d02/EXPERIENCIA_MOBILE.md para limites e planejamento.
 
 Interface pt-BR, moeda R$, datas dd/mm/aaaa. Verificar telas em 375px, estados vazios, carregamento, erro e navegação por teclado. Dados fictícios devem ser identificados. Nunca simule sucesso de uma gravação que falhou.
 
