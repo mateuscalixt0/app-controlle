@@ -63,8 +63,8 @@ Executar validações com dependências instaladas; configurar variáveis do Sup
 - Integrados cadastro manual e consulta paginada de boletos, com valores em centavos no banco e busca/status no servidor.
 - Branch enviada ao GitHub: `work`; commits `a741cd7` e `da97dd0`. Não foi aberto PR porque a autenticação do GitHub CLI está inválida; a URL de criação é https://github.com/mateuscalixt0/app-controle/pull/new/work.
 - `.env.local` local foi preenchido com URL e chave publicável do projeto; arquivo ignorado pelo Git. Não publicar `service_role`.
-- Pendências: conta Auth precisa ser criada pelo titular; variáveis precisam estar no ambiente da hospedagem; habilitar proteção contra senhas vazadas; UI inicial ainda não consulta o banco; anexos/OCR e preços ainda não estão implementados.
-- Migrações confirmadas no projeto remoto: esquema, loja/owner e endurecimento das funções/políticas; RLS está habilitado. Não foram criados dados fictícios no banco remoto para não deixar uma loja sem owner acessível.
+- Pendências: conta Auth precisa ser criada pelo titular; variáveis precisam estar no ambiente da hospedagem; habilitar proteção contra senhas vazadas; painel inicial, anexos/OCR e histórico de preços ainda não estão implementados.
+- Migrações confirmadas no projeto remoto: esquema, loja/owner e endurecimento das funções/políticas; RLS está habilitado. Arquivos locais usam as mesmas versões registradas pelo Supabase. Não foram criados dados fictícios no banco remoto para não deixar uma loja sem owner acessível.
 - Lint/typecheck/build não executados: npm não conseguiu instalar as dependências de forma íntegra no ambiente; o cache/registry retornou tarballs corrompidos. `git diff --check` aprovado.
 
 ## Integrações e limitações

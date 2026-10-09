@@ -1,9 +1,3 @@
--- Mantém sincronizado o endurecimento aplicado no projeto de desenvolvimento.
-revoke all on function public.is_store_member(uuid) from public, anon;
-grant execute on function public.is_store_member(uuid) to authenticated;
-revoke all on function public.create_store_for_current_user(text) from public, anon;
-grant execute on function public.create_store_for_current_user(text) to authenticated;
-
 create or replace function public.is_store_owner(target_store uuid)
 returns boolean
 language sql stable security definer set search_path = ''
