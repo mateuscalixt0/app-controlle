@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { signIn } from "./actions";
 import { createClient } from "@/lib/supabase/server";
+import { SubmitButton } from "@/components/submit-button";
 import "./login.css";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
@@ -24,7 +25,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <label htmlFor="password">Senha</label>
         <input id="password" name="password" type="password" autoComplete="current-password" required maxLength={128} />
         {erro && <p className="form-error" role="alert">E-mail ou senha inválidos.</p>}
-        <button className="primary-action full-action" type="submit">Entrar</button>
+        <SubmitButton className="primary-action full-action" pendingLabel="Entrando…">Entrar</SubmitButton>
       </form>
       <p className="helper-box">A conta é criada pelo Supabase Auth. Não existe senha compartilhada nem usuário administrativo fixo.</p>
     </main>
