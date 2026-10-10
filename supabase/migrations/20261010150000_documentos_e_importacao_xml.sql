@@ -1,11 +1,5 @@
 -- Documentos privados de boletos, importações de XML e índices para consultas frequentes.
 
-do $$
-begin
-  alter table public.bills add constraint bills_store_id_id_key unique (store_id, id);
-exception when duplicate_object then null;
-end $$;
-
 create table if not exists public.bill_documents (
   id uuid primary key default gen_random_uuid(),
   store_id uuid not null references public.stores(id) on delete cascade,
