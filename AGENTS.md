@@ -2,9 +2,11 @@
 
 ## Contexto e fontes
 
-Mateus é gestor de produto, não desenvolvedor. Assuma decisões técnicas rotineiras e explique impacto em linguagem simples, em português. Leia `docs/STATUS.md`, `docs/DECISOES.md` e o cartão correspondente em `PLANO_EXECUCAO_TRELLO.md` antes de trabalhar.
+Mateus é gestor de produto, não desenvolvedor. Assuma decisões técnicas rotineiras e explique impacto em linguagem simples, em português. Para começar, leia `docs/COMECE_AQUI.md` e estas instruções.
 
-As instruções atuais do usuário prevalecem. Para decisões de produto já registradas, use `docs/DECISOES.md` e o plano de execução atual. `PLANO_MVP.md` e `docs/referencias/CLAUDE_ORIGINAL.md` são referências históricas; não reinstaure decisões substituídas. Registre divergências relevantes em vez de inventar requisitos.
+Consulte somente o início de `docs/STATUS.md` para estado atual; não leia o histórico inteiro por padrão. Em `docs/DECISOES.md` e `PLANO_EXECUCAO_TRELLO.md`, abra apenas a decisão ou o cartão diretamente relacionado à tarefa. Leia outros arquivos do projeto conforme necessário para implementar e verificar o pedido. Não exija leitura integral do plano nem de toda a documentação antes de cada tarefa.
+
+As instruções atuais do usuário prevalecem. `docs/DECISOES.md` é a referência para decisões de produto registradas; confirme apenas as seções que se aplicam. `PLANO_MVP.md` e `docs/referencias/CLAUDE_ORIGINAL.md` são referências históricas; não reinstaure decisões substituídas. Registre divergências relevantes em vez de inventar requisitos.
 
 ## Forma de trabalhar
 
@@ -28,6 +30,8 @@ Fora do MVP: pagamentos bancários, DDA, ERP, estoque, emissão fiscal, concilia
 Atualização de produto em 08/10/2026: Mateus incluiu leitura de documentos/fotos (OCR) no escopo, substituindo a exclusão anterior. A orientação não autoriza gastos nem afirma que a extração já existe. Conferir docs/DECISOES.md e docs/d02/EXPERIENCIA_MOBILE.md para limites e planejamento.
 
 Interface pt-BR, moeda R$, datas dd/mm/aaaa. Verificar telas em 375px, estados vazios, carregamento, erro e navegação por teclado. Dados fictícios devem ser identificados. Nunca simule sucesso de uma gravação que falhou.
+
+Responsividade é requisito de todas as páginas, não apenas do login: ao criar ou alterar uma tela, confira a página em largura mobile (mínimo 375px) e desktop, evite rolagem horizontal e preserve campos legíveis, botões utilizáveis e conteúdo sem cortes. Revise também os estados de erro, carregamento e conteúdo longo nas páginas afetadas. Não declare uma página ou o aplicativo inteiro responsivo sem verificar os respectivos fluxos.
 
 ## Arquitetura
 

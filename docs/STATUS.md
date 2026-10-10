@@ -1,6 +1,15 @@
 # Andamento
 
-Atualizado em 09/10/2026.
+Atualizado em 10/10/2026.
+
+## Publicação e responsividade do login — 10/10/2026
+
+- PR #4 foi mesclado à `main`; a correção limita a largura do formulário em telas grandes e adapta espaçamentos, tipografia e campos para mobile e paisagem.
+- As variáveis públicas de conexão do Supabase foram configuradas no Vercel para `Production`; o build de produção ficou `Ready` no commit `4c99b36`. A rota `/login` abriu no domínio publicado.
+- Não foi realizado login com credenciais do usuário. A verificação visual se limitou à rota de login; as demais páginas e fluxos ainda não passaram por uma revisão responsiva abrangente.
+- A regra geral para páginas futuras está em `AGENTS.md`: conferir telas afetadas em 375px e desktop, além de evitar cortes e rolagem horizontal.
+
+## Diagnóstico do build do PR — 09/10/2026.
 
 ## Diagnóstico do build do PR — 09/10/2026
 
