@@ -11,6 +11,7 @@ Atualizado em 10/10/2026.
 - O processamento exibe progresso, permite selecionar novamente o mesmo arquivo e mantém revisão humana; campos não reconhecidos continuam vazios.
 - Limitação: a primeira execução do OCR pode baixar o worker/modelo em português e consumir mais tempo, memória e bateria no celular. A qualidade ainda precisa ser validada com boletos reais.
 - Otimização posterior: o worker/modelo do OCR agora é reutilizado durante a sessão e não é reinicializado para cada página do PDF, reduzindo a demora após o primeiro carregamento.
+- OCR ajustado para usar apenas a primeira página de PDF escaneado, limitar imagens a 1800 px, tentar código de barras/QR com ZXing e falhar com mensagem após 30 segundos em vez de permanecer carregando indefinidamente.
 - Verificações: `npm run lint` passou com um warning preexistente; `npm run typecheck`, `npm run build` e `git diff --check` passaram.
 
 ## Otimização de navegação e sessão — 10/10/2026
