@@ -29,7 +29,7 @@ Aplicativo web mobile-first para pequenos lojistas de material de construção o
 
 1. Leia este resumo e `AGENTS.md`.
 2. Identifique o pedido atual e os arquivos da área afetada.
-3. Confira apenas o topo de `docs/STATUS.md) para estado atual; não leia seu histórico inteiro.
+3. Confira apenas o topo de `docs/STATUS.md` para estado atual; não leia seu histórico inteiro.
 4. Abra somente a decisão e o cartão que se aplicam à tarefa. Não leia os 40 cartões do plano inteiro por padrão.
 5. Leia código e documentação adicionais apenas se forem necessários para executar ou verificar o pedido.
 6. Se os registros divergirem, priorize instruções atuais do usuário, depois decisões atuais e evidências recentes; registre ou explique a divergência.
