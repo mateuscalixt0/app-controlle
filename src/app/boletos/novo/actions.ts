@@ -4,41 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-function parseAmountCents(value: string): number | null {
-  const normalized = value.trim().replace(/\s/g, "").replace(/^R\$/i, "");
-  if (!/^(?:\d{1,3}(?:\.\d{3})*|\d+)(?:,\d{1,2})?$/.test(normalized)) return null;
-  const [whole, fraction = ""] = normalized.replace(/\./g, "").split(",");
-  const cents = Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
-  return Number.isSafeInteger(cents) && cents >= 0 ? cents : null;
-}
-
-export async function addBill(formData: FormData) {
-  const supplierName = String(formData.get("supplier") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
-  const dueDate = String(formData.get("due_date") ?? "");
-  const amountCents = parseAmountCents(String(formData.get("amount") ?? ""));
-  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(dueDate) && !Number.isNaN(Date.parse(`${dueDate}T00:00:00Z`)) && new Date(`${dueDate}T00:00:00Z`).toISOString().startsWith(dueDate);
-  if (!supplierName || supplierName.length > 160 || !description || description.length > 240 || amountCents === null || !validDate) {
-    redirect("/boletos/novo?erro=validacao");
-  }
-
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: member, error: memberError } = await supabase.from("store_members").select("store_id").eq("user_id", user.id).limit(1).maybeSingle();
-  if (memberError || !member) redirect("/configurar-loja");
-
-  let supplierId: string | null = null;
-  const { data: existing, error: lookupError } = await supabase.from("suppliers").select("id").eq("store_id", member.store_id).eq("name", supplierName).maybeSingle();
-  if (lookupError) redirect("/boletos/novo?erro=salvar");
-  if (existing) supplierId = existing.id;
-  else {
-    const { data: supplier, error } = await supabase.from("suppliers").insert({ store_id: member.store_id, name: supplierName }).select("id").single();
-    if (error || !supplier) redirect("/boletos/novo?erro=salvar");
-    supplierId = supplier.id;
-  }
-  const { error } = await supabase.from("bills").insert({ store_id: member.store_id, supplier_id: supplierId, description, amount_cents: amountCents, due_date: dueDate });
-  if (error) redirect("/boletos/novo?erro=salvar");
-  revalidatePath("/boletos");
-  redirect("/boletos");
-}
+function parseAmountCents(value:string){const n=value.trim().replace(/\s/g,"").replace(/^R\$/i,"");if(!/^(?:\d{1,3}(?:\.\d{3})*|\d+)(?:,\d{1,2})?$/.test(n))return null;const[w,f=""]=n.replace(/\./g,"").split(",");const c=Number(w)*100+Number(f.padEnd(2,"0"));return Number.isSafeInteger(c)&&c>=0?c:null;}
+function validDate(v:string){return /^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v+"T00:00:00Z"));}
+async function currentStore(){const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)redirect("/login");const{data:member,error}=await supabase.from("store_members").select("store_id").eq("user_id",user.id).limit(1).maybeSingle();if(error||!member)redirect("/configurar-loja");return{supabase,user,storeId:member.store_id};}
+export async function createBill(input:{supplier:string;description:string;amount:string;dueDate:string;beneficiaryDocument?:string;digitableLine?:string}){const supplierName=input.supplier.trim(),description=input.description.trim(),amountCents=parseAmountCents(input.amount),beneficiaryDocument=(input.beneficiaryDocument??"").replace(/\D/g,""),digitableLine=(input.digitableLine??"").replace(/\D/g,"");if(!supplierName||supplierName.length>160||!description||description.length>240||amountCents===null||!validDate(input.dueDate)||beneficiaryDocument&& !/^\d{11}(\d{3})?$/.test(beneficiaryDocument)||digitableLine&& !/^\d{47,48}$/.test(digitableLine))throw new Error("Confira os campos obrigatórios.");const{supabase,storeId}=await currentStore();let{data:supplier}=await supabase.from("suppliers").select("id").eq("store_id",storeId).eq("name",supplierName).maybeSingle();if(!supplier){const r=await supabase.from("suppliers").insert({store_id:storeId,name:supplierName}).select("id").single();if(r.error||!r.data)throw new Error("Não foi possível salvar o fornecedor.");supplier=r.data;}const{data:bill,error}=await supabase.from("bills").insert({store_id:storeId,supplier_id:supplier.id,description,amount_cents:amountCents,due_date:input.dueDate,beneficiary_document:beneficiaryDocument||null,digitable_line:digitableLine||null}).select("id").single();if(error||!bill)throw new Error("Não foi possível salvar o boleto.");revalidatePath("/boletos");return{billId:bill.id,storeId};}
+export async function attachBillDocument(input:{billId:string;storagePath:string;originalName:string;contentType:string;sizeBytes:number}){if(!/^[0-9a-f-]{36}$/i.test(input.billId)||!input.storagePath||input.storagePath.length>500||input.originalName.length>255||!["application/pdf","image/jpeg","image/png"].includes(input.contentType)||!Number.isInteger(input.sizeBytes)||input.sizeBytes<1||input.sizeBytes>10*1024*1024)throw new Error("Metadados do documento inválidos.");const{supabase,user,storeId}=await currentStore();if(!input.storagePath.startsWith(storeId+"/"+input.billId+"/"))throw new Error("Caminho de arquivo inválido.");const{error}=await supabase.from("bill_documents").insert({store_id:storeId,bill_id:input.billId,storage_path:input.storagePath,original_name:input.originalName,content_type:input.contentType,size_bytes:input.sizeBytes,created_by:user.id,extraction_status:"needs_manual_review"});if(error)throw new Error("O boleto foi salvo, mas não foi possível vincular o documento.");}
+export async function addBill(formData:FormData){try{await createBill({supplier:String(formData.get("supplier")??""),description:String(formData.get("description")??""),amount:String(formData.get("amount")??""),dueDate:String(formData.get("due_date")??"")});}catch{redirect("/boletos/novo?erro=validacao");}redirect("/boletos");}
