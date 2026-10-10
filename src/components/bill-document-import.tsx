@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { extractBillDocument, type BillExtraction } from "@/lib/boleto-extractor";
 import { attachBillDocument, createBill } from "@/app/boletos/novo/actions";
+import { Icon } from "@/components/icons";
 
 const blank: BillExtraction = {
   supplier: "", beneficiaryDocument: "", description: "", amount: "", dueDate: "", line: "",
@@ -67,10 +68,31 @@ export function BillDocumentImport() {
   return <section className="card document-flow">
     <h2>Enviar boleto</h2>
     <p>PDF, JPG ou PNG até 10 MB. Nenhum dado ausente é inventado.</p>
-    <label className="secondary-action file-action">
-      Escolher arquivo ou foto
-      <input type="file" accept="application/pdf,image/jpeg,image/png" capture="environment" onChange={(event) => void choose(event.target.files?.[0])} disabled={pending} />
-    </label>
+    <div className="document-source-actions" aria-label="Escolher origem do documento">
+      <label className="secondary-action document-source-action">
+        <Icon name="upload" />
+        <span>Arquivo</span>
+        <input
+          className="sr-only"
+          type="file"
+          accept="application/pdf,image/jpeg,image/png"
+          onChange={(event) => void choose(event.target.files?.[0])}
+          disabled={pending}
+        />
+      </label>
+      <label className="secondary-action document-source-action">
+        <Icon name="camera" />
+        <span>Câmera</span>
+        <input
+          className="sr-only"
+          type="file"
+          accept="image/jpeg,image/png"
+          capture="environment"
+          onChange={(event) => void choose(event.target.files?.[0])}
+          disabled={pending}
+        />
+      </label>
+    </div>
     {error && <p className="form-error" role="alert">{error}</p>}
     {ocrNotice && <p className="helper-box">{ocrNotice}</p>}
     {file && <form className="form-card review-form" onSubmit={(event) => { event.preventDefault(); save(); }}>
