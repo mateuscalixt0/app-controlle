@@ -27,8 +27,8 @@ export async function addBill(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const dueDate = String(formData.get("due_date") ?? "");
   const amountCents = parseAmountCents(String(formData.get("amount") ?? ""));
-  const candidate = formData.get("document");
-  const document = candidate instanceof File && candidate.size > 0 ? candidate : null;
+  const candidates = [formData.get("camera_document"), formData.get("document")];
+  const document = candidates.find((candidate): candidate is File => candidate instanceof File && candidate.size > 0) ?? null;
   const validDate = /^\d{4}-\d{2}-\d{2}$/.test(dueDate) && !Number.isNaN(Date.parse(`${dueDate}T00:00:00Z`)) && new Date(`${dueDate}T00:00:00Z`).toISOString().startsWith(dueDate);
 
   if (!supplierName || supplierName.length > 160 || !description || description.length > 240 || amountCents === null || !validDate) {
