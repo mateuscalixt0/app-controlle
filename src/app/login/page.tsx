@@ -1,14 +1,12 @@
 import { redirect } from "next/navigation";
 import { signIn } from "./actions";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentSession } from "@/lib/supabase/session";
 import "./login.css";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data: membership } = await supabase.from("store_members").select("store_id").limit(1).maybeSingle();
-    if (membership) redirect("/");
+  const session = await getCurrentSession();
+  if (session) {
+    if (session.storeId) redirect("/");
     redirect("/configurar-loja");
   }
   const { erro } = await searchParams;

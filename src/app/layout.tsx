@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AppShell } from "@/components/app-shell";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentSession } from "@/lib/supabase/session";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,13 +10,12 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const isConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
-  const supabase = isConfigured ? await createClient() : null;
-  const { data: { user } = { user: null } } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+  const session = isConfigured ? await getCurrentSession() : null;
   return (
     <html lang="pt-BR">
       <body>
         <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
-        {user ? <AppShell>{children}</AppShell> : children}
+        {session ? <AppShell>{children}</AppShell> : children}
       </body>
     </html>
   );

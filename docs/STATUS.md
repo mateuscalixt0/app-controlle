@@ -2,6 +2,16 @@
 
 Atualizado em 10/10/2026.
 
+## Otimização de navegação e sessão — 10/10/2026
+
+- Criados estados de carregamento para as rotas principais, com esqueleto visual e `aria-busy`, evitando que a tela anterior permaneça parada durante a navegação.
+- Navegação após importação de boleto passou a usar `router.push` e `router.refresh`, sem recarga completa.
+- Criado helper cacheado de sessão usando `auth.getClaims()`, com resolução única do usuário e da loja por requisição; páginas, actions e rota de documento foram migradas.
+- Boletos agora carregam o nome do fornecedor na mesma consulta por relação, sem segunda consulta de fornecedores.
+- Verificações: `npm run lint` passou com um warning preexistente de variável não usada; `npm run typecheck`, `npm run build` e `git diff --check` passaram.
+- O middleware foi preservado para continuar renovando a sessão com `getUser()`.
+- Próximo passo: confirmar o deploy de produção e validar a navegação autenticada no domínio publicado.
+
 ## Publicação e responsividade do login — 10/10/2026
 
 - PR #4 foi mesclado à `main`; a correção limita a largura do formulário em telas grandes e adapta espaçamentos, tipografia e campos para mobile e paisagem.

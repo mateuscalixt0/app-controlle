@@ -1,13 +1,11 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentSession } from "@/lib/supabase/session";
 import { createStore } from "./actions";
 
 export default async function SetupStorePage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: membership } = await supabase.from("store_members").select("store_id").limit(1).maybeSingle();
-  if (membership) redirect("/");
+  const session = await getCurrentSession();
+  if (!session) redirect("/login");
+  if (session.storeId) redirect("/");
   const { erro } = await searchParams;
 
   return (
@@ -21,7 +19,7 @@ export default async function SetupStorePage({ searchParams }: { searchParams: P
         {erro && <p className="form-error" role="alert">Não foi possível criar a loja. Confira o nome e tente novamente.</p>}
         <button className="primary-action full-action" type="submit">Criar loja</button>
       </form>
-      <p className="helper-box">Conta: {user.email}</p>
+      <p className="helper-box">Conta: {session.email}</p>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { extractBillDocument, type BillExtraction } from "@/lib/boleto-extractor";
@@ -12,6 +13,7 @@ const blank: BillExtraction = {
 };
 
 export function BillDocumentImport() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [data, setData] = useState<BillExtraction>(blank);
   const [error, setError] = useState("");
@@ -57,7 +59,8 @@ export function BillDocumentImport() {
           billId: bill.billId, storagePath: uploadedPath, originalName: file.name,
           contentType: file.type, sizeBytes: file.size,
         });
-        window.location.assign("/boletos");
+        router.push("/boletos");
+        router.refresh();
       } catch (reason) {
         if (uploadedPath) await createClient().storage.from("bill-documents").remove([uploadedPath]);
         setError(reason instanceof Error ? reason.message : "Não foi possível salvar.");

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentSession } from "@/lib/supabase/session";
 
 export async function addMissingItem(formData: FormData) {
   const productName = String(formData.get("product") ?? "").trim();
@@ -13,14 +13,12 @@ export async function addMissingItem(formData: FormData) {
     redirect("/faltas/novo?erro=validacao");
   }
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: member, error: memberError } = await supabase.from("store_members").select("store_id").eq("user_id", user.id).limit(1).maybeSingle();
-  if (memberError || !member) redirect("/configurar-loja");
+  const session = await getCurrentSession();
+  if (!session) redirect("/login");
+  if (!session.storeId) redirect("/configurar-loja");
 
-  const { error } = await supabase.from("missing_items").insert({
-    store_id: member.store_id,
+  const { error } = await session.supabase.from("missing_items").insert({
+    store_id: session.storeId,
     product_name: productName,
     quantity,
     priority,
