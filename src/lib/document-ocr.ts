@@ -1,19 +1,25 @@
 type ProgressHandler = (progress: number) => void;
+type OcrWorker = Awaited<ReturnType<(typeof import("tesseract.js"))["createWorker"]>>;
+
+let workerPromise: Promise<OcrWorker> | null = null;
+let currentProgress: ProgressHandler | undefined;
+
+async function getWorker(onProgress?: ProgressHandler) {
+  currentProgress = onProgress;
+  if (!workerPromise) {
+    workerPromise = import("tesseract.js").then(({ createWorker }) => createWorker("por", undefined, {
+      logger: (message) => {
+        if (message.status === "recognizing text") currentProgress?.(Math.round(message.progress * 100));
+      },
+    }));
+  }
+  return workerPromise;
+}
 
 async function recognizeImage(image: string | HTMLCanvasElement, onProgress?: ProgressHandler) {
-  const { createWorker } = await import("tesseract.js");
-  const worker = await createWorker("por", undefined, {
-    logger: (message) => {
-      if (message.status === "recognizing text") onProgress?.(Math.round(message.progress * 100));
-    },
-  });
-
-  try {
-    const result = await worker.recognize(image);
-    return result.data.text;
-  } finally {
-    await worker.terminate();
-  }
+  const worker = await getWorker(onProgress);
+  const result = await worker.recognize(image);
+  return result.data.text;
 }
 
 async function recognizePdf(file: File, onProgress?: ProgressHandler) {
@@ -23,6 +29,7 @@ async function recognizePdf(file: File, onProgress?: ProgressHandler) {
   const document = await loadingTask.promise;
   const pages: string[] = [];
   const pageCount = Math.min(document.numPages, 3);
+  const worker = await getWorker((progress) => onProgress?.(progress));
 
   try {
     for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
@@ -34,9 +41,9 @@ async function recognizePdf(file: File, onProgress?: ProgressHandler) {
       const context = canvas.getContext("2d");
       if (!context) continue;
       await page.render({ canvas, canvasContext: context, viewport }).promise;
-      pages.push(await recognizeImage(canvas, (progress) => {
-        onProgress?.(Math.round(((pageNumber - 1) * 100 + progress) / pageCount));
-      }));
+      const result = await worker.recognize(canvas);
+      pages.push(result.data.text);
+      onProgress?.(Math.round((pageNumber * 100) / pageCount));
       page.cleanup();
     }
     return pages.join("\n");
