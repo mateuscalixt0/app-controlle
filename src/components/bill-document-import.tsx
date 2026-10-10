@@ -18,24 +18,39 @@ export function BillDocumentImport() {
   const [data, setData] = useState<BillExtraction>(blank);
   const [error, setError] = useState("");
   const [ocrNotice, setOcrNotice] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
   const [pending, startTransition] = useTransition();
 
   async function choose(value: File | undefined) {
     setError(""); setOcrNotice(""); setFile(null); setData(blank);
     if (!value) return;
+    setProcessing(true);
+    setOcrProgress(0);
+    setOcrNotice("Lendo o documento localmente. Isso pode levar alguns segundos na primeira foto.");
     try {
-      const extracted = await extractBillDocument(value);
+      const extracted = await extractBillDocument(value, setOcrProgress);
       setFile(value); setData(extracted);
-      if (value.type !== "application/pdf" || extracted.uncertain.length === 4) {
-        setOcrNotice("Este documento precisa de OCR. Nenhum serviço externo foi ativado: a escolha exige registrar dependência, custo e aprovação antes de enviar arquivos.");
+      if (extracted.uncertain.length === 4) {
+        setOcrNotice("Não encontramos os campos automaticamente. Confira os dados antes de salvar.");
+      } else {
+        setOcrNotice("Leitura concluída. Confira os dados antes de salvar.");
       }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Não foi possível ler o arquivo.");
+    } finally {
+      setProcessing(false);
     }
   }
 
   function change(field: keyof BillExtraction, value: string) {
     setData((current) => ({ ...current, [field]: value, uncertain: current.uncertain.filter((item) => item !== field) }));
+  }
+
+  function chooseFromInput(event: React.ChangeEvent<HTMLInputElement>) {
+    const selected = event.target.files?.[0];
+    event.currentTarget.value = "";
+    void choose(selected);
   }
 
   function save() {
@@ -79,8 +94,8 @@ export function BillDocumentImport() {
           className="sr-only"
           type="file"
           accept="application/pdf,image/jpeg,image/png"
-          onChange={(event) => void choose(event.target.files?.[0])}
-          disabled={pending}
+          onChange={chooseFromInput}
+          disabled={pending || processing}
         />
       </label>
       <label className="secondary-action document-source-action">
@@ -91,13 +106,13 @@ export function BillDocumentImport() {
           type="file"
           accept="image/jpeg,image/png"
           capture="environment"
-          onChange={(event) => void choose(event.target.files?.[0])}
-          disabled={pending}
+          onChange={chooseFromInput}
+          disabled={pending || processing}
         />
       </label>
     </div>
     {error && <p className="form-error" role="alert">{error}</p>}
-    {ocrNotice && <p className="helper-box">{ocrNotice}</p>}
+    {ocrNotice && <p className="helper-box" role="status">{ocrNotice}{processing && ` ${ocrProgress}%`}</p>}
     {file && <form className="form-card review-form" onSubmit={(event) => { event.preventDefault(); save(); }}>
       <p className="eyebrow">CONFERIR ANTES DE SALVAR</p>
       <label>Beneficiário/fornecedor<input required value={data.supplier} onChange={(event) => change("supplier", event.target.value)} /></label>
@@ -106,7 +121,7 @@ export function BillDocumentImport() {
       <label>Valor (R$)<input required inputMode="decimal" value={data.amount} onChange={(event) => change("amount", event.target.value)} /></label>
       <label>Vencimento<input required type="date" value={data.dueDate} onChange={(event) => change("dueDate", event.target.value)} /></label>
       {data.line && <p className="helper-text">Linha digitável encontrada: {data.line}</p>}
-      <button className="primary-action" disabled={pending} type="submit">{pending ? "Salvando boleto…" : "Salvar boleto e documento"}</button>
+      <button className="primary-action" disabled={pending || processing} type="submit">{pending ? "Salvando boleto…" : "Salvar boleto e documento"}</button>
     </form>}
   </section>;
 }

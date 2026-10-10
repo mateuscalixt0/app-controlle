@@ -1,4 +1,5 @@
 import { extractTextFromDigitalPdf } from "./pdf-text";
+import { extractTextWithOcr } from "./document-ocr";
 
 export type BillExtraction = {
   supplier: string;
@@ -15,7 +16,7 @@ function brazilianDateToIso(value: string) {
   return match ? `${match[3]}-${match[2]}-${match[1]}` : "";
 }
 
-export async function extractBillDocument(file: File): Promise<BillExtraction> {
+export async function extractBillDocument(file: File, onProgress?: (progress: number) => void): Promise<BillExtraction> {
   const empty: BillExtraction = {
     supplier: "",
     beneficiaryDocument: "",
@@ -30,9 +31,8 @@ export async function extractBillDocument(file: File): Promise<BillExtraction> {
   if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) {
     throw new Error("Envie um PDF, JPG ou PNG.");
   }
-  if (file.type !== "application/pdf") return empty;
-
-  const text = await extractTextFromDigitalPdf(file);
+  let text = file.type === "application/pdf" ? await extractTextFromDigitalPdf(file) : "";
+  if (!text) text = await extractTextWithOcr(file, onProgress);
   if (!text) return empty;
 
   const line = (text.match(/(?:\d[ .-]?){47,48}/)?.[0] ?? "").replace(/\D/g, "");

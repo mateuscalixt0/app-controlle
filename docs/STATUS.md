@@ -2,6 +2,16 @@
 
 Atualizado em 10/10/2026.
 
+## Responsividade e leitura local de boletos — 10/10/2026
+
+- Removida a opção “Preencher manualmente” da tela de adicionar boleto, mantendo o fluxo de arquivo/foto com conferência antes de salvar.
+- Corrigido o seletor de XML para ocultar o controle nativo que ultrapassava o card em telas pequenas; ajustadas larguras flexíveis e reservas de espaço da navegação inferior.
+- Reduzida a altura artificial da tela de adicionar boleto, com compactação adicional em telas baixas.
+- Adicionados `tesseract.js` e `pdfjs-dist` carregados sob demanda: fotos e PDFs escaneados passam por OCR local no dispositivo; PDFs digitais continuam usando extração de texto antes do OCR.
+- O processamento exibe progresso, permite selecionar novamente o mesmo arquivo e mantém revisão humana; campos não reconhecidos continuam vazios.
+- Limitação: a primeira execução do OCR pode baixar o worker/modelo em português e consumir mais tempo, memória e bateria no celular. A qualidade ainda precisa ser validada com boletos reais.
+- Verificações: `npm run lint` passou com um warning preexistente; `npm run typecheck`, `npm run build` e `git diff --check` passaram.
+
 ## Otimização de navegação e sessão — 10/10/2026
 
 - Criados estados de carregamento para as rotas principais, com esqueleto visual e `aria-busy`, evitando que a tela anterior permaneça parada durante a navegação.
