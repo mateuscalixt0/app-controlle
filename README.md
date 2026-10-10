@@ -2,9 +2,7 @@
 
 Aplicativo para pequenos lojistas de material de construção organizarem boletos e planejarem compras com histórico de preços por fornecedor.
 
-**Estado:** base Next.js executável e conectada ao projeto Supabase de desenvolvimento. Os fluxos do produto, o modelo de dados e a publicação ainda não foram implementados.
-
-As telas mobile de D02 estão disponíveis como protótipo de validação, com dados fictícios identificados. Upload, salvamento e importação permanecem desativados até existirem banco, login e regras de acesso.
+**Estado:** aplicação Next.js conectada ao Supabase, com login e alguns fluxos de boletos e faltas implementados. O registro de `docs/STATUS.md` confirma publicação de produção e abertura da página de login, mas não confirma login real com a conta do titular. OCR, arquivos, histórico de preços e dashboard continuam pendentes. Consulte [Comece aqui](docs/COMECE_AQUI.md) para o resumo e mapa da documentação.
 
 ## Gestão e desenvolvimento
 
@@ -15,10 +13,9 @@ As telas mobile de D02 estão disponíveis como protótipo de validação, com d
 
 ## Por onde começar
 
-1. Leia [AGENTS.md](AGENTS.md), as instruções permanentes de desenvolvimento.
-2. Consulte [PLANO_EXECUCAO_TRELLO.md](PLANO_EXECUCAO_TRELLO.md) para as 40 entregas planejadas.
-3. Leia [docs/DECISOES.md](docs/DECISOES.md) para as decisões atuais e pendências.
-4. Retome de [docs/STATUS.md](docs/STATUS.md), que registra evidências e próximo passo.
+1. Leia [docs/COMECE_AQUI.md](docs/COMECE_AQUI.md) para entender o projeto e encontrar a documentação certa.
+2. Siga [AGENTS.md](AGENTS.md) para as regras de trabalho.
+3. Consulte apenas o trecho relevante de [docs/STATUS.md](docs/STATUS.md), [docs/DECISOES.md](docs/DECISOES.md) e [PLANO_EXECUCAO_TRELLO.md](PLANO_EXECUCAO_TRELLO.md). Não é necessário ler o plano ou o histórico inteiro em toda tarefa.
 
 [PLANO_MVP.md](PLANO_MVP.md) preserva o plano original com ressalvas sobre decisões posteriores. A orientação original para Claude está arquivada em `docs/referencias/CLAUDE_ORIGINAL.md`; o arquivo operacional para Codex é `AGENTS.md`.
 
