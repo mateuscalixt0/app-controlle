@@ -29,6 +29,8 @@ Atualização de produto em 08/10/2026: Mateus incluiu leitura de documentos/fot
 
 Interface pt-BR, moeda R$, datas dd/mm/aaaa. Verificar telas em 375px, estados vazios, carregamento, erro e navegação por teclado. Dados fictícios devem ser identificados. Nunca simule sucesso de uma gravação que falhou.
 
+Responsividade é requisito de todas as páginas, não apenas do login: ao criar ou alterar uma tela, confira a página em largura mobile (mínimo 375px) e desktop, evite rolagem horizontal e preserve campos legíveis, botões utilizáveis e conteúdo sem cortes. Revise também os estados de erro, carregamento e conteúdo longo nas páginas afetadas. Não declare uma página ou o aplicativo inteiro responsivo sem verificar os respectivos fluxos.
+
 ## Arquitetura
 
 Base prevista: Next.js App Router + TypeScript estrito + Tailwind; Supabase Postgres/Auth/Storage; Vercel; Resend; Vitest. Verificar versões e documentação oficial na implementação. Preferir aplicação modular simples, sem microsserviços ou dependências desnecessárias.
