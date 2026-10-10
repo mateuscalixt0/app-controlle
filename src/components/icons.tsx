@@ -11,7 +11,8 @@ type IconName =
   | "search"
   | "calendar"
   | "chevron"
-  | "close";
+  | "close"
+  | "document";
 
 const paths: Record<IconName, React.ReactNode> = {
   "add-bill": <><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M12 9v6M15 3v4h4"/></>,
@@ -25,6 +26,7 @@ const paths: Record<IconName, React.ReactNode> = {
   calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></>,
   chevron: <path d="m9 18 6-6-6-6"/>,
   close: <path d="m6 6 12 12M18 6 6 18"/>,
+  document: <><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v4h4M9 12h6M9 16h6"/></>,
 };
 
 export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {
