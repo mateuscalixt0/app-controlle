@@ -2,9 +2,11 @@
 
 ## Contexto e fontes
 
-Mateus é gestor de produto, não desenvolvedor. Assuma decisões técnicas rotineiras e explique impacto em linguagem simples, em português. Leia `docs/STATUS.md`, `docs/DECISOES.md` e o cartão correspondente em `PLANO_EXECUCAO_TRELLO.md` antes de trabalhar.
+Mateus é gestor de produto, não desenvolvedor. Assuma decisões técnicas rotineiras e explique impacto em linguagem simples, em português. Para começar, leia `docs/COMECE_AQUI.md` e estas instruções.
 
-As instruções atuais do usuário prevalecem. Para decisões de produto já registradas, use `docs/DECISOES.md` e o plano de execução atual. `PLANO_MVP.md` e `docs/referencias/CLAUDE_ORIGINAL.md` são referências históricas; não reinstaure decisões substituídas. Registre divergências relevantes em vez de inventar requisitos.
+Consulte somente o início de `docs/STATUS.md` para estado atual; não leia o histórico inteiro por padrão. Em `docs/DECISOES.md` e `PLANO_EXECUCAO_TRELLO.md`, abra apenas a decisão ou o cartão diretamente relacionado à tarefa. Leia outros arquivos do projeto conforme necessário para implementar e verificar o pedido. Não exija leitura integral do plano nem de toda a documentação antes de cada tarefa.
+
+As instruções atuais do usuário prevalecem. `docs/DECISOES.md` é a referência para decisões de produto registradas; confirme apenas as seções que se aplicam. `PLANO_MVP.md` e `docs/referencias/CLAUDE_ORIGINAL.md` são referências históricas; não reinstaure decisões substituídas. Registre divergências relevantes em vez de inventar requisitos.
 
 ## Forma de trabalhar
 
