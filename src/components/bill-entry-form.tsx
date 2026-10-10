@@ -20,7 +20,7 @@ export function BillEntryForm({ action, error }: { action: (formData: FormData) 
           <span className="upload-icon"><Icon name="camera" /></span>
           <strong>Tirar uma foto</strong>
           <small>Use boa luz e enquadre o boleto inteiro.</small>
-          <input accept="image/jpeg,image/png" capture="environment" name="document" onChange={onFileChange} type="file" />
+          <input accept="image/jpeg,image/png" capture="environment" name="camera_document" onChange={onFileChange} type="file" />
         </label>
         <label className="upload-card">
           <span className="upload-icon"><Icon name="upload" /></span>
