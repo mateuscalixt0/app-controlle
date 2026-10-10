@@ -178,3 +178,21 @@ h3 { margin:0; font-size:15px; line-height:1.25; }
 @media (max-width:360px) { .page-content,.app-header { padding-right:16px; padding-left:16px; } .summary-grid,.upload-grid { grid-template-columns:1fr; } .nav-item { font-size:8px; } }
 @media (min-width:481px) { body { padding:18px 0; } .app-frame { min-height:calc(100dvh - 36px); border-radius:28px; overflow:hidden; } .app-header { top:18px; } .bottom-nav { bottom:18px; } .bottom-nav-inner { border:1px solid var(--line); border-radius:0 0 28px 28px; } }
 @media (prefers-reduced-motion:no-preference) { .missing-card,.primary-action,.nav-item { transition:transform .18s ease,background-color .18s ease; } .missing-card:hover { transform:translateY(-1px); } }
+
+.loading-spinner { display:inline-block; width:15px; height:15px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.upload-card { cursor:pointer; }
+.upload-card:focus-within { outline:3px solid rgba(173,23,78,.3); outline-offset:3px; }
+.selected-file { display:flex; align-items:center; gap:8px; margin:0; padding:11px 13px; border-radius:13px; color:#52505a; background:#f7f4f6; font-size:12px; font-weight:700; }
+.selected-file svg { width:18px; height:18px; color:var(--pink); }
+.entry-fields { display:grid; gap:12px; }
+.document-link { display:inline-flex; margin:0 0 12px; color:var(--pink); font-size:12px; font-weight:800; text-decoration:underline; text-underline-offset:3px; }
+.file-input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+.xml-preview { padding:15px; border:1px solid #edd5df; border-radius:15px; background:#fff8fa; }
+.xml-preview h2 { font-size:17px; }
+.xml-preview p { margin:7px 0 0; color:var(--muted); font-size:12px; line-height:1.45; }
+.xml-preview ul { display:grid; gap:7px; margin:13px 0 0; padding-left:18px; color:var(--foreground); font-size:11px; line-height:1.4; }
+.success-notice { margin:0 0 18px; padding:12px 14px; border:1px solid #b7dec2; border-radius:13px; color:#1d6a37; background:#effaf2; font-size:12px; font-weight:700; }
+.app-route-loading { display:grid; min-height:180px; place-items:center; align-content:center; gap:12px; color:var(--muted); font-size:13px; font-weight:700; }
+.app-route-loading .loading-spinner { width:28px; height:28px; color:var(--pink); }
+@media (prefers-reduced-motion:reduce) { .loading-spinner { animation:none; border-right-color:currentColor; } }

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { DemoNotice } from "@/components/demo-notice";
 import { Icon } from "@/components/icons";
 import { PageHeading } from "@/components/page-heading";
 import { createClient } from "@/lib/supabase/server";
@@ -31,6 +30,12 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
     : { data: [], error: null };
   if (suppliersError) throw new Error("Não foi possível carregar os fornecedores dos boletos.");
   const supplierNames = new Map((suppliers ?? []).map((supplier) => [supplier.id, supplier.name]));
+  const billIds = bills.map((bill) => bill.id);
+  const { data: documents, error: documentsError } = billIds.length
+    ? await supabase.from("bill_documents").select("bill_id").eq("store_id", member.store_id).in("bill_id", billIds)
+    : { data: [], error: null };
+  if (documentsError) throw new Error("Não foi possível carregar os anexos dos boletos.");
+  const billsWithDocument = new Set((documents ?? []).map((document) => document.bill_id));
   const total = count ?? 0;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const paramsForPages = new URLSearchParams();
@@ -41,7 +46,6 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <PageHeading eyebrow="BOLETOS" title="Boletos a pagar" description="Acompanhe os próximos vencimentos e encontre uma conta rapidamente." />
-      <DemoNotice>Boletos cadastrados manualmente ficam salvos nesta loja. Arquivos e OCR ainda não estão disponíveis.</DemoNotice>
       <form className="search-field" action="/boletos" method="get"><Icon name="search" /><label className="sr-only" htmlFor="bill-search">Buscar boleto</label><input id="bill-search" defaultValue={queryText} name="q" placeholder="Buscar por descrição" type="search" />{status && <input name="status" type="hidden" value={status} />}</form>
       <div className="filter-row" aria-label="Filtrar boletos">
         <Link className={status ? "filter-chip" : "filter-chip active"} href={queryText ? `/boletos?q=${encodeURIComponent(queryText)}` : "/boletos"}>Todos</Link>
@@ -58,7 +62,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
           const supplier = bill.supplier_id ? supplierNames.get(bill.supplier_id) : undefined;
           return <article className="card bill-card" key={bill.id}>
             <div className="row"><div><p className="eyebrow">VENCIMENTO {new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(new Date(`${bill.due_date}T00:00:00Z`))}</p><h2>{supplier ?? "Fornecedor removido"}</h2></div><strong className="amount">{brl.format(bill.amount_cents / 100)}</strong></div>
-            <p>{bill.description}</p><span className="status-pill">{bill.status === "pending" ? "Em aberto" : bill.status === "paid" ? "Pago" : "Cancelado"}</span>
+            <p>{bill.description}</p>{billsWithDocument.has(bill.id) && <Link className="document-link" href={`/boletos/${bill.id}/documento`}>Abrir documento</Link>}<span className="status-pill">{bill.status === "pending" ? "Em aberto" : bill.status === "paid" ? "Pago" : "Cancelado"}</span>
           </article>;
         })}
         {bills.length === 0 && <div className="empty-state"><strong>{total ? "Nenhum boleto nesta página" : "Nenhum boleto cadastrado"}</strong><p>Cadastre um boleto manualmente para acompanhar o vencimento.</p></div>}
