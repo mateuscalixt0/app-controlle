@@ -14,20 +14,16 @@ export async function POST(request: Request) {
     if (file.size > MAX_FILE_SIZE) return NextResponse.json({ error: "O documento deve ter no máximo 10 MB." }, { status: 413 });
     if (!ACCEPTED_TYPES.has(file.type)) return NextResponse.json({ error: "Envie um PDF, JPG ou PNG." }, { status: 415 });
 
-    const base64 = Buffer.from(await file.arrayBuffer()).toString("base64");
-    const payload = {
-      filename: file.name,
-      mimeType: file.type,
-      size: file.size,
-      base64,
-      dataUri: `data:${file.type};base64,${base64}`,
-      file: { filename: file.name, mimeType: file.type, size: file.size, base64 },
-    };
+    const payload = new FormData();
+    payload.append("file", file, file.name);
+    payload.append("filename", file.name);
+    payload.append("mimeType", file.type);
+    payload.append("size", String(file.size));
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60_000);
     let response: Response;
     try {
-      response = await fetch(WEBHOOK_URL, { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(payload), signal: controller.signal, cache: "no-store" });
+      response = await fetch(WEBHOOK_URL, { method: "POST", headers: { accept: "application/json" }, body: payload, signal: controller.signal, cache: "no-store" });
     } finally { clearTimeout(timeout); }
     const text = await response.text();
     let result: unknown;
