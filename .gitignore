@@ -12,3 +12,7 @@ coverage/
 .DS_Store
 playwright-report/
 test-results/
+
+public/readers/
+
+supabase/.temp/

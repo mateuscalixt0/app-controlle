@@ -232,3 +232,20 @@ h3 { margin:0; font-size:15px; line-height:1.25; }
 @media (max-width:360px) { .page-content,.app-header { padding-right:16px; padding-left:16px; } .summary-grid,.upload-grid { grid-template-columns:1fr; } .nav-item { font-size:8px; } }
 @media (min-width:481px) { body { padding:18px 0; } .app-frame { min-height:calc(100dvh - 36px); border-radius:28px; overflow:hidden; } .page-content { min-height:calc(100dvh - 108px); } .app-header { top:18px; } .bottom-nav { bottom:18px; } .bottom-nav-inner { border:1px solid var(--line); border-radius:0 0 28px 28px; } }
 @media (prefers-reduced-motion:no-preference) { .missing-card,.primary-action,.nav-item { transition:transform .18s ease,background-color .18s ease; } .missing-card:hover { transform:translateY(-1px); } }
+
+/* Captura e conferência de documentos */
+.document-flow { min-width:0; }
+.document-flow>p { overflow-wrap:anywhere; }
+.review-fields { display:grid; gap:14px; min-width:0; }
+.review-fields label { display:block; min-width:0; font-size:13px; font-weight:700; }
+.review-fields details label { margin-top:12px; }
+.review-fields input { min-width:0; max-width:100%; }
+.review-fields summary { min-height:44px; padding:12px 0; cursor:pointer; }
+.document-filename { overflow-wrap:anywhere; font-size:12px; }
+.document-source-action:focus-within { outline:3px solid var(--pink); outline-offset:3px; }
+.scanner-view { position:relative; overflow:hidden; border-radius:16px; background:#171218; }
+.scanner-view video { display:block; width:100%; height:260px; object-fit:contain; }
+.scanner-guide { position:absolute; inset:25% 5%; border:2px solid white; box-shadow:0 0 0 100vmax #0006; pointer-events:none; }
+.scanner-guide span { position:absolute; top:50%; left:0; right:0; height:2px; background:#ff9a00; }
+.document-flow button { white-space:normal; min-height:44px; }
+.document-flow button:disabled { opacity:.55; cursor:default; }

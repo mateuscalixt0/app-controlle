@@ -9,7 +9,7 @@ Aplicativo web mobile-first para pequenos lojistas de material de construção o
 - A aplicação Next.js está no repositório e conectada ao Supabase.
 - Login por e-mail/senha, criação da loja no primeiro acesso, anotação de faltas e cadastro/listagem manual de boletos estão implementados.
 - A aplicação foi publicada na Vercel; o registro mais recente confirma o deploy de produção e abertura da página de login, mas não confirma um login real com a conta do titular.
-- OCR, envio e armazenamento de arquivos, histórico de preços e dashboard ainda são etapas futuras.
+- Leitura de fotos/PDFs e armazenamento de originais estão implementados; publicação, câmera física e teste autenticado completo estão pendentes. Veja `docs/LEITURA_BOLETOS.md`. Histórico de preços e dashboard ainda são etapas futuras.
 - O estado de deploy, verificações e pendências pode mudar: confira o início de `docs/STATUS.md` antes de afirmar o que está publicado ou validado.
 
 ## Onde está cada informação

@@ -1,6 +1,19 @@
 # Andamento
 
-Atualizado em 10/10/2026.
+Atualizado em 11/10/2026.
+
+## Câmera leitora e PDFs com revisão e original privado — 11/10/2026
+
+- **Tarefa 1:** câmera traseira com enquadramento, leitura ITF automática, validação de código, captura JPG e encerramento do vídeo; alternativa de fotografar sem código ou enviar foto. Valor vem do código válido; beneficiário depende de OCR/entrada manual e data ambígua exige conferência.
+- **Tarefa 2:** PDF.js lê PDFs digitais e percorre as páginas; Tesseract em português processa fotos e páginas incompletas/escaneadas. Recursos servidos pelo próprio app. O fluxo principal deixa de depender do n8n; a rota legada foi preservada e protegida.
+- Revisão simples com beneficiário, valor, vencimento e código editáveis. Falha/cancelamento mantém o original e os dados parciais; campos ausentes podem ser preenchidos. Limites: PDF/JPG/PNG de até 10 MB, leitura de até três minutos, sem garantia de extração para senha, corrupção ou conteúdo ilegível. Não combina boletos diferentes encontrados no mesmo arquivo.
+- Salvamento com UUID/caminho estáveis permite repetir upload/vínculo na mesma tela sem novo boleto. O servidor verifica loja, boleto e arquivo existente antes de vincular. Fechar/recarregar após falha não retoma automaticamente o arquivo. Originais só são enviados ao confirmar.
+- **Correção aplicada no Supabase conectado:** migração aditiva `20261011162936_compatibilidade_leitura_boletos.sql`, com três colunas ausentes (`beneficiary_document`, `digitable_line`, `extraction_status`), verificadas por consulta após aplicação. Bucket já era privado; não foram alteradas políticas ou dados financeiros.
+- **Verificações:** 27 testes unitários/actions; 8 testes Chromium com PDF digital, foto OCR, PDF escaneado em segunda página, vídeo sintético ITF, câmera negada, PDF inválido, cancelamento e falha/repetição de upload. Componente conferido visualmente em 375/1280 px, sem overflow. Build, tipos e lint passaram; lint mantém um warning preexistente em faltas. `git diff --check` passou.
+- Teste SQL transacional real com duas lojas sintéticas, owner/member, anônimo e vínculos cruzados passou; fixtures revertidos. Confirma isolamento de boletos/metadados, não dos bytes do Storage. Advisors antes/depois mantiveram os mesmos avisos preexistentes; detalhes em `docs/LEITURA_BOLETOS.md`.
+- **Validação pendente:** publicação do frontend, câmera física Android/iPhone, amostras anonimizadas de fornecedores e upload/download autenticado completo (nos testes de navegador, persistência é simulada). Não afirmar conclusão do piloto nem validação integral do armazenamento.
+- **Entrega local:** implementação e documentação em commits na branch `feat/leitura-boletos-foto-pdf`. O envio ao repositório público foi bloqueado pela revisão automática por exigir autorização explícita de publicação; nenhum PR foi criado.
+- **Próximo passo:** obter autorização para enviar a branch e abrir PR, publicar preview e conferir os dois caminhos no celular com uma sessão real. Guia técnico e comandos: `docs/LEITURA_BOLETOS.md`.
 
 ## Envio de documento para leitura via n8n — 11/10/2026
 
