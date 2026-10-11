@@ -12,6 +12,7 @@ Atualizado em 10/10/2026.
 - Limitação: a primeira execução do OCR pode baixar o worker/modelo em português e consumir mais tempo, memória e bateria no celular. A qualidade ainda precisa ser validada com boletos reais.
 - Otimização posterior: o worker/modelo do OCR agora é reutilizado durante a sessão e não é reinicializado para cada página do PDF, reduzindo a demora após o primeiro carregamento.
 - OCR ajustado para usar apenas a primeira página de PDF escaneado, limitar imagens a 1800 px, tentar código de barras/QR com ZXing e falhar com mensagem após 30 segundos em vez de permanecer carregando indefinidamente.
+- Fluxo principal de boletos reorganizado para leitura de código: câmera abre leitor ZXing, arquivo/PDF tenta localizar o código e há entrada manual para 44, 47 ou 48 dígitos; valor e vencimento são derivados após validação do código.
 - Verificações: `npm run lint` passou com um warning preexistente; `npm run typecheck`, `npm run build` e `git diff --check` passaram.
 
 ## Otimização de navegação e sessão — 10/10/2026

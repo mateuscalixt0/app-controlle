@@ -78,14 +78,37 @@ export async function extractTextWithOcr(file: File, onProgress?: ProgressHandle
 }
 
 export async function extractCodeWithZxing(file: File) {
-  if (file.type === "application/pdf") return "";
   const { BrowserMultiFormatReader } = await import("@zxing/browser");
   const reader = new BrowserMultiFormatReader();
   try {
-    const result = await withTimeout(reader.decodeFromImageUrl(await prepareImage(file)), "A leitura do código demorou demais.", 4_000);
+    const source = file.type === "application/pdf" ? await preparePdfPage(file) : await prepareImage(file);
+    const result = await withTimeout(reader.decodeFromImageUrl(source), "A leitura do código demorou demais.", 4_000);
     return result.getText().replace(/\D/g, "");
   } catch {
     return "";
+  }
+}
+
+async function preparePdfPage(file: File) {
+  const pdfjs = await import("pdfjs-dist");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString();
+  const loadingTask = pdfjs.getDocument({ data: await file.arrayBuffer() });
+  const document = await loadingTask.promise;
+  try {
+    const page = await document.getPage(1);
+    const initialViewport = page.getViewport({ scale: 1 });
+    const scale = Math.min(1.6, 1800 / Math.max(initialViewport.width, initialViewport.height));
+    const viewport = page.getViewport({ scale });
+    const canvas = window.document.createElement("canvas");
+    canvas.width = Math.ceil(viewport.width);
+    canvas.height = Math.ceil(viewport.height);
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Não foi possível preparar o PDF para leitura.");
+    await page.render({ canvas, canvasContext: context, viewport }).promise;
+    page.cleanup();
+    return canvas.toDataURL("image/jpeg", 0.88);
+  } finally {
+    await loadingTask.destroy();
   }
 }
 
