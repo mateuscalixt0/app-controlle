@@ -2,7 +2,7 @@
 
 Aplicativo para pequenos lojistas de material de construção organizarem boletos e planejarem compras com histórico de preços por fornecedor.
 
-**Estado:** aplicação Next.js conectada ao Supabase, com login e alguns fluxos de boletos e faltas implementados. O registro de `docs/STATUS.md` confirma publicação de produção e abertura da página de login, mas não confirma login real com a conta do titular. OCR, arquivos, histórico de preços e dashboard continuam pendentes. Consulte [Comece aqui](docs/COMECE_AQUI.md) para o resumo e mapa da documentação.
+**Estado:** aplicação Next.js conectada ao Supabase, com login e alguns fluxos de boletos e faltas implementados. O registro de `docs/STATUS.md` confirma publicação de produção e abertura da página de login, mas não confirma login real com a conta do titular. Leitura de fotos/PDFs e anexos privados estão implementados com validações e limites registrados em [Leitura de boletos](docs/LEITURA_BOLETOS.md); publicação e teste autenticado completo desta entrega estão pendentes. Histórico de preços e dashboard continuam pendentes. Consulte [Comece aqui](docs/COMECE_AQUI.md) para o resumo e mapa da documentação.
 
 ## Gestão e desenvolvimento
 
@@ -35,7 +35,7 @@ O projeto Supabase conectado usa a chave publicável moderna. Chaves secretas e 
 
 ## Como executar
 
-Requer Node.js 20.9 ou superior. Copie `.env.example` para `.env.local` e preencha somente a URL e a chave publicável do projeto Supabase. Depois execute:
+Requer Node.js 22.13 ou superior (PDF.js); validação executada com Node.js 24. Copie `.env.example` para `.env.local` e preencha somente a URL e a chave publicável do projeto Supabase. Depois execute:
 
 ```bash
 npm install
@@ -45,12 +45,13 @@ npm run dev
 Verificações disponíveis:
 
 ```bash
+npm test
 npm run lint
 npm run typecheck
 npm run build
 ```
 
-O arquivo `.env.local` é ignorado pelo Git. As migrações versionadas do banco e as políticas RLS ficam em `supabase/migrations`. Para preparar o banco local com exemplos fictícios, instale o [Supabase CLI](https://supabase.com/docs/guides/cli), execute `supabase init` caso ainda não exista configuração e depois `supabase start` e `supabase db reset`. O `db reset` aplica migrações e o `supabase/seed.sql`; os dados são somente de demonstração e não devem ser aplicados em produção. Login, cadastro de loja, anotação de faltas e cadastro manual/listagem paginada de boletos usam o Supabase. OCR, arquivos, histórico de preços e dashboard ainda são etapas futuras.
+O arquivo `.env.local` é ignorado pelo Git. As migrações versionadas do banco e as políticas RLS ficam em `supabase/migrations`. Para preparar o banco local com exemplos fictícios, instale o [Supabase CLI](https://supabase.com/docs/guides/cli), execute `supabase init` caso ainda não exista configuração e depois `supabase start` e `supabase db reset`. O `db reset` aplica migrações e o `supabase/seed.sql`; os dados são somente de demonstração e não devem ser aplicados em produção. Login, cadastro de loja, anotação de faltas e cadastro manual/listagem paginada de boletos usam o Supabase. Consulte [Leitura de boletos](docs/LEITURA_BOLETOS.md) para OCR e arquivos; histórico de preços e dashboard ainda são etapas futuras.
 
 ## Ritmo de entrega
 
