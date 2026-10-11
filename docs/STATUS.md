@@ -2,6 +2,15 @@
 
 Atualizado em 10/10/2026.
 
+## Envio de documento para leitura via n8n — 11/10/2026
+
+- Removido o OCR e o leitor de código executados no navegador, que podiam deixar o envio preso no celular.
+- Arquivo e câmera agora enviam PDF/JPG/PNG para `/api/boletos/extract`; a rota encaminha ao webhook n8n em JSON com `base64`, `dataUri`, nome, MIME e tamanho.
+- A resposta do n8n preenche a revisão do boleto e aceita objetos aninhados (`json`, `body`, `data`, `result` ou `output`) e nomes de campos em português ou inglês.
+- Mantidos a conferência humana, o salvamento no Supabase e o upload privado do documento somente depois de salvar o boleto.
+- Removidas as dependências locais de OCR, PDF e ZXing, sem alteração de schema, RLS ou middleware.
+- Verificações: `npm run lint` passou com um warning preexistente; `npm run typecheck`, `npm run build` e `git diff --check` passaram.
+
 ## Responsividade e leitura local de boletos — 10/10/2026
 
 - Removida a opção “Preencher manualmente” da tela de adicionar boleto, mantendo o fluxo de arquivo/foto com conferência antes de salvar.
