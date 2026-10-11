@@ -4,11 +4,12 @@ import { getCurrentSession } from "@/lib/supabase/session";
 export async function GET(_: Request, { params }: { params: Promise<{ billId: string; documentId: string }> }) {
   const { billId, documentId } = await params;
   const session = await getCurrentSession();
-  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+  if (!session?.storeId) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
   const { data: document } = await session.supabase
     .from("bill_documents")
     .select("storage_path,bill_id")
+    .eq("store_id", session.storeId)
     .eq("id", documentId)
     .eq("bill_id", billId)
     .maybeSingle();

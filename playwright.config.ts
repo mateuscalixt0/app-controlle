@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({ testDir: './tests/browser', timeout: 90_000, workers: 1, use: { locale: 'pt-BR', baseURL: 'http://127.0.0.1:4173', browserName: 'chromium', launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } }, webServer: { command: 'node scripts/prepare-readers.mjs && node node_modules/vite/bin/vite.js --config tests/browser/vite.config.mts', url: 'http://127.0.0.1:4173/tests/browser/harness/', reuseExistingServer: false } });
