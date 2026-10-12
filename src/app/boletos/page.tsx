@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Icon } from "@/components/icons";
 import { PageHeading } from "@/components/page-heading";
 import { getCurrentSession } from "@/lib/supabase/session";
+import { BillCardActions } from "@/components/bill-card-actions";
 
 const PAGE_SIZE = 10;
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -18,7 +19,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
 
   let request = session.supabase
     .from("bills")
-    .select("id,supplier_id,description,amount_cents,due_date,status,suppliers(name)", { count: "exact" })
+    .select("id,supplier_id,description,amount_cents,due_date,status,digitable_line,bill_documents(storage_path),suppliers(name)", { count: "exact" })
     .eq("store_id", session.storeId)
     .order("due_date", { ascending: true })
     .order("id");
@@ -54,11 +55,14 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
         {bills.map((bill) => {
           const supplierData = bill.suppliers as unknown as { name?: string } | { name?: string }[] | null;
           const supplier = Array.isArray(supplierData) ? supplierData[0]?.name : supplierData?.name;
+          const documents = bill.bill_documents as unknown as { storage_path?: string }[] | null;
           return (
             <article className="card bill-card" key={bill.id}>
               <div className="row"><div><p className="eyebrow">VENCIMENTO {new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(new Date(`${bill.due_date}T00:00:00Z`))}</p><h2>{supplier ?? "Fornecedor removido"}</h2></div><strong className="amount">{brl.format(bill.amount_cents / 100)}</strong></div>
               <p>{bill.description}</p>
               <span className="status-pill">{bill.status === "pending" ? "Em aberto" : bill.status === "paid" ? "Pago" : "Cancelado"}</span>
+              <div className="bill-code">{bill.digitable_line ? bill.digitable_line.replace(/(.{5})/g, "$1 ").trim() : "Código não informado"}</div>
+              <BillCardActions billId={bill.id} code={bill.digitable_line} hasDocument={Boolean(documents?.length)} />
             </article>
           );
         })}
