@@ -10,6 +10,8 @@ import { attachBillDocument, createBill } from '@/app/boletos/novo/actions';
 import { BillBarcodeScanner } from './bill-barcode-scanner';
 import { Icon } from '@/components/icons';
 
+type SupplierSuggestion = { id: string; name: string; document: string | null };
+
 export function BillDocumentImport() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
@@ -19,11 +21,32 @@ export function BillDocumentImport() {
   const [processing, setProcessing] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [supplierSuggestions, setSupplierSuggestions] = useState<SupplierSuggestion[]>([]);
+  const [supplierSearchOpen, setSupplierSearchOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const operation = useRef<AbortController | null>(null);
   const saveId = useRef<string | null>(null);
   const pathId = useRef<string | null>(null);
   useEffect(() => () => operation.current?.abort(), []);
+
+  useEffect(() => {
+    const query = data.supplier.trim();
+    if (!query || processing || saved) {
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/fornecedores?q=${encodeURIComponent(query)}`, { signal: controller.signal, cache: 'no-store' });
+        if (!response.ok) return;
+        const payload = await response.json() as { suppliers?: SupplierSuggestion[] };
+        if (!controller.signal.aborted) setSupplierSuggestions(payload.suppliers ?? []);
+      } catch {
+        if (!controller.signal.aborted) setSupplierSuggestions([]);
+      }
+    }, 180);
+    return () => { window.clearTimeout(timer); controller.abort(); };
+  }, [data.supplier, processing, saved]);
 
   const choose = useCallback(async (value: File | undefined, code?: string) => {
     if (!value) return;
@@ -83,14 +106,20 @@ export function BillDocumentImport() {
     </div>
     {scanning && <BillBarcodeScanner onCapture={capture} onClose={() => setScanning(false)} />}
     {error && <p className="form-error" role="alert">{error}</p>}
-    {notice && <p className="helper-box" role="status" aria-live="polite">{notice}</p>}
+    {notice && <p className="helper-box read-notice" role="status" aria-live="polite">{notice}</p>}
     {processing && <button className="secondary-action" type="button" onClick={() => operation.current?.abort()}>Interromper e preencher manualmente</button>}
     {file && <form className="form-card review-form" onSubmit={event => { event.preventDefault(); save(); }}>
       <p className="eyebrow">CONFERIR ANTES DE SALVAR</p>
       <p className="document-filename">Arquivo: {file.name}</p>
       {data.warnings.map(warning => <p className="helper-box" key={warning}>{warning}</p>)}
       <fieldset disabled={pending || processing || saved || scanning} className="review-fields">
-        <label>Para quem vai pagar (beneficiário)<input required maxLength={160} autoComplete="off" value={data.supplier} onChange={event => change('supplier', event.target.value)} /></label>
+        <label className="supplier-field">Para quem vai pagar (beneficiário)
+          <input required maxLength={160} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={supplierSearchOpen} aria-controls="supplier-suggestions" value={data.supplier} onFocus={() => setSupplierSearchOpen(true)} onBlur={() => window.setTimeout(() => setSupplierSearchOpen(false), 120)} onChange={event => { change('supplier', event.target.value); setSupplierSuggestions([]); setSupplierSearchOpen(true); }} />
+          {supplierSearchOpen && data.supplier.trim() && <div className="supplier-suggestions" id="supplier-suggestions" role="listbox" onMouseDown={event => event.preventDefault()}>
+            {supplierSuggestions.map(supplier => <button type="button" role="option" aria-selected="false" className="supplier-suggestion" key={supplier.id} onClick={() => { change('supplier', supplier.name); setSupplierSearchOpen(false); }}><strong>{supplier.name}</strong>{supplier.document && <small>{supplier.document}</small>}</button>)}
+            {supplierSuggestions.length === 0 && <button type="button" role="option" aria-selected="false" className="supplier-create" onClick={() => setSupplierSearchOpen(false)}><span aria-hidden="true">＋</span><strong>Criar beneficiário “{data.supplier.trim()}”</strong><small>Será criado ao salvar o boleto</small></button>}
+          </div>}
+        </label>
         <label>Valor (R$)<input required inputMode="decimal" placeholder="0,00" value={data.amount} onChange={event => change('amount', event.target.value)} /></label>
         <label>Vencimento<input required type="date" value={data.dueDate} onChange={event => change('dueDate', event.target.value)} /></label>
         <label>Código de barras ou linha digitável<input inputMode="numeric" maxLength={80} value={data.line} onChange={event => change('line', event.target.value)} aria-describedby="code-help" /></label>

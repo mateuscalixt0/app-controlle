@@ -32,7 +32,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <>
+    <div className="bills-page">
       <PageHeading eyebrow="BOLETOS" title="Boletos a pagar" description="Acompanhe os próximos vencimentos e encontre uma conta rapidamente." />
       <form className="search-field" action="/boletos" method="get">
         <Icon name="search" />
@@ -66,6 +66,6 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
       </section>
       {pageCount > 1 && <nav className="pagination" aria-label="Paginação">{page > 1 && <Link className="secondary-action" href={`/boletos?page=${page - 1}`}>Anterior</Link>}{page < pageCount && <Link className="secondary-action" href={`/boletos?page=${page + 1}`}>Próxima</Link>}</nav>}
       <Link className="primary-action full-action" href="/boletos/novo"><Icon name="add-bill" /> Adicionar boleto</Link>
-    </>
+    </div>
   );
 }
