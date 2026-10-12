@@ -257,3 +257,30 @@ h3 { margin:0; font-size:15px; line-height:1.25; }
 .supplier-suggestion small,.supplier-create small { color:var(--muted); font-size:11px; font-weight:400; }
 .supplier-create { grid-template-columns:24px 1fr; align-items:center; background:#eef3f8; }
 .supplier-create span { grid-row:span 2; font-size:24px; font-weight:300; }
+
+/* Lista de boletos: layout compacto da referência visual, preservando a navegação existente. */
+.bills-page { min-height:calc(100dvh - 108px); padding-bottom:110px; background:#f8f9fc; }
+.bills-page .page-heading { margin:0 -18px 0; padding:34px 18px 28px; background:#f8f9fc; }
+.bills-page .page-heading h1 { font-size:36px; letter-spacing:-.06em; }
+.bills-page .page-heading>p:last-child { max-width:520px; font-size:16px; }
+.bills-page .search-field { height:62px; margin-top:4px; border-radius:17px; background:#fbfcff; }
+.bills-page .search-field input { font-size:16px; }
+.bills-page .filter-row { gap:9px; margin:16px 0 24px; overflow-x:auto; padding-bottom:2px; }
+.bills-page .filter-chip { padding:9px 16px; border-color:#e1e4ec; font-size:13px; background:#fbfcff; }
+.bills-page .filter-chip.active { border-color:var(--pink); color:var(--pink); background:#fff; }
+.bills-page .results-count { margin:0 2px 16px; color:var(--muted); font-size:13px; }
+.bills-page .stack { gap:16px; }
+.bills-page .bill-card { padding:24px; border:1px solid #e0e3eb; border-radius:27px; background:#fbfcff; box-shadow:0 5px 18px #3e41520a; }
+.bills-page .bill-card .row { align-items:flex-start; gap:16px; }
+.bills-page .bill-card .eyebrow { margin:0; color:#727584; font-size:13px; letter-spacing:.12em; }
+.bills-page .bill-card h2 { margin:18px 0 0; font-size:21px; letter-spacing:-.03em; }
+.bills-page .bill-card p { margin:8px 0 17px; font-size:16px; }
+.bills-page .bill-card .amount { flex:0 0 auto; font-size:21px; letter-spacing:-.03em; white-space:nowrap; }
+.bills-page .status-pill { display:inline-flex; padding:8px 13px; border-radius:999px; color:#a4144b; background:#fce9f1; font-size:12px; font-weight:800; }
+.bills-page .full-action { margin-top:20px; min-height:62px; border-radius:18px; }
+@media (max-width:480px) {
+  .bills-page .page-heading { margin-left:-16px; margin-right:-16px; padding-left:16px; padding-right:16px; }
+  .bills-page .page-heading h1 { font-size:32px; }
+  .bills-page .bill-card { padding:20px; border-radius:24px; }
+  .bills-page .bill-card .amount { font-size:19px; }
+}
