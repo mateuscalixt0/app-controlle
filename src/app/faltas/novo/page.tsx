@@ -1,4 +1,3 @@
-import { DemoNotice } from "@/components/demo-notice";
 import { PageHeading } from "@/components/page-heading";
 import { addMissingItem } from "./actions";
 
