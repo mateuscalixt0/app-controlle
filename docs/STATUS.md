@@ -1,6 +1,13 @@
 # Andamento
 
-Atualizado em 11/10/2026.
+Atualizado em 13/10/2026.
+
+## Gate de QA obrigatório — 13/10/2026
+
+- Criada a skill `.agents/skills/qa/SKILL.md` para exigir revisão de diff, testes automatizados, fluxos críticos, autorização, persistência e responsividade antes de commits de comportamento e merges na `main`.
+- Atualizado `AGENTS.md` para tornar a skill obrigatória e exigir que PRs registrem testes aprovados e pendências.
+- A suíte encontrou e corrigiu um teste desatualizado que ainda esperava extração automática do fornecedor, comportamento removido por decisão de produto.
+- Verificações executadas: `npm run lint`, `npm run typecheck`, `npm test` (27 testes) e `npm run build`, todas aprovadas. O build mantém apenas o aviso conhecido de convenção `middleware` do Next.js.
 
 ## Câmera leitora e PDFs com revisão e original privado — 11/10/2026
 
