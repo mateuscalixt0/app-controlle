@@ -48,6 +48,10 @@ describe('extração assistida', () => {
     const result = extractBoletoText(`Beneficiário: LOJA FICTICIA\nPagador: CLIENTE TESTE\nValor do documento: R$ 129,56\nVencimento: 22/02/2025\n${line(barcode())}`);
     expect(result).toMatchObject({ supplier: '', amount: '129,56', dueDate: '2025-02-22', line: line(barcode()) });
   });
+  it('encontra vencimento quando o rótulo e a data estão em linhas separadas', () => {
+    const result = extractBoletoText('Cedente\nConselho Regional\nVencimento\n31/03/2015\nData do Processamento\n08/11/2012');
+    expect(result).toMatchObject({ supplier: '', dueDate: '2015-03-31' });
+  });
   it('não escolhe ciclo nem beneficiário pelo código', () => {
     const result = extractBoletoText('', [barcode()]);
     expect(result.supplier).toBe(''); expect(result.dueDate).toBe(''); expect(result.warnings.length).toBeGreaterThan(0);
