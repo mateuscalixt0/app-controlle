@@ -9,6 +9,7 @@ export function BillCardActions({ billId, code, hasDocument, status }: { billId:
   const [downloading, setDownloading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [error, setError] = useState('');
 
   async function copyCode() {
     if (!code) return;
@@ -31,9 +32,14 @@ export function BillCardActions({ billId, code, hasDocument, status }: { billId:
 
   if (hidden) return null;
   async function mark(status: 'paid' | 'cancelled') {
-    await updateBillStatus(billId, status);
-    setMenuOpen(false);
-    if (status === 'paid') setHidden(true);
+    setError('');
+    try {
+      await updateBillStatus(billId, status);
+      setMenuOpen(false);
+      if (status === 'paid') setHidden(true);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Não foi possível salvar a alteração.');
+    }
   }
   return <>
     <div className="bill-card-menu">
@@ -41,6 +47,7 @@ export function BillCardActions({ billId, code, hasDocument, status }: { billId:
       {menuOpen && <div className="bill-card-menu-popover"><Link href={`/boletos/novo?edit=${billId}`}>Editar</Link><button type="button" onClick={() => void mark('cancelled')}>Cancelar</button></div>}
     </div>
     {status !== 'cancelled' && <button type="button" className="bill-paid-action" onClick={() => void mark('paid')}>Marcar como pago</button>}
+    {error && <p className="form-error" role="alert">{error}</p>}
     <div className="bill-card-actions">
     <button className="bill-card-action" disabled={!code} onClick={copyCode} type="button">{copied ? 'Código copiado' : 'Copiar código'}</button>
     <button className="bill-card-action" disabled={!hasDocument || downloading} onClick={downloadBill} type="button">{downloading ? 'Preparando…' : '↓ Baixar boleto'}</button>
