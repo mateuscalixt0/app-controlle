@@ -35,8 +35,9 @@ export async function updateBillStatus(billId: string, status: 'paid' | 'cancell
   if (!uuid.test(billId)) throw new Error('Boleto inválido.');
   const { supabase, storeId } = await currentStore();
   const update = status === 'paid' ? { status, paid_at: new Date().toISOString() } : { status, paid_at: null };
-  const { error } = await supabase.from('bills').update(update).eq('id', billId).eq('store_id', storeId);
+  const { data, error } = await supabase.from('bills').update(update).eq('id', billId).eq('store_id', storeId).select('id,status,paid_at').maybeSingle();
   if (error) throw new Error('Não foi possível atualizar o boleto.');
+  if (!data || data.id !== billId || data.status !== status || (status === 'paid' && !data.paid_at)) throw new Error('O banco não confirmou a atualização do boleto.');
   revalidatePath('/boletos');
 }
 export async function createBill(input: { id?: string; supplier: string; description: string; amount: string; dueDate: string; beneficiaryDocument?: string; digitableLine?: string }) {
