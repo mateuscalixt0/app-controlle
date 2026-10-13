@@ -31,6 +31,14 @@ export async function createSupplier(name: string) {
   if (created.error || !created.data) throw new Error('Não foi possível salvar o fornecedor.');
   return created.data;
 }
+export async function updateBillStatus(billId: string, status: 'paid' | 'cancelled') {
+  if (!uuid.test(billId)) throw new Error('Boleto inválido.');
+  const { supabase, storeId } = await currentStore();
+  const update = status === 'paid' ? { status, paid_at: new Date().toISOString() } : { status, paid_at: null };
+  const { error } = await supabase.from('bills').update(update).eq('id', billId).eq('store_id', storeId);
+  if (error) throw new Error('Não foi possível atualizar o boleto.');
+  revalidatePath('/boletos');
+}
 export async function createBill(input: { id?: string; supplier: string; description: string; amount: string; dueDate: string; beneficiaryDocument?: string; digitableLine?: string }) {
   const supplierName = input.supplier.trim(), description = input.description.trim(), amountCents = parseAmountCents(input.amount);
   const beneficiaryDocument = (input.beneficiaryDocument ?? '').replace(/\D/g, '');
