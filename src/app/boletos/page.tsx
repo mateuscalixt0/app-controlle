@@ -62,7 +62,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
               <p>{bill.description}</p>
               <span className="status-pill">{bill.status === "pending" ? "Em aberto" : bill.status === "paid" ? "Pago" : "Cancelado"}</span>
               <div className="bill-code">{bill.digitable_line ? bill.digitable_line.replace(/(.{5})/g, "$1 ").trim() : "Código não informado"}</div>
-              <BillCardActions billId={bill.id} code={bill.digitable_line} hasDocument={Boolean(documents?.length)} />
+              <BillCardActions billId={bill.id} code={bill.digitable_line} hasDocument={Boolean(documents?.length)} status={bill.status} />
             </article>
           );
         })}
