@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { updateBillStatus } from '@/app/boletos/novo/actions';
 
 export function BillCardActions({ billId, code, hasDocument, status }: { billId: string; code: string | null; hasDocument: boolean; status: 'pending' | 'paid' | 'cancelled' }) {
+  const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,7 +38,11 @@ export function BillCardActions({ billId, code, hasDocument, status }: { billId:
     try {
       await updateBillStatus(billId, status);
       setMenuOpen(false);
-      if (status === 'paid') setHidden(true);
+      if (status === 'paid') {
+        setHidden(true);
+        router.replace('/boletos');
+        router.refresh();
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Não foi possível salvar a alteração.');
     }

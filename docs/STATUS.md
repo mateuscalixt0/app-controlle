@@ -2,6 +2,13 @@
 
 Atualizado em 13/10/2026.
 
+## Pagamentos reaparecendo após atualização da lista — 13/10/2026
+
+- Diagnóstico confirmado nos logs e no Supabase: a action executou `PATCH /rest/v1/bills` com resposta 200; o registro verificado está `status = paid` e tem `paid_at` preenchido.
+- A causa visível era o filtro vazio da rota `/boletos`, que significava todos os estados. Após recarregar, boletos pagos apareciam novamente na aba “Todos”, embora estivessem pagos no banco.
+- A lista agora abre em “Em aberto”; o filtro “Todos” continua disponível explicitamente e os filtros “Pagos” e “Cancelados” continuam acessíveis. Ao marcar pago, a tela volta para `/boletos` para aplicar o filtro inicial.
+- Validação executada: lint, typecheck, 30 testes unitários e build passaram. A revisão de navegador visual continua pendente porque o Chromium do Playwright não está instalado e o download do executável foi bloqueado com HTTP 403.
+
 ## Gate de QA obrigatório — 13/10/2026
 
 - Criada a skill `.agents/skills/qa/SKILL.md` para exigir revisão de diff, testes automatizados, fluxos críticos, autorização, persistência e responsividade antes de commits de comportamento e merges na `main`.
