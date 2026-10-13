@@ -14,7 +14,8 @@ export function extractBoletoText(text: string, detectedCodes: string[] = []): B
   // O fornecedor é escolhido pelo usuário para evitar associação automática de OCR ambíguo.
   result.supplier = '';
   result.amount = unique([...normalized.matchAll(/(?:valor\s*(?:do\s*)?(?:documento|boleto)|\(=\)\s*valor\s*cobrado)\s*[:\-]?\s*(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})/gi)].map(m => m[1].replace(/\./g, '')));
-  result.dueDate = unique([...normalized.matchAll(/vencimento\s*[:\-]?\s*(\d{2})\/(\d{2})\/(\d{4})/gi)].map(m => `${m[3]}-${m[2]}-${m[1]}`).filter(validCivilDate));
+  // Em PDFs impressos o rótulo e a data costumam ficar em linhas/colunas separadas.
+  result.dueDate = unique([...normalized.matchAll(/vencimento[\s:.-]{0,100}?(\d{2})\/(\d{2})\/(\d{4})/gi)].map(m => `${m[3]}-${m[2]}-${m[1]}`).filter(validCivilDate));
   const code = [...parsed.values()][0];
   if (code) {
     result.line = code.code;
