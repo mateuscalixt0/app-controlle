@@ -19,7 +19,9 @@ export function BottomNav() {
     <nav aria-label="Navegação principal" className="bottom-nav">
       <div className="bottom-nav-inner">
         {items.map((item) => {
-          const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          // A rota de adicionar boleto também começa com /boletos; exigir
+          // correspondência exata aqui evita destacar os dois itens.
+          const active = item.href === "/" ? pathname === "/" : pathname === item.href || (item.href !== "/boletos" && pathname.startsWith(`${item.href}/`));
 
           return (
             <Link

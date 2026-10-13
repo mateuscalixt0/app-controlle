@@ -276,11 +276,19 @@ h3 { margin:0; font-size:15px; line-height:1.25; }
 .bills-page .bill-card h2 { margin:18px 0 0; font-size:21px; letter-spacing:-.03em; }
 .bills-page .bill-card p { margin:8px 0 17px; font-size:16px; }
 .bills-page .bill-card .amount { flex:0 0 auto; font-size:21px; letter-spacing:-.03em; white-space:nowrap; }
+.bills-page .bill-card .row .amount { align-self:center; }
 .bills-page .status-pill { display:inline-flex; padding:8px 13px; border-radius:999px; color:#a4144b; background:#fce9f1; font-size:12px; font-weight:800; }
 .bills-page .bill-code { margin-top:18px; padding:16px 20px; border-radius:16px; background:#f4f2f4; color:#29262d; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; line-height:1.7; overflow-wrap:anywhere; }
 .bills-page .bill-card-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
 .bills-page .bill-card-action { min-height:48px; border:1px solid #e4dfe4; border-radius:16px; background:#fff; color:#b51152; font:inherit; font-size:14px; cursor:pointer; }
 .bills-page .bill-card-action:disabled { cursor:not-allowed; opacity:.5; }
+.bills-page .bill-card { position:relative; }
+.bill-card-menu { position:absolute; top:16px; right:18px; }
+.bill-card-menu>button { border:0; background:transparent; color:var(--muted); font-size:25px; line-height:1; cursor:pointer; }
+.bill-card-menu-popover { position:absolute; right:0; z-index:4; display:grid; min-width:120px; padding:5px; border:1px solid var(--line); border-radius:12px; background:#fff; box-shadow:0 8px 24px #17121822; }
+.bill-card-menu-popover a,.bill-card-menu-popover button { padding:9px 12px; border:0; background:transparent; color:var(--foreground); text-align:left; font:inherit; text-decoration:none; cursor:pointer; }
+.bill-card-menu-popover a:hover,.bill-card-menu-popover button:hover { background:var(--pink-soft); }
+.bill-paid-action { width:100%; min-height:45px; margin-top:14px; border:0; border-radius:14px; background:var(--pink); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
 .bills-page .full-action { margin-top:20px; min-height:62px; border-radius:18px; }
 @media (max-width:480px) {
   .bills-page .page-heading { margin-left:-16px; margin-right:-16px; padding-left:16px; padding-right:16px; }

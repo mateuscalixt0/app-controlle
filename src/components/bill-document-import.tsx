@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { extractBillDocument, emptyExtraction, validateBillFile, type BillExtraction } from '@/lib/boleto-extractor';
 import { parseBoletoCode } from '@/lib/boleto-code';
 import { extractBoletoText } from '@/lib/boleto-text';
-import { attachBillDocument, createBill } from '@/app/boletos/novo/actions';
+import { attachBillDocument, createBill, createSupplier } from '@/app/boletos/novo/actions';
 import { BillBarcodeScanner } from './bill-barcode-scanner';
 import { Icon } from '@/components/icons';
 
@@ -23,6 +23,7 @@ export function BillDocumentImport() {
   const [saved, setSaved] = useState(false);
   const [supplierSuggestions, setSupplierSuggestions] = useState<SupplierSuggestion[]>([]);
   const [supplierSearchOpen, setSupplierSearchOpen] = useState(false);
+  const [creatingSupplier, setCreatingSupplier] = useState(false);
   const [pending, startTransition] = useTransition();
   const operation = useRef<AbortController | null>(null);
   const saveId = useRef<string | null>(null);
@@ -117,7 +118,19 @@ export function BillDocumentImport() {
           <input required maxLength={160} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={supplierSearchOpen} aria-controls="supplier-suggestions" value={data.supplier} onFocus={() => setSupplierSearchOpen(true)} onBlur={() => window.setTimeout(() => setSupplierSearchOpen(false), 120)} onChange={event => { change('supplier', event.target.value); setSupplierSuggestions([]); setSupplierSearchOpen(true); }} />
           {supplierSearchOpen && data.supplier.trim() && <div className="supplier-suggestions" id="supplier-suggestions" role="listbox" onMouseDown={event => event.preventDefault()}>
             {supplierSuggestions.map(supplier => <button type="button" role="option" aria-selected="false" className="supplier-suggestion" key={supplier.id} onClick={() => { change('supplier', supplier.name); setSupplierSearchOpen(false); }}><strong>{supplier.name}</strong>{supplier.document && <small>{supplier.document}</small>}</button>)}
-            {supplierSuggestions.length === 0 && <button type="button" role="option" aria-selected="false" className="supplier-create" onClick={() => setSupplierSearchOpen(false)}><span aria-hidden="true">＋</span><strong>Criar beneficiário “{data.supplier.trim()}”</strong><small>Será criado ao salvar o boleto</small></button>}
+            {supplierSuggestions.length === 0 && <button type="button" role="option" aria-selected="false" className="supplier-create" disabled={creatingSupplier} onClick={async () => {
+              const name = data.supplier.trim();
+              if (!name) return;
+              setCreatingSupplier(true);
+              try {
+                const supplier = await createSupplier(name);
+                setSupplierSuggestions([supplier]);
+                change('supplier', supplier.name);
+                setSupplierSearchOpen(false);
+                setNotice(`Fornecedor “${supplier.name}” criado e disponível para boletos e produtos.`);
+              } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível criar o fornecedor.'); }
+              finally { setCreatingSupplier(false); }
+            }}><span aria-hidden="true">＋</span><strong>{creatingSupplier ? 'Criando fornecedor…' : `Criar fornecedor “${data.supplier.trim()}”`}</strong><small>Ficará disponível para boletos e produtos</small></button>}
           </div>}
         </label>
         <label>Valor (R$)<input required inputMode="decimal" placeholder="0,00" value={data.amount} onChange={event => change('amount', event.target.value)} /></label>

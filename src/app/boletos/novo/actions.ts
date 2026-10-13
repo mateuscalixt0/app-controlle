@@ -20,6 +20,25 @@ async function currentStore() {
   if (!session.storeId) redirect('/configurar-loja');
   return { ...session, storeId: session.storeId };
 }
+export async function createSupplier(name: string) {
+  const normalized = name.trim();
+  if (!normalized || normalized.length > 160) throw new Error('Informe um nome de fornecedor válido.');
+  const { supabase, storeId } = await currentStore();
+  const existing = await supabase.from('suppliers').select('id,name,document').eq('store_id', storeId).eq('name', normalized).maybeSingle();
+  if (existing.error) throw new Error('Não foi possível consultar o fornecedor.');
+  if (existing.data) return existing.data;
+  const created = await supabase.from('suppliers').insert({ store_id: storeId, name: normalized }).select('id,name,document').single();
+  if (created.error || !created.data) throw new Error('Não foi possível salvar o fornecedor.');
+  return created.data;
+}
+export async function updateBillStatus(billId: string, status: 'paid' | 'cancelled') {
+  if (!uuid.test(billId)) throw new Error('Boleto inválido.');
+  const { supabase, storeId } = await currentStore();
+  const update = status === 'paid' ? { status, paid_at: new Date().toISOString() } : { status, paid_at: null };
+  const { error } = await supabase.from('bills').update(update).eq('id', billId).eq('store_id', storeId);
+  if (error) throw new Error('Não foi possível atualizar o boleto.');
+  revalidatePath('/boletos');
+}
 export async function createBill(input: { id?: string; supplier: string; description: string; amount: string; dueDate: string; beneficiaryDocument?: string; digitableLine?: string }) {
   const supplierName = input.supplier.trim(), description = input.description.trim(), amountCents = parseAmountCents(input.amount);
   const beneficiaryDocument = (input.beneficiaryDocument ?? '').replace(/\D/g, '');
