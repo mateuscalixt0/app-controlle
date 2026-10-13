@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { updateBillStatus } from '@/app/boletos/novo/actions';
 
-export function BillCardActions({ billId, code, hasDocument }: { billId: string; code: string | null; hasDocument: boolean }) {
+export function BillCardActions({ billId, code, hasDocument, status }: { billId: string; code: string | null; hasDocument: boolean; status: 'pending' | 'paid' | 'cancelled' }) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -37,9 +38,9 @@ export function BillCardActions({ billId, code, hasDocument }: { billId: string;
   return <>
     <div className="bill-card-menu">
       <button type="button" aria-label="Mais opções" aria-expanded={menuOpen} onClick={() => setMenuOpen(value => !value)}>⋯</button>
-      {menuOpen && <div className="bill-card-menu-popover"><a href={`/boletos/novo?edit=${billId}`}>Editar</a><button type="button" onClick={() => void mark('cancelled')}>Cancelar</button></div>}
+      {menuOpen && <div className="bill-card-menu-popover"><Link href={`/boletos/novo?edit=${billId}`}>Editar</Link><button type="button" onClick={() => void mark('cancelled')}>Cancelar</button></div>}
     </div>
-    <button type="button" className="bill-paid-action" onClick={() => void mark('paid')}>Marcar como pago</button>
+    {status !== 'cancelled' && <button type="button" className="bill-paid-action" onClick={() => void mark('paid')}>Marcar como pago</button>}
     <div className="bill-card-actions">
     <button className="bill-card-action" disabled={!code} onClick={copyCode} type="button">{copied ? 'Código copiado' : 'Copiar código'}</button>
     <button className="bill-card-action" disabled={!hasDocument || downloading} onClick={downloadBill} type="button">{downloading ? 'Preparando…' : '↓ Baixar boleto'}</button>
