@@ -66,4 +66,6 @@ Migrações de banco versionadas e reproduzíveis. Separar desenvolvimento/teste
 
 Testes significativos para parsers, dinheiro/datas, permissões, importações, duplicidade e fluxos críticos. Verificar tipos, lint e build quando o projeto existir. Falta de acesso a um serviço deve ser registrada como verificação pendente, nunca como aprovação.
 
+Antes de cada commit de comportamento e de cada merge para `main`, aplicar a skill [`qa-release-gate`](.agents/skills/qa/SKILL.md). O commit ou PR deve registrar os testes executados e os fluxos críticos aprovados; não integrar mudanças com testes críticos pendentes.
+
 Fechamento para o gestor: o que funciona, o que foi testado, como conferir, limitações e próximo cartão. Não marcar tarefa como concluída se depender de aceite ainda não dado. Não assumir trabalho agendado entre sessões.

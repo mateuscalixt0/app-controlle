@@ -44,9 +44,9 @@ describe('código de boleto', () => {
   });
 });
 describe('extração assistida', () => {
-  it('lê os campos rotulados e a linha digitável, ignorando pagador', () => {
+  it('lê valor, vencimento e linha, deixando o fornecedor para seleção manual', () => {
     const result = extractBoletoText(`Beneficiário: LOJA FICTICIA\nPagador: CLIENTE TESTE\nValor do documento: R$ 129,56\nVencimento: 22/02/2025\n${line(barcode())}`);
-    expect(result).toMatchObject({ supplier: 'LOJA FICTICIA', amount: '129,56', dueDate: '2025-02-22', line: line(barcode()) });
+    expect(result).toMatchObject({ supplier: '', amount: '129,56', dueDate: '2025-02-22', line: line(barcode()) });
   });
   it('não escolhe ciclo nem beneficiário pelo código', () => {
     const result = extractBoletoText('', [barcode()]);
