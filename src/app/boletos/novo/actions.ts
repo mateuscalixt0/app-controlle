@@ -40,6 +40,27 @@ export async function updateBillStatus(billId: string, status: 'paid' | 'cancell
   if (!data || data.id !== billId || data.status !== status || (status === 'paid' && !data.paid_at)) throw new Error('O banco não confirmou a atualização do boleto.');
   revalidatePath('/boletos');
 }
+export async function updateBill(input: { id: string; supplier: string; description: string; amount: string; dueDate: string; digitableLine?: string }) {
+  if (!uuid.test(input.id)) throw new Error('Boleto inválido.');
+  const supplierName = input.supplier.trim();
+  const description = input.description.trim();
+  const amountCents = parseAmountCents(input.amount);
+  if (!supplierName || !description || amountCents === null || !validCivilDate(input.dueDate)) throw new Error('Confira beneficiário, valor e vencimento.');
+  const digitableLine = input.digitableLine?.trim() ? parseBoletoCode(input.digitableLine).code : null;
+  const { supabase, storeId } = await currentStore();
+  const supplierResult = await supabase.from('suppliers').select('id').eq('store_id', storeId).eq('name', supplierName).maybeSingle();
+  if (supplierResult.error) throw new Error('Não foi possível consultar o fornecedor.');
+  let supplier = supplierResult.data;
+  if (!supplier) {
+    const created = await supabase.from('suppliers').insert({ store_id: storeId, name: supplierName }).select('id').single();
+    if (created.error || !created.data) throw new Error('Não foi possível salvar o fornecedor.');
+    supplier = created.data;
+  }
+  const { data, error } = await supabase.from('bills').update({ supplier_id: supplier.id, description, amount_cents: amountCents, due_date: input.dueDate, digitable_line: digitableLine }).eq('id', input.id).eq('store_id', storeId).select('id,due_date,amount_cents,description,digitable_line').maybeSingle();
+  if (error || !data || data.id !== input.id) throw new Error('O banco não confirmou a edição do boleto.');
+  revalidatePath('/boletos');
+  return data;
+}
 export async function createBill(input: { id?: string; supplier: string; description: string; amount: string; dueDate: string; beneficiaryDocument?: string; digitableLine?: string }) {
   const supplierName = input.supplier.trim(), description = input.description.trim(), amountCents = parseAmountCents(input.amount);
   const beneficiaryDocument = (input.beneficiaryDocument ?? '').replace(/\D/g, '');
