@@ -11,7 +11,8 @@ export function extractBoletoText(text: string, detectedCodes: string[] = []): B
   for (const code of codes) { try { const p = parseBoletoCode(code); parsed.set(p.barcode, p); } catch { /* OCR candidates are untrusted. */ } }
   if (parsed.size > 1) { result.warnings.push('Há mais de um boleto neste documento. Separe os boletos ou preencha os dados de um deles.'); return result; }
   const unique = (values: string[]) => { const items = [...new Set(values.filter(Boolean))]; return items.length === 1 ? items[0] : ''; };
-  result.supplier = unique([...normalized.matchAll(/(?:^|\n)[ \t]*(?:benefici[aá]rio(?: final)?|cedente)\s*[:\-]?\s*\n?([^\n]{2,160})/gi)].map(m => m[1].trim()).filter(v => !/^(?:CPF|CNPJ|ag[eê]ncia|pagador|sacado)/i.test(v)));
+  // O fornecedor é escolhido pelo usuário para evitar associação automática de OCR ambíguo.
+  result.supplier = '';
   result.amount = unique([...normalized.matchAll(/(?:valor\s*(?:do\s*)?(?:documento|boleto)|\(=\)\s*valor\s*cobrado)\s*[:\-]?\s*(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})/gi)].map(m => m[1].replace(/\./g, '')));
   result.dueDate = unique([...normalized.matchAll(/vencimento\s*[:\-]?\s*(\d{2})\/(\d{2})\/(\d{4})/gi)].map(m => `${m[3]}-${m[2]}-${m[1]}`).filter(validCivilDate));
   const code = [...parsed.values()][0];
