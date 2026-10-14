@@ -5,6 +5,7 @@ vi.mock('next/cache', () => ({ revalidatePath: mocks.revalidate }));
 vi.mock('next/navigation', () => ({ redirect: (path: string) => { throw new Error(`redirect:${path}`); } }));
 import { attachBillDocument, createBill } from '../src/app/boletos/novo/actions';
 import { GET } from '../src/app/api/boletos/[billId]/documentos/[documentId]/route';
+import { getBillListStatus } from '../src/lib/bill-list-filter';
 const store = '11111111-1111-4111-8111-111111111111', bill = '22222222-2222-4222-8222-222222222222', file = '33333333-3333-4333-8333-333333333333';
 function query(data: unknown, error: unknown = null) {
   const chain = { select: vi.fn(), eq: vi.fn(), maybeSingle: vi.fn().mockResolvedValue({ data, error }), upsert: vi.fn().mockResolvedValue({ error }) };
@@ -21,4 +22,15 @@ describe('autorização e recuperação de gravação', () => {
   it('retorna mesmo boleto numa repetição sem novo insert', async () => { const chain = query({ id: bill, amount_cents: 12345, due_date: '2026-10-11', description: 'Boleto', beneficiary_document: null, digitable_line: null, suppliers: { name: 'FICTICIO' } }); mocks.from.mockReturnValue(chain); await expect(createBill({ id: bill, supplier: 'FICTICIO', description: 'Boleto', amount: '123,45', dueDate: '2026-10-11' })).resolves.toEqual({ billId: bill, storeId: store }); expect(mocks.from).toHaveBeenCalledTimes(1); });
   it('não aceita mudar dados numa repetição já persistida', async () => { mocks.from.mockReturnValue(query({ id: bill, amount_cents: 12345, due_date: '2026-10-11', description: 'Boleto', suppliers: { name: 'FICTICIO' } })); await expect(createBill({ id: bill, supplier: 'FICTICIO', description: 'Boleto', amount: '9,99', dueDate: '2026-10-11' })).rejects.toThrow('já foi cadastrado'); });
   it('download não gera link sem autorização', async () => { const chain = query(null); mocks.from.mockReturnValue(chain); const response = await GET(new Request('http://localhost'), { params: Promise.resolve({ billId: bill, documentId: file }) }); expect(response.status).toBe(404); expect(chain.eq).toHaveBeenCalledWith('store_id', store); expect(mocks.signed).not.toHaveBeenCalled(); });
+});
+describe('filtro inicial da lista de boletos', () => {
+  it('abre em boletos em aberto para pagos não voltarem à lista após recarregar', () => {
+    expect(getBillListStatus()).toBe('pending');
+    expect(getBillListStatus('invalid')).toBe('pending');
+  });
+  it('mantém acesso explícito a todos, pagos e cancelados', () => {
+    expect(getBillListStatus('all')).toBe('all');
+    expect(getBillListStatus('paid')).toBe('paid');
+    expect(getBillListStatus('cancelled')).toBe('cancelled');
+  });
 });
