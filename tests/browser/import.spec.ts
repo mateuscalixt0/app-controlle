@@ -22,7 +22,9 @@ for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/tests/browser/harness/');
     await page.locator('input[type=file]').setInputFiles({ name: 'boleto-ficticio.pdf', mimeType: 'application/pdf', buffer: pdf([fields]) });
-    await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('FORNECEDOR FICTICIO', { timeout: 45_000 });
+    await expect(page.getByLabel('Valor (R$)')).toHaveValue('123,45', { timeout: 45_000 });
+    await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('');
+    await page.getByLabel('Para quem vai pagar').fill('FORNECEDOR FICTICIO');
     await expect(page.getByLabel('Valor (R$)')).toHaveValue('123,45');
     await expect(page.getByLabel('Vencimento')).toHaveValue('2026-10-11');
     await expect(page.getByRole('button', { name: 'Confirmar e salvar boleto' })).toBeEnabled({ timeout: 45_000 });
@@ -54,7 +56,8 @@ test('foto com OCR real preenche os campos', async ({ page }) => {
   await page.goto('/tests/browser/harness/');
   const image = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = 1400; canvas.height = 450; const ctx = canvas.getContext('2d')!; ctx.fillStyle = 'white'; ctx.fillRect(0, 0, 1400, 450); ctx.fillStyle = 'black'; ctx.font = '32px Arial'; ['Cedente: FORNECEDOR FICTICIO', 'Valor do documento: 123,45', 'Vencimento: 11/10/2026'].forEach((line, i) => ctx.fillText(line, 40, 100 + i * 100)); return canvas.toDataURL('image/png').split(',')[1]; });
   await page.locator('input[type=file]').setInputFiles({ name: 'foto-ficticia.png', mimeType: 'image/png', buffer: Buffer.from(image, 'base64') });
-  await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('FORNECEDOR FICTICIO', { timeout: 80_000 });
+  await expect(page.getByLabel('Valor (R$)')).toHaveValue('123,45', { timeout: 80_000 });
+  await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('');
   await expect(page.getByLabel('Valor (R$)')).toHaveValue('123,45');
   await expect(page.getByLabel('Vencimento')).toHaveValue('2026-10-11');
 });
@@ -112,7 +115,7 @@ test('PDF escaneado lê imagem da segunda página', async ({ page }) => {
   source += 'xref\n0 7\n0000000000 65535 f \n' + offsets.map(n => `${String(n).padStart(10, '0')} 00000 n \n`).join('') + `trailer << /Size 7 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
   await page.locator('input[type=file]').setInputFiles({ name: 'duas-paginas-escaneadas.pdf', mimeType: 'application/pdf', buffer: Buffer.from(source) });
   await expect(page.getByRole('button', { name: 'Confirmar e salvar boleto' })).toBeEnabled({ timeout: 80_000 });
-  await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('FORNECEDOR FICTICIO');
+  await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('');
   await expect(page.getByLabel('Valor (R$)')).toHaveValue('123,45');
   await expect(page.getByLabel('Vencimento')).toHaveValue('2026-10-11');
 });

@@ -5,11 +5,10 @@ import { usePathname } from "next/navigation";
 import { Icon } from "./icons";
 
 const items = [
-  { href: "/boletos/novo", label: "Adicionar boleto", icon: "add-bill" as const },
-  { href: "/boletos", label: "Boletos a pagar", icon: "bills" as const },
-  { href: "/", label: "Início", icon: "home" as const, center: true },
-  { href: "/faltas", label: "Lista de faltas", icon: "list" as const },
-  { href: "/compras", label: "Compras e preços", icon: "prices" as const },
+  { href: "/", label: "Início", icon: "home" as const },
+  { href: "/boletos", label: "Boletos", icon: "bills" as const },
+  { href: "/faltas", label: "Faltas", icon: "list" as const },
+  { href: "/minha-loja", label: "Minha loja", icon: "user" as const },
 ];
 
 export function BottomNav() {
@@ -19,14 +18,12 @@ export function BottomNav() {
     <nav aria-label="Navegação principal" className="bottom-nav">
       <div className="bottom-nav-inner">
         {items.map((item) => {
-          // A rota de adicionar boleto também começa com /boletos; exigir
-          // correspondência exata aqui evita destacar os dois itens.
-          const active = item.href === "/" ? pathname === "/" : pathname === item.href || (item.href !== "/boletos" && pathname.startsWith(`${item.href}/`));
+          const active = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`) || (item.href === "/minha-loja" && pathname.startsWith("/compras"));
 
           return (
             <Link
               aria-current={active ? "page" : undefined}
-              className={`nav-item ${item.center ? "nav-center" : ""} ${active ? "nav-active" : ""}`}
+              className={`nav-item ${active ? "nav-active" : ""}`}
               href={item.href}
               key={item.href}
             >
