@@ -41,38 +41,18 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
 
   return (
     <>
-      <form className="missing-filters" action="/faltas" method="get">
-        <div className="search-field"><Icon name="search" />
-        <label className="sr-only" htmlFor="missing-search">Buscar produto</label>
-        <input id="missing-search" defaultValue={queryText} name="q" placeholder="Buscar produto" type="search" />
-        </div>
-        <div className="product-filters"><label>Ordenar por<select name="sort" defaultValue={sort}><option value="newest">Mais recentes</option><option value="oldest">Mais antigos</option></select></label><label>Empresa de referência<select name="company" defaultValue={company}><option value="">Todas as empresas</option>{companies.map(name => <option value={name} key={name}>{name}</option>)}</select></label></div>
-        <button className="secondary-action" type="submit">Aplicar filtros</button>
-        {priority && <input name="priority" type="hidden" value={priority} />}
-      </form>
-      <div className="filter-row" aria-label="Filtrar por prioridade">
-        <Link className={priority ? "filter-chip" : "filter-chip active"} href={`/faltas?${new URLSearchParams([...query].filter(([key]) => key !== "priority"))}`}>Todas</Link>
-        {(["normal", "media", "urgente"] as Priority[]).map((value) => {
-          const params = new URLSearchParams(query);
-          if (queryText) params.set("q", queryText);
-          params.set("priority", value);
-          return <Link className={priority === value ? "filter-chip active" : "filter-chip"} href={`/faltas?${params.toString()}`} key={value}>{priorityMeta[value].label}</Link>;
-        })}
-      </div>
-      <p className="results-count" aria-live="polite">{total} {total === 1 ? "produto encontrado" : "produtos encontrados"} · página {page} de {pageCount}</p>
-      <section className="stack" aria-label="Produtos faltantes">
+      <section className="missing-list-panel" aria-label="Produtos faltantes">
         {items.map((item) => {
           const meta = priorityMeta[item.priority];
           return (
             <button className={`missing-card ${meta.className}`} key={item.id} onClick={() => setSelected(item)} type="button">
-              <div className="row"><div><h2>{item.product_name}</h2><p>Quantidade: <strong>{item.quantity}{item.unit ? ` ${item.unit}` : ""}</strong></p></div><Icon className="chevron" name="chevron" /></div>
-              <span className={`priority-pill ${meta.className}`}>{meta.label}</span>
-              <p className="item-date">Adicionado em {new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(item.created_at))}</p>
+              <span className="missing-checkbox" aria-hidden="true" /><div className="missing-card-copy"><h2>{item.product_name}</h2><p>{item.quantity}{item.unit ? ` ${item.unit}` : ""} · {new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(item.created_at))}</p><p>{item.reference_company ? `Empresa: ${item.reference_company}` : "Sem empresa de referência"}</p><span className={`priority-pill ${meta.className}`}>{meta.label}</span></div><Icon className="chevron" name="chevron" />
             </button>
           );
         })}
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
       </section>
+      <Link className="primary-action full-action missing-bottom-action" href="/faltas/novo"><Icon name="list" /> Anotar produto</Link>
       {pageCount > 1 && <nav className="pagination" aria-label="Paginação">
         {page > 1 && <Link className="secondary-action" href={`/faltas?page=${page - 1}${suffix}`}>Anterior</Link>}
         {page < pageCount && <Link className="secondary-action" href={`/faltas?page=${page + 1}${suffix}`}>Próxima</Link>}
