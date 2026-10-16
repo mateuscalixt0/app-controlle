@@ -1,6 +1,14 @@
 # Andamento
 
-Atualizado em 15/10/2026.
+Atualizado em 16/10/2026.
+
+## Atualização no projeto Vercel existente — 16/10/2026
+
+- Mateus esclareceu e autorizou a substituição do visual no mesmo endereço `https://app-controlle.vercel.app`, mantendo backend e conexão existentes. A orientação anterior de criar outro projeto de hospedagem foi desnecessária e está substituída.
+- A integração GitHub confirmou deploy bem-sucedido da branch de design no projeto Vercel `cm-tech1/app-controlle`. Não é necessário criar projeto nem recadastrar variáveis.
+- Incorporada a correção atual da `main` que inicia a lista somente com boletos pendentes; filtros e paginação continuam disponíveis com os novos cartões.
+- Revalidados lint, tipos e 35 testes unitários; quatro testes do visual no Chromium passaram em 375/1280 px, incluindo cópia, download, cancelamento e erro. APIs, ações de gravação, autenticação e migrações não diferem da `main`.
+- A publicação no projeto existente foi solicitada expressamente após informar as pendências. Validação com sessão real, persistência e câmera física permanece pendente, sem alegação de aprovação desses testes. Acesso HTTP direto ao domínio retorna 403 neste ambiente; a confirmação do deploy deve usar o status da Vercel no GitHub.
 
 
 ## Integração do design aprovado ao aplicativo — 15/10/2026
@@ -70,6 +78,13 @@ Atualizado em 15/10/2026.
 - Registrado em `AGENTS.md` o uso da skill nas próximas tarefas de interface. Nenhuma tela ou comportamento do aplicativo foi alterado.
 - Validação: conferência dos arquivos contra os hashes Git da origem e revisão de whitespace. Testes da aplicação não se aplicam à instalação documental.
 - Próximo passo: aplicar a skill à próxima tarefa de interface solicitada. O catálogo de skills pode exigir uma nova sessão para exibir a instalação; o arquivo já pode ser lido diretamente.
+
+## Pagamentos reaparecendo após atualização da lista — 13/10/2026
+
+- Diagnóstico confirmado nos logs e no Supabase: a action executou `PATCH /rest/v1/bills` com resposta 200; o registro verificado está `status = paid` e tem `paid_at` preenchido.
+- A causa visível era o filtro vazio da rota `/boletos`, que significava todos os estados. Após recarregar, boletos pagos apareciam novamente na aba “Todos”, embora estivessem pagos no banco.
+- A lista agora abre em “Em aberto”; o filtro “Todos” continua disponível explicitamente e os filtros “Pagos” e “Cancelados” continuam acessíveis. Ao marcar pago, a tela volta para `/boletos` para aplicar o filtro inicial.
+- Validação executada: lint, typecheck, 30 testes unitários e build passaram. A revisão de navegador visual continua pendente porque o Chromium do Playwright não está instalado e o download do executável foi bloqueado com HTTP 403.
 
 ## Gate de QA obrigatório — 13/10/2026
 
