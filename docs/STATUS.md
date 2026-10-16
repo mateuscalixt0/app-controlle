@@ -2,6 +2,13 @@
 
 Atualizado em 16/10/2026.
 
+## Lista local de fornecedores no cadastro de boleto — 16/10/2026
+
+- Ao abrir o campo de beneficiário, a tela requisita todos os fornecedores da loja uma única vez. A rota autenticada percorre páginas de 500 registros, mantém o recorte por `store_id` e devolve a relação em ordem alfabética estável.
+- A digitação agora filtra essa lista no navegador, sem novas consultas. O seletor exibe aproximadamente cinco itens e permite rolar os demais. Um fornecedor criado entra na lista local já ordenada e fica selecionado sem reiniciar a tela.
+- **PASSOU:** `npm run lint`, `npm run typecheck`, `npm test` (35 testes), `npm run build` e 9 cenários Playwright da importação em Chromium. O cenário de fornecedor comprova a ordem alfabética, a rolagem e uma única requisição mesmo após digitar e criar um novo nome.
+- **PENDENTE:** enviar a atualização da PR #22 e validar em sessão autenticada com fornecedores reais. A `main` não será alterada sem novo pedido de Mateus.
+
 ## Busca e criação de fornecedor no cadastro de boleto — 16/10/2026
 
 - Corrigida a consulta de fornecedores: a aplicação pedia a coluna inexistente `document`, o que fazia a lista e a criação poderem falhar.

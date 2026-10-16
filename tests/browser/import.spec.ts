@@ -45,11 +45,16 @@ test('PDF corrompido mantém original e permite completar os dados', async ({ pa
   await expect(page.getByLabel('Código de barras ou linha digitável')).toBeVisible();
 });
 test('pesquisa fornecedor existente e cria um novo sem reiniciar a tela', async ({ page }) => {
-  await page.route('**/api/fornecedores?q=Rudu', route => route.fulfill({ json: { suppliers: [{ id: 'supplier-rudu', name: 'Rudu' }] } }));
-  await page.route('**/api/fornecedores?q=Novo%20Fornecedor', route => route.fulfill({ json: { suppliers: [] } }));
+  let supplierRequests = 0;
+  await page.route('**/api/fornecedores', route => { supplierRequests++; return route.fulfill({ json: { suppliers: [{ id: 'supplier-rudu', name: 'Rudu' }, { id: 'supplier-kk', name: 'kk' }, { id: 'supplier-teste', name: 'teste' }, { id: 'supplier-a', name: 'Aço' }, { id: 'supplier-b', name: 'Brita' }, { id: 'supplier-c', name: 'Cimento' }] } }); });
   await page.goto('/tests/browser/harness/');
   await page.locator('input[type=file]').setInputFiles({ name: 'corrompido.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.7 invalid') });
+  await expect(page.locator('.read-notice')).toContainText('arquivo foi mantido');
   const supplier = page.getByLabel('Para quem vai pagar');
+  await supplier.focus();
+  await expect(page.getByRole('option')).toHaveCount(6);
+  expect(await page.getByRole('option').allTextContents()).toEqual(['Aço', 'Brita', 'Cimento', 'kk', 'Rudu', 'teste']);
+  expect(await page.locator('#supplier-suggestions').evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
   await supplier.fill('Rudu');
   await expect(page.getByRole('option', { name: 'Rudu' })).toBeVisible();
   await page.getByRole('option', { name: 'Rudu' }).click();
@@ -59,6 +64,7 @@ test('pesquisa fornecedor existente e cria um novo sem reiniciar a tela', async 
   await page.getByRole('option', { name: /Criar fornecedor “Novo Fornecedor”/ }).click();
   await expect(supplier).toHaveValue('Novo Fornecedor');
   await expect(page.locator('.read-notice')).toContainText('Fornecedor “Novo Fornecedor” criado');
+  expect(supplierRequests).toBe(1);
 });
 test('permissão de câmera negada oferece alternativa e fecha', async ({ page }) => {
   await page.addInitScript(() => { navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('denied', 'NotAllowedError'); }; });
