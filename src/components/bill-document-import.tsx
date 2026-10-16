@@ -10,7 +10,7 @@ import { attachBillDocument, createBill, createSupplier } from '@/app/boletos/no
 import { BillBarcodeScanner } from './bill-barcode-scanner';
 import { Icon } from '@/components/icons';
 
-type SupplierSuggestion = { id: string; name: string; document: string | null };
+type SupplierSuggestion = { id: string; name: string };
 
 export function BillDocumentImport() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export function BillDocumentImport() {
   const [processing, setProcessing] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [supplierSuggestions, setSupplierSuggestions] = useState<SupplierSuggestion[]>([]);
+  const [supplierSuggestions, setSupplierSuggestions] = useState<SupplierSuggestion[] | null>([]);
   const [supplierSearchOpen, setSupplierSearchOpen] = useState(false);
   const [creatingSupplier, setCreatingSupplier] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -39,11 +39,15 @@ export function BillDocumentImport() {
     const timer = window.setTimeout(async () => {
       try {
         const response = await fetch(`/api/fornecedores?q=${encodeURIComponent(query)}`, { signal: controller.signal, cache: 'no-store' });
-        if (!response.ok) return;
+        if (!response.ok) throw new Error();
         const payload = await response.json() as { suppliers?: SupplierSuggestion[] };
-        if (!controller.signal.aborted) setSupplierSuggestions(payload.suppliers ?? []);
+        if (!controller.signal.aborted) {
+          setSupplierSuggestions(payload.suppliers ?? []);
+        }
       } catch {
-        if (!controller.signal.aborted) setSupplierSuggestions([]);
+        if (!controller.signal.aborted) {
+          setSupplierSuggestions([]);
+        }
       }
     }, 180);
     return () => { window.clearTimeout(timer); controller.abort(); };
@@ -62,7 +66,10 @@ export function BillDocumentImport() {
     // A bound on total work protects mobile devices; original and partial results stay available.
     const timeout = setTimeout(() => controller.abort(), 180_000);
     const merge = (result: BillExtraction) => {
-      if (!controller.signal.aborted) setData(result);
+      if (!controller.signal.aborted) {
+        setSupplierSuggestions(result.supplier.trim() ? null : []);
+        setData(result);
+      }
     };
     try {
       const result = await extractBillDocument(value, { initialCode: code, signal: controller.signal, onPartial: merge, onProgress: message => { if (!controller.signal.aborted) setNotice(message); } });
@@ -74,6 +81,8 @@ export function BillDocumentImport() {
   const capture = useCallback((value: File, code?: string) => { void choose(value, code); }, [choose]);
 
   function change(field: keyof BillExtraction, value: string) { setData(current => ({ ...current, [field]: value })); }
+  const supplierName = data.supplier.trim();
+  const hasExactSupplier = supplierSuggestions?.some(supplier => supplier.name.localeCompare(supplierName, 'pt-BR', { sensitivity: 'accent' }) === 0) ?? false;
   function applyCode() {
     setError('');
     try {
@@ -115,11 +124,12 @@ export function BillDocumentImport() {
       {data.warnings.map(warning => <p className="helper-box" key={warning}>{warning}</p>)}
       <fieldset disabled={pending || processing || saved || scanning} className="review-fields">
         <label className="supplier-field">Para quem vai pagar (beneficiário)
-          <input required maxLength={160} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={supplierSearchOpen} aria-controls="supplier-suggestions" value={data.supplier} onFocus={() => setSupplierSearchOpen(true)} onBlur={() => window.setTimeout(() => setSupplierSearchOpen(false), 120)} onChange={event => { change('supplier', event.target.value); setSupplierSuggestions([]); setSupplierSearchOpen(true); }} />
-          {supplierSearchOpen && data.supplier.trim() && <div className="supplier-suggestions" id="supplier-suggestions" role="listbox" onMouseDown={event => event.preventDefault()}>
-            {supplierSuggestions.map(supplier => <button type="button" role="option" aria-selected="false" className="supplier-suggestion" key={supplier.id} onClick={() => { change('supplier', supplier.name); setSupplierSearchOpen(false); }}><strong>{supplier.name}</strong>{supplier.document && <small>{supplier.document}</small>}</button>)}
-            {supplierSuggestions.length === 0 && <button type="button" role="option" aria-selected="false" className="supplier-create" disabled={creatingSupplier} onClick={async () => {
-              const name = data.supplier.trim();
+          <input required maxLength={160} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={supplierSearchOpen} aria-controls="supplier-suggestions" value={data.supplier} onFocus={() => setSupplierSearchOpen(true)} onBlur={() => window.setTimeout(() => setSupplierSearchOpen(false), 120)} onChange={event => { change('supplier', event.target.value); setSupplierSuggestions(event.target.value.trim() ? null : []); setSupplierSearchOpen(true); }} />
+          {supplierSearchOpen && supplierName && <div className="supplier-suggestions" id="supplier-suggestions" role="listbox" onMouseDown={event => event.preventDefault()}>
+            {supplierSuggestions === null && <p className="supplier-searching" role="status">Buscando fornecedores…</p>}
+            {supplierSuggestions?.map(supplier => <button type="button" role="option" aria-selected={supplier.name === supplierName} className="supplier-suggestion" key={supplier.id} onClick={() => { change('supplier', supplier.name); setSupplierSearchOpen(false); }}><strong>{supplier.name}</strong></button>)}
+            {supplierSuggestions !== null && !hasExactSupplier && <button type="button" role="option" aria-selected="false" className="supplier-create" disabled={creatingSupplier} onClick={async () => {
+              const name = supplierName;
               if (!name) return;
               setCreatingSupplier(true);
               try {
