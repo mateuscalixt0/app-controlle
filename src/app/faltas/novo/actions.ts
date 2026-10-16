@@ -28,7 +28,7 @@ export async function addMissingItem(formData: FormData) {
   redirect("/faltas");
 }
 
-export async function addMissingItemInline(formData: FormData) {
+export async function addMissingItemInline(_previousState: { error?: string; success?: boolean }, formData: FormData) {
   const productName = String(formData.get("product") ?? "").trim();
   const quantity = Number(String(formData.get("quantity") ?? "").trim().replace(",", "."));
   const priority = String(formData.get("priority") ?? "normal");
