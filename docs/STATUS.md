@@ -1,6 +1,83 @@
 # Andamento
 
-Atualizado em 13/10/2026.
+Atualizado em 16/10/2026.
+
+## Atualização no projeto Vercel existente — 16/10/2026
+
+- Mateus esclareceu e autorizou a substituição do visual no mesmo endereço `https://app-controlle.vercel.app`, mantendo backend e conexão existentes. A orientação anterior de criar outro projeto de hospedagem foi desnecessária e está substituída.
+- A integração GitHub confirmou deploy bem-sucedido da branch de design no projeto Vercel `cm-tech1/app-controlle`. Não é necessário criar projeto nem recadastrar variáveis.
+- Incorporada a correção atual da `main` que inicia a lista somente com boletos pendentes; filtros e paginação continuam disponíveis com os novos cartões.
+- Revalidados lint, tipos e 35 testes unitários; quatro testes do visual no Chromium passaram em 375/1280 px, incluindo cópia, download, cancelamento e erro. APIs, ações de gravação, autenticação e migrações não diferem da `main`.
+- A publicação no projeto existente foi solicitada expressamente após informar as pendências. Validação com sessão real, persistência e câmera física permanece pendente, sem alegação de aprovação desses testes. Acesso HTTP direto ao domínio retorna 403 neste ambiente; a confirmação do deploy deve usar o status da Vercel no GitHub.
+
+
+## Integração do design aprovado ao aplicativo — 15/10/2026
+
+- Mateus aprovou o protótipo inteiro e autorizou integração. Implementação preparada na branch de homologação `feat/design-aprovado`; não houve merge nem publicação da aplicação real em produção nesta etapa.
+- Aplicada identidade cinza/branco/preto/lima, cartões arredondados e espaçamento do protótipo. Navegação lateral no desktop e inferior no celular: Início, Boletos, Faltas e Minha loja. Login, formulários e importadores herdam os mesmos padrões.
+- Início substitui exemplos por consultas da loja autenticada: soma em centavos dos boletos pendentes (incluindo vencidos), próximos vencimentos e contagem de faltas. Leitura paginada evita truncar totais pelo limite de linhas da API; falhas geram erro, não saldo fictício.
+- Boletos: detalhes em diálogo, copiar na lista e nos detalhes, download pela rota privada existente, editar, registrar pago/cancelado com erro e carregamento. Sem novo fluxo de pagamento bancário ou alteração de políticas de dados.
+- Faltas: ordem recente/antiga e filtro por empresa de referência anotada, com filtros preservados na paginação; detalhes exibem inclusão, quantidade e referências reais. Comparação de vendedores/menor preço ainda não conectada, explicitada na interface. Minha loja mostra conta e loja reais e abre a importação XML já existente.
+- Contrato visual criado em `docs/DESIGN.md`: referência aprovada, tokens, fonte, raios, espaçamentos, layouts, telas, estados, acessibilidade e limites. `AGENTS.md`, mapa documental e referência apontam para ele.
+- **PASSOU:** `npm run lint`, `npm run typecheck`, `npm test` (33 testes), `npm run build` e `git diff --check`. Build mantém aviso conhecido sobre convenção `middleware` do Next.js.
+- **PASSOU:** 12 cenários distintos de Playwright/Chromium, em execução principal mais reexecução direcionada após correções. Início, lista/detalhes de boletos, faltas e login renderizados com componentes reais e fixtures em 375/1280 px, sem overflow ou erros JavaScript; foco/Enter/Escape, ocultar total, clipboard, falha e sucesso de download, ausência de documento, pago/cancelado e falha sem sucesso falso. Leitura PDF digital/escaneado/foto, recuperação de upload, cancelamento e câmera sintética também passaram. Capturas de início desktop/mobile e login mobile inspecionadas.
+- Ajustados mocks do harness e expectativas antigas de fornecedor automático nos testes de leitura para a decisão vigente de preenchimento manual; nenhuma mudança no parser. Falhas iniciais de configuração do harness e dessas expectativas foram corrigidas; nenhum teste foi removido.
+- **PENDENTE para liberação:** login com conta real, persistência e isolamento com duas lojas, download de arquivo privado real, câmera física e navegação autenticada completa (incluindo Minha loja, criação da loja, XML e cadastro/edição). Testes de UI usam serviços simulados e não comprovam essas integrações. Sem alterações de schema/RLS nesta tarefa.
+- Próximo passo: executar o gate autenticado em ambiente de homologação antes de commit/merge/publicação. O endereço Sites continua sendo o protótipo independente; não representa o estado de deploy do Next.js.
+
+## Preparação da homologação — 16/10/2026
+
+- Branch `feat/design-aprovado` enviada ao repositório remoto no commit `c154e0fcb4904b32e2d4d05356c3c1e70915e1b4`: https://github.com/mateuscalixt0/app-controlle/tree/feat/design-aprovado . Produção não foi alterada.
+- A criação de PR pelo ambiente foi recusada pela permissão atual da API do GitHub. A PR pode ser aberta pelo link sugerido pelo próprio GitHub: https://github.com/mateuscalixt0/app-controlle/pull/new/feat/design-aprovado .
+- Não existe configuração local do projeto Vercel, credencial Vercel nem `.env.local` de homologação. A CLI confirmou sessão desconectada. Não foi criado deploy temporário sem as variáveis do Supabase, pois ele não permitiria validar login ou dados reais.
+- Próximo passo: conectar o repositório/branch à Vercel (ou fornecer acesso à conta/projeto de homologação) e configurar `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` do projeto Supabase de teste. Depois disso, publicar a prévia e executar o roteiro autenticado.
+
+## Detalhes e filtros de faltas no protótipo — 15/10/2026
+
+- Publicado no mesmo Site privado: commit `8616e0d83a47472d4fd5976f42d4ce22efb52885`, deploy confirmado como `succeeded`.
+- Minha loja: botão “Importar XML de produtos” abre aviso de recurso futuro; nenhum arquivo é selecionado, enviado ou processado.
+- Faltas: cada produto abre modal com data/hora de inclusão, quantidade, situação, lojas e preços fictícios por unidade, com destaque ao menor preço registrado. Novos produtos sem referência mostram estado sem preços.
+- Filtros combináveis de loja e ordenação por mais recentes/mais antigos; seleção de comprado permanece independente da abertura dos detalhes.
+- Verificado com Chromium/Playwright em 375/1280 px: ordenação, filtro por loja, menor preço, novo produto sem preços, seleção de comprado, teclado/Enter/Escape, modal de XML e ausência de overflow/erros JavaScript. Capturas mobile inspecionadas.
+- Dados são demonstrativos em memória. Preços registrados não garantem disponibilidade/oferta atual e não incluem frete ou condições de pagamento. Aplicação real não alterada. Próximo passo: avaliação do usuário.
+
+## Copiar código e baixar PDF no protótipo — 15/10/2026
+
+- Publicada atualização privada no mesmo endereço: https://controle-prototipo-mateus.quickmorel1.chatgpt.site/#boletos . Commit `b106a03d1563063cedee8b0f29fbeabfd131af72`; deploy confirmado como `succeeded`.
+- Detalhes do boleto agora mostram linha digitável fictícia, botão de copiar e download de PDF demonstrativo. Lista de boletos tem ícone de copiar independente da abertura dos detalhes.
+- Verificações realizadas antes da interrupção: clipboard na lista e nos detalhes, falha de permissão, download e leitura do PDF, layout sem overflow em 375/1280 px; capturas mobile inspecionadas. Publicação retomada após limite de uso interromper a aprovação automática.
+- Código e PDF identificados como exemplos sem validade para pagamento. Alterações restritas ao protótipo; aplicação real preservada. Próximo passo: avaliação do usuário.
+
+## Protótipo navegável com Taste Skill — 14/10/2026
+
+- Criado protótipo separado em `/workspace/sites/controle-prototipo`, seguindo a referência Neobank: cinza-claro, branco, preto, verde-lima e cartões arredondados. Aplicada a skill `redesign-existing-projects` da coleção Taste Skill, com as preferências do usuário prevalecendo.
+- Telas: início, boletos, adicionar/conferir boleto, faltas e minha loja. Busca, filtros, detalhes, registro simulado de pagamento e inclusão/conclusão de faltas funcionam em memória; recarregar restaura os exemplos. Câmera/PDF são simulações explícitas, sem upload nem extração.
+- Verificação: JavaScript validado; Chromium/Playwright conferiram cinco rotas em 375/1280 px sem overflow e os fluxos de busca vazia, filtro, cadastro/pagamento simulado e inclusão/conclusão de falta; sem erros JavaScript. Capturas do início inspecionadas em mobile e desktop.
+- Publicação privada no Sites confirmada (`succeeded`): https://controle-prototipo-mateus.quickmorel1.chatgpt.site — projeto `appgprj_6acfe0d301588191b6d07dad968c68a8`, commit `26d32105eb7ef8ada865aae0bab4ba51043fa749`. Código enviado ao repositório privado e pacote gerado manualmente porque os helpers Sites não estavam disponíveis no ambiente.
+- Próximo passo: colher a avaliação visual do usuário antes de adaptar a aplicação real. O protótipo não valida dados, login ou operações de produção.
+
+## Troca para Taste Skill e referência escolhida — 14/10/2026
+
+- Instalada a coleção de `Leonxlnx/taste-skill` em `.agents/skills/`, na revisão `f624f37a8c650b9cc550253104925efe4c8de246`, por cópia manual via integração GitHub. Removida a skill anterior `interface-design`; preservada a skill de QA.
+- Atualizado `AGENTS.md` para orientar o uso das novas skills e priorizar a imagem Neobank escolhida pelo usuário. Registradas as preferências em `docs/visual/REFERENCIA_ESCOLHIDA.md`.
+- A proposta anterior “balcão organizado” foi rejeitada; seus arquivos permanecem apenas como histórico, com aviso na análise.
+- Verificações: hashes Git dos 45 arquivos originais, leitura dos JSONs e `git diff --check`. Scripts auxiliares não executados. A descoberta automática das novas skills pode exigir uma nova sessão; os arquivos estão disponíveis para leitura direta.
+- Próximo passo: adaptar as telas à referência escolhida. Nenhuma alteração visual da aplicação ou publicação foi feita nesta troca de skills.
+
+## Análise visual com interface-design — 14/10/2026
+
+- Analisados estilos, navegação, início, boletos, captura, faltas, compras e login. Recomendações e evidências em `docs/visual/ANALISE_VISUAL.md`.
+- Criadas prévia HTML da direção “balcão organizado” e reconstrução parcial da lista atual, ambas com dados fictícios. Aplicativo não alterado nesta análise.
+- Verificação: inspeção de código e `git diff --check`. Renderização pendente: Chromium falhou por restrição do ambiente e o executável do Playwright está ausente. Nenhuma alegação de validação visual ou funcional em produção.
+- Próximo passo recomendado: implementar e verificar a lista de boletos como referência visual; depois expandir para as demais telas.
+
+## Skill de interface instalada — 14/10/2026
+
+- Instalada localmente em `.agents/skills/interface-design/`, com `SKILL.md`, metadados do Codex, referências e licença MIT do repositório `Dammyjay93/interface-design`.
+- Origem fixada na revisão `2f9be3206855bcb2d1d0af262c8bae25cba6658d`; instalação manual pela integração GitHub devido à indisponibilidade do proxy do terminal.
+- Registrado em `AGENTS.md` o uso da skill nas próximas tarefas de interface. Nenhuma tela ou comportamento do aplicativo foi alterado.
+- Validação: conferência dos arquivos contra os hashes Git da origem e revisão de whitespace. Testes da aplicação não se aplicam à instalação documental.
+- Próximo passo: aplicar a skill à próxima tarefa de interface solicitada. O catálogo de skills pode exigir uma nova sessão para exibir a instalação; o arquivo já pode ser lido diretamente.
 
 ## Pagamentos reaparecendo após atualização da lista — 13/10/2026
 

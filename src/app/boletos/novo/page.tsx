@@ -25,11 +25,7 @@ export default async function NewBillPage({ searchParams }: { searchParams: Prom
 
       {bill ? <BillEditForm bill={{ id: bill.id, supplier: supplier ?? '', description: bill.description, amount: (bill.amount_cents / 100).toFixed(2).replace('.', ','), dueDate: bill.due_date, line: bill.digitable_line ?? '' }} /> : <BillDocumentImport />}
 
-      <div className="new-bill-empty" aria-hidden="true">
-        <div className="document-illustration"><Icon name="bills" /></div>
-        <strong>Envie seu boleto para continuar</strong>
-        <p>Vamos ler as informações e preencher os dados automaticamente.</p>
-      </div>
+
 
     </div>
   );

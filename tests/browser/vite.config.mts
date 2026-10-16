@@ -5,6 +5,7 @@ export default defineConfig({
     { find: '@/app/boletos/novo/actions', replacement: resolve('tests/browser/harness/actions.ts') },
     { find: '@/lib/supabase/client', replacement: resolve('tests/browser/harness/actions.ts') },
     { find: 'next/navigation', replacement: resolve('tests/browser/harness/actions.ts') },
+    { find: 'next/link', replacement: resolve('tests/browser/harness/link.tsx') },
     { find: '@', replacement: resolve('src') },
   ] },
   esbuild: { jsx: 'automatic' },

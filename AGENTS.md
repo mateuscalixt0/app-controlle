@@ -10,6 +10,8 @@ As instruções atuais do usuário prevalecem. `docs/DECISOES.md` é a referênc
 
 ## Forma de trabalhar
 
+- Para criar, revisar ou refinar interfaces, use as skills instaladas de `Leonxlnx/taste-skill`. Para este aplicativo, comece por [`redesign-existing-projects`](.agents/skills/redesign-skill/SKILL.md) e selecione as demais conforme a tarefa; a skill principal [`design-taste-frontend`](.agents/skills/taste-skill/SKILL.md) é voltada a páginas públicas, não a telas internas. Siga o contrato de design aprovado em [`docs/DESIGN.md`](docs/DESIGN.md) e a referência escolhida pelo usuário em [`docs/visual/REFERENCIA_ESCOLHIDA.md`](docs/visual/REFERENCIA_ESCOLHIDA.md). Ela prevalece sobre estilos predefinidos das skills. Reutilize componentes existentes e preserve decisões de produto, acessibilidade e responsividade. A proposta anterior “balcão organizado” foi rejeitada e não deve orientar o redesign.
+
 - Apresente o objetivo e um plano curto, depois execute o trabalho autorizado. Não peça ao gestor decisões técnicas rotineiras.
 - Entregue uma funcionalidade verificável por vez. Não implemente todos os 40 cartões de uma vez.
 - Mudanças de escopo, novos gastos e liberação do piloto são decisões do gestor. Prepare o resultado concreto antes de solicitar uma decisão necessária.

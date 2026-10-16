@@ -1,6 +1,10 @@
 import type { SVGProps } from "react";
 
 type IconName =
+  | "copy"
+  | "download"
+  | "check"
+  | "eye"
   | "add-bill"
   | "bills"
   | "home"
@@ -17,6 +21,10 @@ type IconName =
   | "user";
 
 const paths: Record<IconName, React.ReactNode> = {
+  copy: <><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></>,
+  download: <path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>,
+  check: <path d="m5 12 4 4L19 6"/>,
+  eye: <><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12"/><circle cx="12" cy="12" r="3"/></>,
   "add-bill": <><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M12 9v6M15 3v4h4"/></>,
   bills: <><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></>,
   home: <><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></>,

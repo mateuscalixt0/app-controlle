@@ -3,11 +3,10 @@ import { redirect } from "next/navigation";
 import { Icon } from "@/components/icons";
 import { PageHeading } from "@/components/page-heading";
 import { getCurrentSession } from "@/lib/supabase/session";
-import { BillCardActions } from "@/components/bill-card-actions";
+import { BillCard } from "@/components/bill-card";
 import { getBillListStatus } from "@/lib/bill-list-filter";
 
 const PAGE_SIZE = 10;
-const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 export default async function BillsPage({ searchParams }: { searchParams: Promise<{ page?: string; q?: string; status?: string }> }) {
   const params = await searchParams;
@@ -42,7 +41,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="bills-page">
-      <PageHeading eyebrow="BOLETOS" title="Boletos a pagar" description="Acompanhe os próximos vencimentos e encontre uma conta rapidamente." />
+      <PageHeading eyebrow="BOLETOS" title="Seus boletos" description="Acompanhe os próximos vencimentos e encontre uma conta rapidamente." />
       <form className="search-field" action="/boletos" method="get">
         <Icon name="search" />
         <label className="sr-only" htmlFor="bill-search">Buscar boleto</label>
@@ -65,16 +64,10 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
           const supplier = Array.isArray(supplierData) ? supplierData[0]?.name : supplierData?.name;
           const documents = bill.bill_documents as unknown as { storage_path?: string }[] | null;
           return (
-            <article className="card bill-card" key={bill.id}>
-              <div className="row"><div><p className="eyebrow">VENCIMENTO {new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(new Date(`${bill.due_date}T00:00:00Z`))}</p><h2>{supplier ?? "Fornecedor removido"}</h2></div><strong className="amount">{brl.format(bill.amount_cents / 100)}</strong></div>
-              <p>{bill.description}</p>
-              <span className="status-pill">{bill.status === "pending" ? "Em aberto" : bill.status === "paid" ? "Pago" : "Cancelado"}</span>
-              <div className="bill-code">{bill.digitable_line ? bill.digitable_line.replace(/(.{5})/g, "$1 ").trim() : "Código não informado"}</div>
-              <BillCardActions billId={bill.id} code={bill.digitable_line} hasDocument={Boolean(documents?.length)} status={bill.status} />
-            </article>
+            <BillCard key={`${bill.id}-${bill.status}`} bill={{ id: bill.id, supplier: supplier ?? "Fornecedor não informado", description: bill.description, amount: bill.amount_cents, dueDate: bill.due_date, code: bill.digitable_line, hasDocument: Boolean(documents?.length), status: bill.status }} />
           );
         })}
-        {bills.length === 0 && <div className="empty-state"><strong>Nenhum boleto cadastrado</strong><p>Envie um documento ou cadastre um boleto manualmente.</p></div>}
+        {bills.length === 0 && <div className="empty-state"><strong>{queryText || status !== "all" ? "Nenhum boleto encontrado" : "Nenhum boleto cadastrado"}</strong><p>{queryText || status !== "all" ? "Ajuste a busca ou os filtros para tentar novamente." : "Envie um documento para adicionar seu primeiro boleto."}</p></div>}
       </section>
       {pageCount > 1 && <nav className="pagination" aria-label="Paginação">{page > 1 && <Link className="secondary-action" href={pageHref(page - 1)}>Anterior</Link>}{page < pageCount && <Link className="secondary-action" href={pageHref(page + 1)}>Próxima</Link>}</nav>}
       <Link className="primary-action full-action" href="/boletos/novo"><Icon name="add-bill" /> Adicionar boleto</Link>
