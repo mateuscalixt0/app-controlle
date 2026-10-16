@@ -28,15 +28,17 @@ export async function addMissingItem(formData: FormData) {
   redirect("/faltas");
 }
 
-export async function addMissingItemInline(_previousState: { error?: string; success?: boolean }, formData: FormData) {
+type InlineMissingItemState = { error: string; success: boolean };
+
+export async function addMissingItemInline(_previousState: InlineMissingItemState, formData: FormData): Promise<InlineMissingItemState> {
   const productName = String(formData.get("product") ?? "").trim();
   const quantity = Number(String(formData.get("quantity") ?? "").trim().replace(",", "."));
   const priority = String(formData.get("priority") ?? "normal");
-  if (!productName || productName.length > 200 || !Number.isFinite(quantity) || quantity <= 0 || !["normal", "media", "urgente"].includes(priority)) return { error: "Confira os dados informados." };
+  if (!productName || productName.length > 200 || !Number.isFinite(quantity) || quantity <= 0 || !["normal", "media", "urgente"].includes(priority)) return { error: "Confira os dados informados.", success: false };
   const session = await getCurrentSession();
-  if (!session?.storeId) return { error: "Sua sessão não está pronta para salvar o item." };
+  if (!session?.storeId) return { error: "Sua sessão não está pronta para salvar o item.", success: false };
   const { error } = await session.supabase.from("missing_items").insert({ store_id: session.storeId, product_name: productName, quantity, priority });
-  if (error) return { error: "Não foi possível salvar o item." };
+  if (error) return { error: "Não foi possível salvar o item.", success: false };
   revalidatePath("/faltas");
-  return { success: true };
+  return { error: "", success: true };
 }
