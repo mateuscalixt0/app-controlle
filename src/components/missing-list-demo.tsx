@@ -27,6 +27,7 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
   const [addState, addAction, addingItem] = useActionState(addMissingItemInline, { error: "", success: false });
   const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const addDialogRef = useRef<HTMLDialogElement>(null);
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const query = new URLSearchParams();
   if (queryText) query.set("q", queryText);
@@ -39,7 +40,17 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
     const dialog = dialogRef.current;
     if (selected && dialog && !dialog.open) dialog.showModal();
   }, [selected]);
-  useEffect(() => { if (addState.success) router.refresh(); }, [addState.success, router]);
+  useEffect(() => {
+    const dialog = addDialogRef.current;
+    if (adding && dialog && !dialog.open) dialog.showModal();
+    if (!adding && dialog?.open) dialog.close();
+  }, [adding]);
+  useEffect(() => {
+    if (addState.success) {
+      setAdding(false);
+      router.refresh();
+    }
+  }, [addState, router]);
 
   function closeDialog() {
     dialogRef.current?.close();
@@ -68,9 +79,9 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
       </section>
       <button className="primary-action full-action missing-bottom-action" onClick={() => setAdding(true)} type="button"><Icon name="plus" /> Anotar produto</button>
-      <dialog className="detail-dialog add-dialog" onClose={() => setAdding(false)} open={adding}>
-        <form action={addAction} className="dialog-content add-form" onSubmit={() => setAdding(false)}>
-          <div className="dialog-header"><h2>Anotar uma falta</h2><button aria-label="Fechar" className="icon-button" onClick={() => setAdding(false)} type="button"><Icon name="close" /></button></div>
+      <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} ref={addDialogRef}>
+        <form action={addAction} className="dialog-content add-form">
+          <div className="dialog-header"><h2 id="add-missing-title">Anotar uma falta</h2><button aria-label="Fechar" className="icon-button" onClick={() => setAdding(false)} type="button"><Icon name="close" /></button></div>
           <label>Produto<input name="product" required placeholder="Ex.: Areia fina" /></label><label>Quantidade e unidade<input name="quantity" required inputMode="decimal" type="number" min="0.001" step="0.001" placeholder="Ex.: 5 sacos" /></label><label>Prioridade<select defaultValue="normal" name="priority"><option value="normal">Normal</option><option value="media">Média</option><option value="urgente">Precisa comprar</option></select></label>
           {addState.error && <p className="form-error">{addState.error}</p>}<button className="primary-action" disabled={addingItem} type="submit">{addingItem ? "Adicionando…" : "Adicionar à lista"}</button><p className="helper-text">Salvo na lista de faltas.</p>
         </form>
