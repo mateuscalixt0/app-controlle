@@ -2,8 +2,16 @@
 
 Atualizado em 16/10/2026.
 
+## Busca e criação de fornecedor no cadastro de boleto — 16/10/2026
+
+- Corrigida a consulta de fornecedores: a aplicação pedia a coluna inexistente `document`, o que fazia a lista e a criação poderem falhar.
+- Ao digitar no beneficiário, a tela informa que está buscando e mostra fornecedores da loja atual. Sem nome equivalente, exibe “Criar fornecedor”; após criar, seleciona o nome novo no mesmo campo, sem recarregar a tela.
+- **PASSOU:** `npm run lint`, `npm run typecheck`, `npm test` (35 testes), `npm run build` e 9 cenários do Playwright na importação, incluindo fornecedor existente, criação em tela e fluxos PDF/câmera. A consulta no Supabase confirmou que a tabela possui somente `id`, `store_id`, `name` e `created_at`; leitura limitada à loja permanece na rota e na ação.
+- Próximo passo: publicar no mesmo projeto Vercel e validar no navegador do gestor com fornecedores reais.
+
 ## Atualização no projeto Vercel existente — 16/10/2026
 
+- Publicação concluída: PR #21 integrada à `main`, commit `ed72be8731c463ea5ae73a6dfb7fbd28fbc160d5`. Status da Vercel confirmado como `success` no deploy https://vercel.com/cm-tech1/app-controlle/729Xq7Ne1mTnmXW6CEkMDQgKzFJz . Endereço de uso: https://app-controlle.vercel.app/boletos/novo . Este registro posterior ao deploy está no workspace local.
 - Mateus esclareceu e autorizou a substituição do visual no mesmo endereço `https://app-controlle.vercel.app`, mantendo backend e conexão existentes. A orientação anterior de criar outro projeto de hospedagem foi desnecessária e está substituída.
 - A integração GitHub confirmou deploy bem-sucedido da branch de design no projeto Vercel `cm-tech1/app-controlle`. Não é necessário criar projeto nem recadastrar variáveis.
 - Incorporada a correção atual da `main` que inicia a lista somente com boletos pendentes; filtros e paginação continuam disponíveis com os novos cartões.

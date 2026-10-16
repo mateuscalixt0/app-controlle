@@ -24,10 +24,10 @@ export async function createSupplier(name: string) {
   const normalized = name.trim();
   if (!normalized || normalized.length > 160) throw new Error('Informe um nome de fornecedor válido.');
   const { supabase, storeId } = await currentStore();
-  const existing = await supabase.from('suppliers').select('id,name,document').eq('store_id', storeId).eq('name', normalized).maybeSingle();
+  const existing = await supabase.from('suppliers').select('id,name').eq('store_id', storeId).eq('name', normalized).maybeSingle();
   if (existing.error) throw new Error('Não foi possível consultar o fornecedor.');
   if (existing.data) return existing.data;
-  const created = await supabase.from('suppliers').insert({ store_id: storeId, name: normalized }).select('id,name,document').single();
+  const created = await supabase.from('suppliers').insert({ store_id: storeId, name: normalized }).select('id,name').single();
   if (created.error || !created.data) throw new Error('Não foi possível salvar o fornecedor.');
   return created.data;
 }

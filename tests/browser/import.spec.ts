@@ -40,9 +40,25 @@ for (const width of [375, 1280]) {
 test('PDF corrompido mantém original e permite completar os dados', async ({ page }) => {
   await page.goto('/tests/browser/harness/');
   await page.locator('input[type=file]').setInputFiles({ name: 'corrompido.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.7 invalid') });
-  await expect(page.getByRole('status')).toContainText('arquivo foi mantido', { timeout: 45_000 });
+  await expect(page.locator('.read-notice')).toContainText('arquivo foi mantido', { timeout: 45_000 });
   await expect(page.getByLabel('Para quem vai pagar')).toBeEditable();
   await expect(page.getByLabel('Código de barras ou linha digitável')).toBeVisible();
+});
+test('pesquisa fornecedor existente e cria um novo sem reiniciar a tela', async ({ page }) => {
+  await page.route('**/api/fornecedores?q=Rudu', route => route.fulfill({ json: { suppliers: [{ id: 'supplier-rudu', name: 'Rudu' }] } }));
+  await page.route('**/api/fornecedores?q=Novo%20Fornecedor', route => route.fulfill({ json: { suppliers: [] } }));
+  await page.goto('/tests/browser/harness/');
+  await page.locator('input[type=file]').setInputFiles({ name: 'corrompido.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.7 invalid') });
+  const supplier = page.getByLabel('Para quem vai pagar');
+  await supplier.fill('Rudu');
+  await expect(page.getByRole('option', { name: 'Rudu' })).toBeVisible();
+  await page.getByRole('option', { name: 'Rudu' }).click();
+  await expect(supplier).toHaveValue('Rudu');
+  await supplier.fill('Novo Fornecedor');
+  await expect(page.getByRole('option', { name: /Criar fornecedor “Novo Fornecedor”/ })).toBeVisible();
+  await page.getByRole('option', { name: /Criar fornecedor “Novo Fornecedor”/ }).click();
+  await expect(supplier).toHaveValue('Novo Fornecedor');
+  await expect(page.locator('.read-notice')).toContainText('Fornecedor “Novo Fornecedor” criado');
 });
 test('permissão de câmera negada oferece alternativa e fecha', async ({ page }) => {
   await page.addInitScript(() => { navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('denied', 'NotAllowedError'); }; });
@@ -92,7 +108,7 @@ test('cancelar leitura preserva formulário e ignora resultado tardio', async ({
   await page.getByRole('button', { name: 'Interromper e preencher manualmente' }).click();
   await expect(page.getByLabel('Para quem vai pagar')).toBeEditable();
   await page.getByLabel('Para quem vai pagar').fill('PREENCHIDO MANUALMENTE');
-  await expect(page.getByRole('status')).toContainText('Leitura interrompida');
+  await expect(page.locator('.read-notice')).toContainText('Leitura interrompida');
   await expect(page.getByLabel('Para quem vai pagar')).toHaveValue('PREENCHIDO MANUALMENTE');
 });
 

@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   const { data, error } = await session.supabase
     .from('suppliers')
-    .select('id,name,document')
+    .select('id,name')
     .eq('store_id', session.storeId)
     .ilike('name', `%${query.replace(/[%_]/g, '\\$&')}%`)
     .order('name')
