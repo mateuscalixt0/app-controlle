@@ -27,3 +27,16 @@ export async function addMissingItem(formData: FormData) {
   revalidatePath("/faltas");
   redirect("/faltas");
 }
+
+export async function addMissingItemInline(formData: FormData) {
+  const productName = String(formData.get("product") ?? "").trim();
+  const quantity = Number(String(formData.get("quantity") ?? "").trim().replace(",", "."));
+  const priority = String(formData.get("priority") ?? "normal");
+  if (!productName || productName.length > 200 || !Number.isFinite(quantity) || quantity <= 0 || !["normal", "media", "urgente"].includes(priority)) return { error: "Confira os dados informados." };
+  const session = await getCurrentSession();
+  if (!session?.storeId) return { error: "Sua sessão não está pronta para salvar o item." };
+  const { error } = await session.supabase.from("missing_items").insert({ store_id: session.storeId, product_name: productName, quantity, priority });
+  if (error) return { error: "Não foi possível salvar o item." };
+  revalidatePath("/faltas");
+  return { success: true };
+}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { MissingList, type MissingListItem } from "@/components/missing-list-demo";
 import { PageHeading } from "@/components/page-heading";
@@ -35,7 +34,7 @@ export default async function MissingItemsPage({ searchParams }: { searchParams:
 
   return (
     <>
-      <PageHeading eyebrow="COMPRAS" title="O que está faltando" description={`${count ?? 0} ${count === 1 ? "produto" : "produtos"}`} />
+      <PageHeading eyebrow="COMPRAS" title="Lista de faltas" description="Organize o que está faltando para a próxima compra." />
       <MissingList items={rows} page={page} pageSize={PAGE_SIZE} total={count ?? 0} queryText={queryText} priority={priority} sort={sort} company={company} companies={[...companies].sort((a, b) => a.localeCompare(b, "pt-BR"))} />
     </>
   );

@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { addMissingItemInline } from "@/app/faltas/novo/actions";
 import { priorityMeta, type Priority } from "@/lib/demo-data";
 import { Icon } from "./icons";
 
@@ -20,6 +23,9 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
   items: MissingListItem[]; page: number; pageSize: number; total: number; queryText: string; priority: string; sort?: string; company?: string; companies?: string[];
 }) {
   const [selected, setSelected] = useState<MissingListItem | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [addState, addAction, addingItem] = useActionState(addMissingItemInline, { error: "", success: false });
+  const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const query = new URLSearchParams();
@@ -33,6 +39,7 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
     const dialog = dialogRef.current;
     if (selected && dialog && !dialog.open) dialog.showModal();
   }, [selected]);
+  useEffect(() => { if (addState.success) router.refresh(); }, [addState.success, router]);
 
   function closeDialog() {
     dialogRef.current?.close();
@@ -41,6 +48,14 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
 
   return (
     <>
+      <button className="primary-action full-action top-action" onClick={() => setAdding(true)} type="button"><Icon name="list" /> Anotar produto faltante</button>
+      <form className="missing-filters" action="/faltas" id="missing-filters" method="get">
+        <div className="search-field"><Icon name="search" /><label className="sr-only" htmlFor="missing-search">Buscar produto</label><input id="missing-search" defaultValue={queryText} name="q" placeholder="Buscar produto" type="search" /></div>
+        <div className="product-filters"><label>Ordenar por<select name="sort" defaultValue={sort}><option value="newest">Mais recentes</option><option value="oldest">Mais antigos</option></select></label><label>Empresa de referência<select name="company" defaultValue={company}><option value="">Todas as empresas</option>{companies.map(name => <option value={name} key={name}>{name}</option>)}</select></label></div>
+        <button className="secondary-action" type="submit">Aplicar filtros</button>{priority && <input name="priority" type="hidden" value={priority} />}
+      </form>
+      <div className="filter-row" aria-label="Filtrar por prioridade">{["", "normal", "media", "urgente"].map(value => <Link className={priority === value ? "filter-chip active" : "filter-chip"} href={`/faltas?${new URLSearchParams({ ...(queryText ? { q: queryText } : {}), ...(value ? { priority: value } : {}) })}`} key={value}>{value === "" ? "Todas" : priorityMeta[value as Priority].label}</Link>)}</div>
+      <p className="results-count" aria-live="polite">{total} {total === 1 ? "produto encontrado" : "produtos encontrados"} · página {page} de {pageCount}</p>
       <section className="missing-list-panel" aria-label="Produtos faltantes">
         {items.map((item) => {
           const meta = priorityMeta[item.priority];
@@ -52,7 +67,14 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
         })}
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
       </section>
-      <Link className="primary-action full-action missing-bottom-action" href="/faltas/novo"><Icon name="list" /> Anotar produto</Link>
+      <button className="primary-action full-action missing-bottom-action" onClick={() => setAdding(true)} type="button"><Icon name="plus" /> Anotar produto</button>
+      <dialog className="detail-dialog add-dialog" onClose={() => setAdding(false)} open={adding}>
+        <form action={addAction} className="dialog-content add-form" onSubmit={() => setAdding(false)}>
+          <div className="dialog-header"><h2>Anotar uma falta</h2><button aria-label="Fechar" className="icon-button" onClick={() => setAdding(false)} type="button"><Icon name="close" /></button></div>
+          <label>Produto<input name="product" required placeholder="Ex.: Areia fina" /></label><label>Quantidade e unidade<input name="quantity" required inputMode="decimal" type="number" min="0.001" step="0.001" placeholder="Ex.: 5 sacos" /></label><label>Prioridade<select defaultValue="normal" name="priority"><option value="normal">Normal</option><option value="media">Média</option><option value="urgente">Precisa comprar</option></select></label>
+          {addState.error && <p className="form-error">{addState.error}</p>}<button className="primary-action" disabled={addingItem} type="submit">{addingItem ? "Adicionando…" : "Adicionar à lista"}</button><p className="helper-text">Salvo na lista de faltas.</p>
+        </form>
+      </dialog>
       {pageCount > 1 && <nav className="pagination" aria-label="Paginação">
         {page > 1 && <Link className="secondary-action" href={`/faltas?page=${page - 1}${suffix}`}>Anterior</Link>}
         {page < pageCount && <Link className="secondary-action" href={`/faltas?page=${page + 1}${suffix}`}>Próxima</Link>}
