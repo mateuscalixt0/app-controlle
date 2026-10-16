@@ -21,37 +21,32 @@ export function BillDocumentImport() {
   const [processing, setProcessing] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [supplierSuggestions, setSupplierSuggestions] = useState<SupplierSuggestion[] | null>([]);
+  const [supplierDirectory, setSupplierDirectory] = useState<SupplierSuggestion[]>([]);
+  const [supplierDirectoryStatus, setSupplierDirectoryStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [supplierSearchOpen, setSupplierSearchOpen] = useState(false);
   const [creatingSupplier, setCreatingSupplier] = useState(false);
   const [pending, startTransition] = useTransition();
   const operation = useRef<AbortController | null>(null);
   const saveId = useRef<string | null>(null);
   const pathId = useRef<string | null>(null);
+  const supplierLoadStarted = useRef(false);
   useEffect(() => () => operation.current?.abort(), []);
 
-  useEffect(() => {
-    const query = data.supplier.trim();
-    if (!query || processing || saved) {
-      return;
+  const loadSuppliers = useCallback(async () => {
+    if (supplierLoadStarted.current || supplierDirectoryStatus === 'ready') return;
+    supplierLoadStarted.current = true;
+    setSupplierDirectoryStatus('loading');
+    try {
+      const response = await fetch('/api/fornecedores', { cache: 'no-store' });
+      if (!response.ok) throw new Error();
+      const payload = await response.json() as { suppliers?: SupplierSuggestion[] };
+      setSupplierDirectory((payload.suppliers ?? []).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')));
+      setSupplierDirectoryStatus('ready');
+    } catch {
+      supplierLoadStarted.current = false;
+      setSupplierDirectoryStatus('error');
     }
-    const controller = new AbortController();
-    const timer = window.setTimeout(async () => {
-      try {
-        const response = await fetch(`/api/fornecedores?q=${encodeURIComponent(query)}`, { signal: controller.signal, cache: 'no-store' });
-        if (!response.ok) throw new Error();
-        const payload = await response.json() as { suppliers?: SupplierSuggestion[] };
-        if (!controller.signal.aborted) {
-          setSupplierSuggestions(payload.suppliers ?? []);
-        }
-      } catch {
-        if (!controller.signal.aborted) {
-          setSupplierSuggestions([]);
-        }
-      }
-    }, 180);
-    return () => { window.clearTimeout(timer); controller.abort(); };
-  }, [data.supplier, processing, saved]);
+  }, [supplierDirectoryStatus]);
 
   const choose = useCallback(async (value: File | undefined, code?: string) => {
     if (!value) return;
@@ -67,7 +62,6 @@ export function BillDocumentImport() {
     const timeout = setTimeout(() => controller.abort(), 180_000);
     const merge = (result: BillExtraction) => {
       if (!controller.signal.aborted) {
-        setSupplierSuggestions(result.supplier.trim() ? null : []);
         setData(result);
       }
     };
@@ -82,7 +76,8 @@ export function BillDocumentImport() {
 
   function change(field: keyof BillExtraction, value: string) { setData(current => ({ ...current, [field]: value })); }
   const supplierName = data.supplier.trim();
-  const hasExactSupplier = supplierSuggestions?.some(supplier => supplier.name.localeCompare(supplierName, 'pt-BR', { sensitivity: 'accent' }) === 0) ?? false;
+  const supplierMatches = supplierDirectory.filter(supplier => supplier.name.toLocaleLowerCase('pt-BR').includes(supplierName.toLocaleLowerCase('pt-BR')));
+  const hasExactSupplier = supplierDirectory.some(supplier => supplier.name.localeCompare(supplierName, 'pt-BR', { sensitivity: 'accent' }) === 0);
   function applyCode() {
     setError('');
     try {
@@ -124,17 +119,19 @@ export function BillDocumentImport() {
       {data.warnings.map(warning => <p className="helper-box" key={warning}>{warning}</p>)}
       <fieldset disabled={pending || processing || saved || scanning} className="review-fields">
         <label className="supplier-field">Para quem vai pagar (beneficiário)
-          <input required maxLength={160} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={supplierSearchOpen} aria-controls="supplier-suggestions" value={data.supplier} onFocus={() => setSupplierSearchOpen(true)} onBlur={() => window.setTimeout(() => setSupplierSearchOpen(false), 120)} onChange={event => { change('supplier', event.target.value); setSupplierSuggestions(event.target.value.trim() ? null : []); setSupplierSearchOpen(true); }} />
-          {supplierSearchOpen && supplierName && <div className="supplier-suggestions" id="supplier-suggestions" role="listbox" onMouseDown={event => event.preventDefault()}>
-            {supplierSuggestions === null && <p className="supplier-searching" role="status">Buscando fornecedores…</p>}
-            {supplierSuggestions?.map(supplier => <button type="button" role="option" aria-selected={supplier.name === supplierName} className="supplier-suggestion" key={supplier.id} onClick={() => { change('supplier', supplier.name); setSupplierSearchOpen(false); }}><strong>{supplier.name}</strong></button>)}
-            {supplierSuggestions !== null && !hasExactSupplier && <button type="button" role="option" aria-selected="false" className="supplier-create" disabled={creatingSupplier} onClick={async () => {
+          <input required maxLength={160} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={supplierSearchOpen} aria-controls="supplier-suggestions" value={data.supplier} onFocus={() => { setSupplierSearchOpen(true); void loadSuppliers(); }} onBlur={() => window.setTimeout(() => setSupplierSearchOpen(false), 120)} onChange={event => { change('supplier', event.target.value); setSupplierSearchOpen(true); }} />
+          {supplierSearchOpen && <div className="supplier-suggestions" id="supplier-suggestions" role="listbox" onMouseDown={event => event.preventDefault()}>
+            {supplierDirectoryStatus === 'loading' && <p className="supplier-searching" role="status">Carregando fornecedores…</p>}
+            {supplierDirectoryStatus === 'error' && <button type="button" className="supplier-create" onClick={() => void loadSuppliers()}><strong>Não foi possível carregar fornecedores</strong><small>Tocar para tentar novamente</small></button>}
+            {supplierDirectoryStatus === 'ready' && supplierMatches.map(supplier => <button type="button" role="option" aria-selected={supplier.name === supplierName} className="supplier-suggestion" key={supplier.id} onClick={() => { change('supplier', supplier.name); setSupplierSearchOpen(false); }}><strong>{supplier.name}</strong></button>)}
+            {supplierDirectoryStatus === 'ready' && supplierName && !hasExactSupplier && <button type="button" role="option" aria-selected="false" className="supplier-create" disabled={creatingSupplier} onClick={async () => {
               const name = supplierName;
               if (!name) return;
               setCreatingSupplier(true);
               try {
                 const supplier = await createSupplier(name);
-                setSupplierSuggestions([supplier]);
+                setSupplierDirectory(current => [...current, supplier].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')));
+                setSupplierDirectoryStatus('ready');
                 change('supplier', supplier.name);
                 setSupplierSearchOpen(false);
                 setNotice(`Fornecedor “${supplier.name}” criado e disponível para boletos e produtos.`);
