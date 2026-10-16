@@ -17,6 +17,13 @@ Atualizado em 15/10/2026.
 - **PENDENTE para liberação:** login com conta real, persistência e isolamento com duas lojas, download de arquivo privado real, câmera física e navegação autenticada completa (incluindo Minha loja, criação da loja, XML e cadastro/edição). Testes de UI usam serviços simulados e não comprovam essas integrações. Sem alterações de schema/RLS nesta tarefa.
 - Próximo passo: executar o gate autenticado em ambiente de homologação antes de commit/merge/publicação. O endereço Sites continua sendo o protótipo independente; não representa o estado de deploy do Next.js.
 
+## Preparação da homologação — 16/10/2026
+
+- Branch `feat/design-aprovado` enviada ao repositório remoto no commit `c154e0fcb4904b32e2d4d05356c3c1e70915e1b4`: https://github.com/mateuscalixt0/app-controlle/tree/feat/design-aprovado . Produção não foi alterada.
+- A criação de PR pelo ambiente foi recusada pela permissão atual da API do GitHub. A PR pode ser aberta pelo link sugerido pelo próprio GitHub: https://github.com/mateuscalixt0/app-controlle/pull/new/feat/design-aprovado .
+- Não existe configuração local do projeto Vercel, credencial Vercel nem `.env.local` de homologação. A CLI confirmou sessão desconectada. Não foi criado deploy temporário sem as variáveis do Supabase, pois ele não permitiria validar login ou dados reais.
+- Próximo passo: conectar o repositório/branch à Vercel (ou fornecer acesso à conta/projeto de homologação) e configurar `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` do projeto Supabase de teste. Depois disso, publicar a prévia e executar o roteiro autenticado.
+
 ## Detalhes e filtros de faltas no protótipo — 15/10/2026
 
 - Publicado no mesmo Site privado: commit `8616e0d83a47472d4fd5976f42d4ce22efb52885`, deploy confirmado como `succeeded`.
