@@ -9,6 +9,7 @@ type IconName =
   | "bills"
   | "home"
   | "list"
+  | "plus"
   | "prices"
   | "camera"
   | "upload"
@@ -29,6 +30,7 @@ const paths: Record<IconName, React.ReactNode> = {
   bills: <><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></>,
   home: <><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></>,
   list: <><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></>,
+  plus: <path d="M12 5v14M5 12h14"/>,
   prices: <><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/><path d="M2 19h21"/></>,
   camera: <><path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="4"/></>,
   upload: <><path d="M12 16V4M7 9l5-5 5 5"/><path d="M5 15v5h14v-5"/></>,
