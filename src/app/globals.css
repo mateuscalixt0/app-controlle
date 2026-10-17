@@ -86,4 +86,39 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .bill-open{grid-template-columns:40px minmax(0,1fr) auto;gap:10px;padding:18px 15px 8px}.bill-open .date-tile{width:40px;min-width:40px}.bill-description strong{font-size:14px}.bill-description>span{font-size:12px}.money-col>strong{font-size:15px}.status-pill{font-size:11px}.bill-quick-actions{padding-left:15px}.dialog-content{padding:24px}.dialog-header h2{font-size:20px}.detail-lines>div{font-size:13px}.new-bill-title h1{font-size:24px}.product-filters{gap:10px}.product-filters select{font-size:13px;padding:12px 8px}.section-heading a{font-size:13px}.auth-page{margin-block:24px}
 }
 @media(max-width:380px){.page-content{padding-left:18px;padding-right:18px}.balance-value{font-size:35px}.lime-foot{gap:8px}.pill-white{padding:10px 12px}.transaction{grid-template-columns:40px minmax(0,1fr)}.transaction>strong:last-child{grid-column:2}.bill-open{grid-template-columns:40px minmax(0,1fr)}.money-col{grid-column:2;justify-items:start;text-align:left;grid-template-columns:auto auto;align-items:center}.dialog-content{padding:22px}.document-source-action{padding:16px}}
+@media(max-width:360px){
+ .page-content{padding:18px 16px calc(88px + env(safe-area-inset-bottom))}
+ .hero-row{gap:12px;margin-bottom:20px}
+ .hero-row h1{font-size:21px;letter-spacing:-.8px}
+ .hero-row p{font-size:12px;margin-top:4px}
+ .hero-row .icon-button{width:42px;min-width:42px;height:42px;border-radius:13px;padding:8px}
+ .card{padding:16px;border-radius:21px}
+ .balance-label{font-size:12px}
+ .balance-label .icon-button{margin:-9px -6px -6px 0}
+ .balance-value{font-size:32px;letter-spacing:-1.2px;margin:5px 0}
+ .balance-card .helper-text{font-size:11px}
+ .full-action{min-height:44px;margin-top:16px;padding:9px 12px;font-size:12px}
+ .full-action svg{width:18px;height:18px}
+ .section-heading{gap:8px;margin:20px 0 10px}
+ .section-heading h2{font-size:17px}
+ .section-heading a{min-height:36px;font-size:11px}
+ .section-heading a svg{width:15px}
+ .lime-card{padding:16px;border-radius:21px}
+ .lime-card>p{font-size:12px}
+ .big-count{font-size:31px;letter-spacing:-1px;margin:8px 0}
+ .lime-foot{margin-top:10px;font-size:11px}
+ .pill-white{min-height:38px;padding:8px 10px;font-size:11px}
+ .home-grid>div+div{margin-top:20px}
+ .upcoming-card .section-heading{margin-bottom:0}
+ .transaction{grid-template-columns:36px minmax(0,1fr);gap:8px;padding:12px 0}
+ .date-tile{width:36px;min-width:36px;height:42px;border-radius:11px}
+ .date-tile strong{font-size:15px}.date-tile small{font-size:9px}
+ .transaction strong{font-size:12px}.transaction small{font-size:10px;margin-top:2px}
+ .home-note{font-size:11px;margin-top:16px}
+ .bottom-nav{width:100%}
+ .bottom-nav-inner{border-radius:20px 20px 0 0;padding:4px 4px max(8px,env(safe-area-inset-bottom));}
+ .nav-item{min-height:44px;padding:2px 1px;gap:3px;font-size:10px}
+ .nav-item .nav-icon svg{width:20px;height:20px}
+ .nav-item:last-child .nav-icon{padding:2px}
+}
 @media(prefers-reduced-motion:no-preference){button,.primary-action,.secondary-action{transition:background-color .15s,transform .15s}}
