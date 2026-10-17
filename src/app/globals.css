@@ -85,7 +85,7 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .bottom-nav{position:fixed;z-index:30;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,500px);padding:0}.bottom-nav-inner{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:var(--surface);border-radius:26px 26px 0 0;padding:12px 8px max(14px,env(safe-area-inset-bottom));box-shadow:0 -8px 26px #20231f05}.nav-item{display:grid;justify-items:center;align-content:center;gap:6px;min-height:56px;padding:4px 2px;font-size:12px;font-weight:500;border-radius:12px}.nav-active{font-weight:700;background:transparent;color:var(--foreground)}.nav-item:last-child .nav-icon{border:2px solid var(--accent);border-radius:50%;padding:3px}.nav-item:last-child .nav-icon svg{width:20px;height:20px}.nav-active svg{stroke-width:2.3}
  .bill-open{grid-template-columns:40px minmax(0,1fr) auto;gap:10px;padding:18px 15px 8px}.bill-open .date-tile{width:40px;min-width:40px}.bill-description strong{font-size:14px}.bill-description>span{font-size:12px}.money-col>strong{font-size:15px}.status-pill{font-size:11px}.bill-quick-actions{padding-left:15px}.dialog-content{padding:24px}.dialog-header h2{font-size:20px}.detail-lines>div{font-size:13px}.new-bill-title h1{font-size:24px}.product-filters{gap:10px}.product-filters select{font-size:13px;padding:12px 8px}.section-heading a{font-size:13px}.auth-page{margin-block:24px}
 }
-@media(max-width:380px){.page-content{padding-left:18px;padding-right:18px}.balance-value{font-size:35px}.lime-foot{gap:8px}.pill-white{padding:10px 12px}.transaction{grid-template-columns:40px minmax(0,1fr)}.transaction>strong:last-child{grid-column:2}.bill-open{grid-template-columns:40px minmax(0,1fr)}.money-col{grid-column:2;justify-items:start;text-align:left;grid-template-columns:auto auto;align-items:center}.dialog-content{padding:22px}.document-source-action{padding:16px}}
+@media(max-width:380px){.page-content{padding-left:18px;padding-right:18px}.balance-value{font-size:35px}.lime-foot{gap:8px}.pill-white{padding:10px 12px}.transaction{grid-template-columns:40px minmax(0,1fr)}.transaction>strong:last-child{grid-column:2}.bill-open{grid-template-columns:40px minmax(0,1fr) auto}.money-col{grid-column:auto;justify-items:end;text-align:right;grid-template-columns:1fr;align-items:center}.dialog-content{padding:22px}.document-source-action{padding:16px}}
 @media(max-width:360px){
  .page-content{padding:18px 16px calc(88px + env(safe-area-inset-bottom))}
  .hero-row{gap:12px;margin-bottom:20px}
@@ -126,7 +126,7 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .primary-action,.secondary-action{min-height:44px;padding:9px 14px;font-size:12px}
  .text-action{min-height:40px;padding:7px 8px;font-size:12px}
  .filter-row{gap:6px;margin:14px 0 16px}
- .filter-chip{min-height:38px;padding:8px 12px;font-size:11px}
+ .filter-chip{min-height:38px;padding:8px 11px;font-size:11px}
  .results-count{font-size:11px;margin-bottom:10px}
  .bill-item{border-radius:19px}
  .bill-open{padding:14px 12px 6px;border-radius:19px}
@@ -156,5 +156,7 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .document-source-action{min-height:84px;padding:14px;font-size:14px}
  .detail-dialog{width:calc(100% - 20px);border-radius:22px}
  .detail-lines>div,.detail-grid>div{font-size:12px;padding:12px 0}
+ .bills-page .filter-row{flex-wrap:nowrap;gap:5px}
+ .bills-page .filter-chip{flex:1;min-width:0;padding-left:6px;padding-right:6px;white-space:nowrap}
 }
 @media(prefers-reduced-motion:no-preference){button,.primary-action,.secondary-action{transition:background-color .15s,transform .15s}}
