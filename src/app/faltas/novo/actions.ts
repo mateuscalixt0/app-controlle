@@ -42,3 +42,14 @@ export async function addMissingItemInline(_previousState: InlineMissingItemStat
   revalidatePath("/faltas");
   return { error: "", success: true };
 }
+
+export async function markMissingItemsBought(formData: FormData) {
+  const ids = String(formData.get("ids") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+  if (!ids.length) return;
+  const session = await getCurrentSession();
+  if (!session?.storeId) redirect("/login");
+  const { error } = await session.supabase.from("missing_items").update({ is_missing: false }).eq("store_id", session.storeId).in("id", ids);
+  if (error) throw new Error("Não foi possível atualizar os produtos.");
+  revalidatePath("/faltas");
+  redirect("/faltas");
+}

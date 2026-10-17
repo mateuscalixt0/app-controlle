@@ -19,7 +19,8 @@ type IconName =
   | "close"
   | "back"
   | "bell"
-  | "user";
+  | "user"
+  | "cart";
 
 const paths: Record<IconName, React.ReactNode> = {
   copy: <><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></>,
@@ -41,6 +42,7 @@ const paths: Record<IconName, React.ReactNode> = {
   back: <path d="m15 18-6-6 6-6"/>,
   bell: <><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 22h4"/></>,
   user: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+  cart: <><path d="M3 4h2l2.2 10.3a2 2 0 0 0 2 1.7h7.6a2 2 0 0 0 1.9-1.4L20 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></>,
 };
 
 export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { addMissingItemInline } from "@/app/faltas/novo/actions";
+import { addMissingItemInline, markMissingItemsBought } from "@/app/faltas/novo/actions";
 import { priorityMeta, type Priority } from "@/lib/demo-data";
 import { Icon } from "./icons";
 
@@ -53,6 +53,11 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
   return (
     <>
       <button className="primary-action full-action top-action" onClick={() => setAdding(true)} type="button"><Icon name="list" /> Anotar produto faltante</button>
+      <section aria-label="Resumo da lista de faltas" className="missing-summary">
+        <p>Para a próxima compra</p>
+        <strong>{total} {total === 1 ? "produto" : "produtos"}</strong>
+        <span>Anote agora. Compare antes de comprar.</span>
+      </section>
       <form className="missing-filters" action="/faltas" id="missing-filters" method="get" onChange={(event) => { if (event.target instanceof HTMLSelectElement) event.currentTarget.requestSubmit(); }}>
         <div className="search-field"><Icon name="search" /><label className="sr-only" htmlFor="missing-search">Buscar produto</label><input id="missing-search" defaultValue={queryText} name="q" placeholder="Buscar produto" type="search" /></div>
         <div className="product-filters"><label><span className="sr-only">Ordenar por</span><select aria-label="Ordenar por" name="sort" defaultValue={sort}><option value="newest">Mais recentes</option><option value="oldest">Mais antigos</option></select></label><label><span className="sr-only">Empresa de referência</span><select aria-label="Empresa de referência" name="company" defaultValue={company}><option value="">Todas as empresas</option>{companies.map(name => <option value={name} key={name}>{name}</option>)}</select></label></div>
@@ -72,6 +77,7 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
         })}
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
       </section>
+      {checkedItems.size > 0 && <form action={markMissingItemsBought} className="missing-cart-form"><input name="ids" type="hidden" value={[...checkedItems].join(",")} /><button aria-label={`Marcar ${checkedItems.size} ${checkedItems.size === 1 ? "produto" : "produtos"} como comprados`} className="missing-cart-action" type="submit"><Icon name="cart" /><span>{checkedItems.size}</span></button></form>}
       <button className="primary-action full-action missing-bottom-action" onClick={() => setAdding(true)} type="button"><Icon name="plus" /> Anotar produto</button>
       <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} ref={addDialogRef}>
         <form action={addAction} className="dialog-content add-form">

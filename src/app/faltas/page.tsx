@@ -13,7 +13,7 @@ export default async function MissingItemsPage({ searchParams }: { searchParams:
   if (!session) redirect("/login");
   if (!session.storeId) redirect("/configurar-loja");
 
-  let request = session.supabase.from("missing_items").select("id,product_name,quantity,unit,category,reference_company,priority,created_at", { count: "exact" }).eq("store_id", session.storeId).order("created_at", { ascending: sort === "oldest" }).order("id");
+  let request = session.supabase.from("missing_items").select("id,product_name,quantity,unit,category,reference_company,priority,created_at", { count: "exact" }).eq("store_id", session.storeId).eq("is_missing", true).order("created_at", { ascending: sort === "oldest" }).order("id");
   if (queryText) request = request.ilike("product_name", `%${queryText.replace(/[%_]/g, "\\$&")}%`);
   if (company) request = request.eq("reference_company", company);
   if (priority) request = request.eq("priority", priority as "normal" | "media" | "urgente");
