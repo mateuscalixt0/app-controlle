@@ -168,4 +168,13 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .missing-filters + .filter-row .filter-chip{flex:1;min-width:0;padding:7px 5px;font-size:10px;white-space:nowrap}
  .missing-bottom-action{margin-top:18px}
 }
+@media(max-width:480px){
+ .missing-list-panel{padding:6px 16px;border-radius:24px}
+ .missing-card{gap:10px;padding:12px 0}
+ .missing-checkbox{width:46px;height:46px;flex-basis:46px;border-radius:13px;accent-color:var(--primary)}
+ .missing-card h2{font-size:14px}
+ .missing-card p{font-size:11px;margin-top:3px}
+ .priority-pill{font-size:10px;padding:3px 8px;margin-top:6px}
+ .missing-card .chevron{height:40px}
+}
 @media(prefers-reduced-motion:no-preference){button,.primary-action,.secondary-action{transition:background-color .15s,transform .15s}}
