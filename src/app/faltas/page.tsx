@@ -3,7 +3,7 @@ import { MissingList, type MissingListItem } from "@/components/missing-list-dem
 import { PageHeading } from "@/components/page-heading";
 import { getCurrentSession } from "@/lib/supabase/session";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 4;
 
 export default async function MissingItemsPage({ searchParams }: { searchParams: Promise<{ page?: string; q?: string; priority?: string; sort?: string; company?: string }> }) {
   const params = await searchParams;

@@ -23,6 +23,7 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
   items: MissingListItem[]; page: number; pageSize: number; total: number; queryText: string; priority: string; sort?: string; company?: string; companies?: string[];
 }) {
   const [selected, setSelected] = useState<MissingListItem | null>(null);
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [adding, setAdding] = useState(false);
   const [addState, addAction, addingItem] = useActionState(addMissingItemInline, { error: "", success: false });
   const router = useRouter();
@@ -71,9 +72,10 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
         {items.map((item) => {
           const meta = priorityMeta[item.priority];
           return (
-            <button className={`missing-card ${meta.className}`} key={item.id} onClick={() => setSelected(item)} type="button">
-              <span className="missing-checkbox" aria-hidden="true" /><div className="missing-card-copy"><h2>{item.product_name}</h2><p>{item.quantity}{item.unit ? ` ${item.unit}` : ""} · {new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(item.created_at))}</p><p>{item.reference_company ? `Empresa: ${item.reference_company}` : "Sem empresa de referência"}</p><span className={`priority-pill ${meta.className}`}>{meta.label}</span></div><Icon className="chevron" name="chevron" />
-            </button>
+            <article className={`missing-card ${meta.className}`} key={item.id}>
+              <input aria-label={`Marcar ${item.product_name} como comprado`} checked={checkedItems.has(item.id)} className="missing-checkbox" onChange={() => setCheckedItems((current) => { const next = new Set(current); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} type="checkbox" />
+              <button className="missing-card-copy" onClick={() => setSelected(item)} type="button"><h2>{item.product_name}</h2><p>{item.quantity}{item.unit ? ` ${item.unit}` : ""} · {new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(item.created_at))}</p><p>{item.reference_company ? `Empresa: ${item.reference_company}` : "Sem empresa de referência"}</p><span className={`priority-pill ${meta.className}`}>{meta.label}</span></button><button aria-label={`Ver detalhes de ${item.product_name}`} className="chevron" onClick={() => setSelected(item)} type="button"><Icon name="chevron" /></button>
+            </article>
           );
         })}
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
