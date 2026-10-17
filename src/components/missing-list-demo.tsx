@@ -19,8 +19,8 @@ export type MissingListItem = {
   created_at: string;
 };
 
-export function MissingList({ items, page, pageSize, total, queryText, priority, sort = "newest", company = "", companies = [] }: {
-  items: MissingListItem[]; page: number; pageSize: number; total: number; queryText: string; priority: string; sort?: string; company?: string; companies?: string[];
+export function MissingList({ items, total, queryText, priority, sort = "newest", company = "", companies = [] }: {
+  items: MissingListItem[]; total: number; queryText: string; priority: string; sort?: string; company?: string; companies?: string[];
 }) {
   const [selected, setSelected] = useState<MissingListItem | null>(null);
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
@@ -29,14 +29,6 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
   const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const addDialogRef = useRef<HTMLDialogElement>(null);
-  const pageCount = Math.max(1, Math.ceil(total / pageSize));
-  const query = new URLSearchParams();
-  if (queryText) query.set("q", queryText);
-  if (priority) query.set("priority", priority);
-  query.set("sort", sort);
-  if (company) query.set("company", company);
-  const suffix = query.size ? `&${query.toString()}` : "";
-
   useEffect(() => {
     const dialog = dialogRef.current;
     if (selected && dialog && !dialog.open) dialog.showModal();
@@ -67,7 +59,7 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
         {priority && <input name="priority" type="hidden" value={priority} />}
       </form>
       <div className="filter-row" aria-label="Filtrar por prioridade">{["", "normal", "media", "urgente"].map(value => <Link className={priority === value ? "filter-chip active" : "filter-chip"} href={`/faltas?${new URLSearchParams({ ...(queryText ? { q: queryText } : {}), ...(value ? { priority: value } : {}) })}`} key={value}>{value === "" ? "Todas" : priorityMeta[value as Priority].label}</Link>)}</div>
-      <p className="results-count" aria-live="polite">{total} {total === 1 ? "produto encontrado" : "produtos encontrados"} · página {page} de {pageCount}</p>
+      <p className="results-count" aria-live="polite">{total} {total === 1 ? "produto encontrado" : "produtos encontrados"}</p>
       <section className="missing-list-panel" aria-label="Produtos faltantes">
         {items.map((item) => {
           const meta = priorityMeta[item.priority];
@@ -88,10 +80,6 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
           {addState.error && <p className="form-error">{addState.error}</p>}<button className="primary-action" disabled={addingItem} type="submit">{addingItem ? "Adicionando…" : "Adicionar à lista"}</button><p className="helper-text">Salvo na lista de faltas.</p>
         </form>
       </dialog>
-      {pageCount > 1 && <nav className="pagination" aria-label="Paginação">
-        {page > 1 && <Link className="secondary-action" href={`/faltas?page=${page - 1}${suffix}`}>Anterior</Link>}
-        {page < pageCount && <Link className="secondary-action" href={`/faltas?page=${page + 1}${suffix}`}>Próxima</Link>}
-      </nav>}
       <dialog aria-labelledby="detail-title" className="detail-dialog" onClose={() => setSelected(null)} ref={dialogRef}>
         {selected && <ProductDetail item={selected} onClose={closeDialog} />}
       </dialog>

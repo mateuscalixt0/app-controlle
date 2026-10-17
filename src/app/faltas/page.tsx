@@ -3,11 +3,8 @@ import { MissingList, type MissingListItem } from "@/components/missing-list-dem
 import { PageHeading } from "@/components/page-heading";
 import { getCurrentSession } from "@/lib/supabase/session";
 
-const PAGE_SIZE = 4;
-
 export default async function MissingItemsPage({ searchParams }: { searchParams: Promise<{ page?: string; q?: string; priority?: string; sort?: string; company?: string }> }) {
   const params = await searchParams;
-  const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const queryText = (params.q ?? "").trim().slice(0, 100);
   const sort = params.sort === 'oldest' ? 'oldest' : 'newest';
   const company = (params.company ?? '').trim().slice(0, 160);
@@ -20,7 +17,7 @@ export default async function MissingItemsPage({ searchParams }: { searchParams:
   if (queryText) request = request.ilike("product_name", `%${queryText.replace(/[%_]/g, "\\$&")}%`);
   if (company) request = request.eq("reference_company", company);
   if (priority) request = request.eq("priority", priority as "normal" | "media" | "urgente");
-  const { data, count, error } = await request.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+  const { data, count, error } = await request;
   if (error) throw new Error("Não foi possível carregar a lista de faltas.");
   const companies = new Set<string>();
   for (let offset = 0; ; ) {
@@ -35,7 +32,7 @@ export default async function MissingItemsPage({ searchParams }: { searchParams:
   return (
     <>
       <PageHeading eyebrow="COMPRAS" title="Lista de faltas" description="Organize o que está faltando para a próxima compra." />
-      <MissingList items={rows} page={page} pageSize={PAGE_SIZE} total={count ?? 0} queryText={queryText} priority={priority} sort={sort} company={company} companies={[...companies].sort((a, b) => a.localeCompare(b, "pt-BR"))} />
+      <MissingList items={rows} total={count ?? 0} queryText={queryText} priority={priority} sort={sort} company={company} companies={[...companies].sort((a, b) => a.localeCompare(b, "pt-BR"))} />
     </>
   );
 }
