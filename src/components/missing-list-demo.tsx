@@ -60,10 +60,10 @@ export function MissingList({ items, page, pageSize, total, queryText, priority,
   return (
     <>
       <button className="primary-action full-action top-action" onClick={() => setAdding(true)} type="button"><Icon name="list" /> Anotar produto faltante</button>
-      <form className="missing-filters" action="/faltas" id="missing-filters" method="get">
+      <form className="missing-filters" action="/faltas" id="missing-filters" method="get" onChange={(event) => { if (event.target instanceof HTMLSelectElement) event.currentTarget.requestSubmit(); }}>
         <div className="search-field"><Icon name="search" /><label className="sr-only" htmlFor="missing-search">Buscar produto</label><input id="missing-search" defaultValue={queryText} name="q" placeholder="Buscar produto" type="search" /></div>
         <div className="product-filters"><label>Ordenar por<select name="sort" defaultValue={sort}><option value="newest">Mais recentes</option><option value="oldest">Mais antigos</option></select></label><label>Empresa de referência<select name="company" defaultValue={company}><option value="">Todas as empresas</option>{companies.map(name => <option value={name} key={name}>{name}</option>)}</select></label></div>
-        <button className="secondary-action" type="submit">Aplicar filtros</button>{priority && <input name="priority" type="hidden" value={priority} />}
+        {priority && <input name="priority" type="hidden" value={priority} />}
       </form>
       <div className="filter-row" aria-label="Filtrar por prioridade">{["", "normal", "media", "urgente"].map(value => <Link className={priority === value ? "filter-chip active" : "filter-chip"} href={`/faltas?${new URLSearchParams({ ...(queryText ? { q: queryText } : {}), ...(value ? { priority: value } : {}) })}`} key={value}>{value === "" ? "Todas" : priorityMeta[value as Priority].label}</Link>)}</div>
       <p className="results-count" aria-live="polite">{total} {total === 1 ? "produto encontrado" : "produtos encontrados"} · página {page} de {pageCount}</p>
