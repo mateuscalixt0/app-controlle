@@ -158,5 +158,14 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .detail-lines>div,.detail-grid>div{font-size:12px;padding:12px 0}
  .bills-page .filter-row{flex-wrap:nowrap;gap:5px}
  .bills-page .filter-chip{flex:1;min-width:0;padding-left:6px;padding-right:6px;white-space:nowrap}
+ .missing-filters{gap:10px;margin-top:4px}
+ .missing-filters .search-field{min-height:44px;padding:0 13px;border-radius:14px}
+ .missing-filters .search-field input{font-size:13px}
+ .missing-filters .product-filters{grid-template-columns:1fr 1fr;gap:8px}
+ .missing-filters .product-filters label{font-size:11px}
+ .missing-filters .product-filters select{margin-top:5px;min-height:42px;border-radius:12px;font-size:11px}
+ .missing-filters + .filter-row{margin-top:12px}
+ .missing-filters + .filter-row .filter-chip{flex:1;min-width:0;padding:7px 5px;font-size:10px;white-space:nowrap}
+ .missing-bottom-action{margin-top:18px}
 }
 @media(prefers-reduced-motion:no-preference){button,.primary-action,.secondary-action{transition:background-color .15s,transform .15s}}
