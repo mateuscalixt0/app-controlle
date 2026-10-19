@@ -14,7 +14,7 @@
 }
 *{box-sizing:border-box}
 html{background:var(--background)}
-body{margin:0;color:var(--foreground);background:var(--background);font-family:var(--font-ui);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{width:125%;margin:0;color:var(--foreground);background:var(--background);font-family:var(--font-ui);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;zoom:.8}
 button,input,select,textarea{font:inherit}
 button,a,input,select{-webkit-tap-highlight-color:transparent}
 button{cursor:pointer;color:inherit}button:disabled,input:disabled,select:disabled{cursor:not-allowed;opacity:.58}
