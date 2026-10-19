@@ -23,8 +23,7 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
   items: MissingListItem[]; total: number; queryText: string; priority: string; sort?: string; company?: string; companies?: string[];
 }) {
   const [selected, setSelected] = useState<MissingListItem | null>(null);
-  const [uncheckedItems, setUncheckedItems] = useState<Set<string>>(() => new Set());
-  const checkedItems = new Set(items.map((item) => item.id).filter((id) => !uncheckedItems.has(id)));
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(() => new Set());
   const [confirmingBought, setConfirmingBought] = useState(false);
   const [isMarkingBought, startMarkingBought] = useTransition();
   const [adding, setAdding] = useState(false);
@@ -86,14 +85,14 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
           const meta = priorityMeta[item.priority];
           return (
             <article className={`missing-card ${meta.className}${checkedItems.has(item.id) ? " is-selected" : ""}`} key={item.id}>
-              <input aria-label={`Marcar ${item.product_name} como comprado`} checked={checkedItems.has(item.id)} className="missing-checkbox" onChange={() => setUncheckedItems((current) => { const next = new Set(current); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} type="checkbox" />
+              <input aria-label={`Marcar ${item.product_name} como comprado`} checked={checkedItems.has(item.id)} className="missing-checkbox" onChange={() => setCheckedItems((current) => { const next = new Set(current); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} type="checkbox" />
               <button className="missing-card-copy" onClick={() => setSelected(item)} type="button"><h2>{item.product_name}</h2><p>{item.quantity}{item.unit ? ` ${item.unit}` : ""} · {new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(item.created_at))}</p><p>{item.reference_company ? `Empresa: ${item.reference_company}` : "Sem empresa de referência"}</p><span className={`priority-pill ${meta.className}`}>{meta.label}</span></button><button aria-label={`Ver detalhes de ${item.product_name}`} className="chevron" onClick={() => setSelected(item)} type="button"><Icon name="chevron" /></button>
             </article>
           );
         })}
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
       </section>
-      {checkedItems.size > 0 && <form action={markMissingItemsBought} className="missing-cart-form" id="mark-missing-bought"><input name="ids" type="hidden" value={[...checkedItems].join(",")} /><button aria-label={confirmingBought ? "Confirmando itens comprados" : `Marcar ${checkedItems.size} ${checkedItems.size === 1 ? "produto" : "produtos"} como comprados`} className={`missing-cart-action${confirmingBought ? " is-confirming" : ""}`} disabled={confirmingBought || isMarkingBought} onClick={(event) => { event.preventDefault(); markSelectedAsBought(); }} type="submit"><span className="missing-cart-icon" aria-hidden="true">{confirmingBought ? "✓" : <Icon name="cart" />}</span><span className="missing-cart-count">{checkedItems.size}</span></button></form>}
+      {checkedItems.size > 0 && <form action={markMissingItemsBought} className="missing-cart-form" id="mark-missing-bought"><input name="ids" type="hidden" value={[...checkedItems].join(",")} /><button aria-label={confirmingBought ? "Confirmando itens comprados" : `Marcar ${checkedItems.size} ${checkedItems.size === 1 ? "produto" : "produtos"} como comprados`} className={`missing-cart-action${confirmingBought ? " is-confirming" : ""}`} disabled={confirmingBought || isMarkingBought} onClick={(event) => { event.preventDefault(); markSelectedAsBought(); }} type="submit"><span className="missing-cart-icon" aria-hidden="true">{confirmingBought ? <svg aria-hidden="true" className="confirmation-check" viewBox="0 0 28 28"><path d="M4 14.5 10.5 21 24 6.5" /></svg> : <Icon name="cart" />}</span><span className="missing-cart-count">{checkedItems.size}</span></button></form>}
       <button className="primary-action full-action missing-bottom-action" onClick={() => setAdding(true)} type="button"><Icon name="plus" /> Anotar produto</button>
       <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} ref={addDialogRef}>
         <form action={addAction} className="dialog-content add-form">
