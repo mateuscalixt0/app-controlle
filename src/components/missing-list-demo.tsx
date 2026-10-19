@@ -23,7 +23,8 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
   items: MissingListItem[]; total: number; queryText: string; priority: string; sort?: string; company?: string; companies?: string[];
 }) {
   const [selected, setSelected] = useState<MissingListItem | null>(null);
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const [uncheckedItems, setUncheckedItems] = useState<Set<string>>(() => new Set());
+  const checkedItems = new Set(items.map((item) => item.id).filter((id) => !uncheckedItems.has(id)));
   const [confirmingBought, setConfirmingBought] = useState(false);
   const [isMarkingBought, startMarkingBought] = useTransition();
   const [adding, setAdding] = useState(false);
@@ -84,8 +85,8 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
         {items.map((item) => {
           const meta = priorityMeta[item.priority];
           return (
-            <article className={`missing-card ${meta.className}`} key={item.id}>
-              <input aria-label={`Marcar ${item.product_name} como comprado`} checked={checkedItems.has(item.id)} className="missing-checkbox" onChange={() => setCheckedItems((current) => { const next = new Set(current); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} type="checkbox" />
+            <article className={`missing-card ${meta.className}${checkedItems.has(item.id) ? " is-selected" : ""}`} key={item.id}>
+              <input aria-label={`Marcar ${item.product_name} como comprado`} checked={checkedItems.has(item.id)} className="missing-checkbox" onChange={() => setUncheckedItems((current) => { const next = new Set(current); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} type="checkbox" />
               <button className="missing-card-copy" onClick={() => setSelected(item)} type="button"><h2>{item.product_name}</h2><p>{item.quantity}{item.unit ? ` ${item.unit}` : ""} · {new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(item.created_at))}</p><p>{item.reference_company ? `Empresa: ${item.reference_company}` : "Sem empresa de referência"}</p><span className={`priority-pill ${meta.className}`}>{meta.label}</span></button><button aria-label={`Ver detalhes de ${item.product_name}`} className="chevron" onClick={() => setSelected(item)} type="button"><Icon name="chevron" /></button>
             </article>
           );
