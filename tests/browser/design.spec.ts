@@ -31,9 +31,16 @@ for (const width of [375, 1280]) {
         await expect(page.getByRole('dialog')).toContainText('15/10/2026');
         await expect(page.getByRole('dialog')).toContainText('Nenhum preço é estimado');
         await page.keyboard.press('Escape');
-        await page.getByLabel('Ordenar por').selectOption('oldest');
-        await page.getByLabel('Empresa de referência').selectOption('Empresa de teste');
-        await expect(page.getByLabel('Ordenar por')).toHaveValue('oldest');
+        await page.getByLabel('Ordenação').selectOption('oldest');
+        await expect(page).toHaveURL(/sort=oldest/);
+        await page.getByLabel('Empresa').selectOption('Empresa de teste');
+        await expect(page).toHaveURL(/company=Empresa\+de\+teste|company=Empresa%20de%20teste/);
+        await page.getByLabel('Marcar Cimento de teste como comprado').check();
+        await expect(page.getByRole('button', { name: 'Marcar 1 produto como comprado' })).toBeVisible();
+        await page.getByRole('button', { name: 'Marcar 1 produto como comprado' }).click();
+        await expect(page.getByRole('button', { name: 'Confirmando itens comprados' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Confirmando itens comprados' })).toContainText('✓');
+        await expect(page.getByRole('button', { name: 'Confirmando itens comprados' })).toHaveCount(0, { timeout: 5000 });
       }
       if (path === '/login') await expect(page.getByRole('alert')).toContainText('E-mail ou senha inválidos');
       await page.screenshot({path:`/tmp/controle-${width}-${path.replaceAll('/','') || 'inicio'}.png`,fullPage:true});

@@ -11,7 +11,7 @@ const params = new URLSearchParams(location.search);
 if (params.has('absent')) Object.assign(bill, {code:null,hasDocument:false});
 const path = params.get('path');
 async function mount() {
-  const view = path === '/login' ? <LoginView erro="1" action={() => {}}/> : <AppShell>{path === '/boletos' ? <><h1>Seus boletos</h1><BillCard bill={bill}/></> : path === '/faltas' ? <><h1>Lista de faltas</h1><MissingList items={[{id:'test',product_name:'Cimento de teste',quantity:10,unit:'sacos',category:null,reference_company:'Empresa de teste',priority:'urgente',created_at:'2026-10-15T12:00:00Z'}]} page={1} pageSize={20} total={1} queryText="" priority="" companies={['Empresa de teste']}/></> : <HomeDashboard summary={{amount:123456,count:1,missing:8,urgent:3,upcoming:[bill]}}/>}</AppShell>;
+  const view = path === '/login' ? <LoginView erro="1" action={() => {}}/> : <AppShell>{path === '/boletos' ? <><h1>Seus boletos</h1><BillCard bill={bill}/></> : path === '/faltas' ? <><h1>Lista de faltas</h1><MissingList items={[{id:'test',product_name:'Cimento de teste',quantity:10,unit:'sacos',category:null,reference_company:'Empresa de teste',priority:'urgente',created_at:'2026-10-15T12:00:00Z'},{id:'second',product_name:'Areia de teste',quantity:5,unit:'sacos',category:null,reference_company:null,priority:'normal',created_at:'2026-10-14T12:00:00Z'}]} total={2} queryText="" priority="" companies={['Empresa de teste']}/></> : <HomeDashboard summary={{amount:123456,count:1,missing:8,urgent:3,upcoming:[bill]}}/>}</AppShell>;
   createRoot(document.getElementById('root')!).render(view);
 }
 void mount();

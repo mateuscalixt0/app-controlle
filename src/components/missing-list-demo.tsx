@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { addMissingItemInline, markMissingItemsBought } from "@/app/faltas/novo/actions";
@@ -24,6 +24,8 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
 }) {
   const [selected, setSelected] = useState<MissingListItem | null>(null);
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const [confirmingBought, setConfirmingBought] = useState(false);
+  const [isMarkingBought, startMarkingBought] = useTransition();
   const [adding, setAdding] = useState(false);
   const [addState, addAction, addingItem] = useActionState(addMissingItemInline, { error: "", success: false });
   const router = useRouter();
@@ -40,7 +42,7 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
   }, [adding]);
   useEffect(() => {
     if (addState.success) {
-      setAdding(false);
+      addDialogRef.current?.close();
       router.refresh();
     }
   }, [addState, router]);
@@ -48,6 +50,19 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
   function closeDialog() {
     dialogRef.current?.close();
     setSelected(null);
+  }
+
+  function markSelectedAsBought() {
+    if (!checkedItems.size || confirmingBought || isMarkingBought) return;
+    setConfirmingBought(true);
+    window.setTimeout(() => {
+      const form = document.getElementById("mark-missing-bought") as HTMLFormElement | null;
+      if (!form) {
+        setConfirmingBought(false);
+        return;
+      }
+      startMarkingBought(() => form.requestSubmit());
+    }, 450);
   }
 
   return (
@@ -60,7 +75,7 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
       </section>
       <form className="missing-filters" action="/faltas" id="missing-filters" method="get" onChange={(event) => { if (event.target instanceof HTMLSelectElement) event.currentTarget.requestSubmit(); }}>
         <div className="search-field"><Icon name="search" /><label className="sr-only" htmlFor="missing-search">Buscar produto</label><input id="missing-search" defaultValue={queryText} name="q" placeholder="Buscar produto" type="search" /></div>
-        <div className="product-filters"><label><span className="sr-only">Ordenar por</span><select aria-label="Ordenar por" name="sort" defaultValue={sort}><option value="newest">Mais recentes</option><option value="oldest">Mais antigos</option></select></label><label><span className="sr-only">Empresa de referência</span><select aria-label="Empresa de referência" name="company" defaultValue={company}><option value="">Todas as empresas</option>{companies.map(name => <option value={name} key={name}>{name}</option>)}</select></label></div>
+        <div className="product-filters"><select aria-label="Ordenação" name="sort" defaultValue={sort}><option value="newest">Mais recentes</option><option value="oldest">Mais antigos</option></select><select aria-label="Empresa" name="company" defaultValue={company}><option value="">Todas as empresas</option>{companies.map(name => <option value={name} key={name}>{name}</option>)}</select></div>
         {priority && <input name="priority" type="hidden" value={priority} />}
       </form>
       <div className="filter-row" aria-label="Filtrar por prioridade">{["", "normal", "media", "urgente"].map(value => <Link className={priority === value ? "filter-chip active" : "filter-chip"} href={`/faltas?${new URLSearchParams({ ...(queryText ? { q: queryText } : {}), ...(value ? { priority: value } : {}) })}`} key={value}>{value === "" ? "Todas" : priorityMeta[value as Priority].label}</Link>)}</div>
@@ -77,7 +92,7 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
         })}
         {items.length === 0 && <div className="empty-state"><strong>{total || queryText || priority || company ? "Nenhum produto encontrado" : "Sua lista está vazia"}</strong><p>{total || queryText || priority || company ? "Volte para uma página anterior ou ajuste os filtros." : "Anote um produto para começar sua lista."}</p></div>}
       </section>
-      {checkedItems.size > 0 && <form action={markMissingItemsBought} className="missing-cart-form"><input name="ids" type="hidden" value={[...checkedItems].join(",")} /><button aria-label={`Marcar ${checkedItems.size} ${checkedItems.size === 1 ? "produto" : "produtos"} como comprados`} className="missing-cart-action" type="submit"><Icon name="cart" /><span>{checkedItems.size}</span></button></form>}
+      {checkedItems.size > 0 && <form action={markMissingItemsBought} className="missing-cart-form" id="mark-missing-bought"><input name="ids" type="hidden" value={[...checkedItems].join(",")} /><button aria-label={confirmingBought ? "Confirmando itens comprados" : `Marcar ${checkedItems.size} ${checkedItems.size === 1 ? "produto" : "produtos"} como comprados`} className={`missing-cart-action${confirmingBought ? " is-confirming" : ""}`} disabled={confirmingBought || isMarkingBought} onClick={(event) => { event.preventDefault(); markSelectedAsBought(); }} type="submit"><span className="missing-cart-icon" aria-hidden="true">{confirmingBought ? "✓" : <Icon name="cart" />}</span><span className="missing-cart-count">{checkedItems.size}</span></button></form>}
       <button className="primary-action full-action missing-bottom-action" onClick={() => setAdding(true)} type="button"><Icon name="plus" /> Anotar produto</button>
       <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} ref={addDialogRef}>
         <form action={addAction} className="dialog-content add-form">
