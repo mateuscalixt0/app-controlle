@@ -21,8 +21,8 @@ export async function getHomeSummary(supabase: SupabaseClient, storeId: string) 
     offset += data.length;
   }
   const [missing, urgent] = await Promise.all([
-    supabase.from('missing_items').select('id', { count: 'exact', head: true }).eq('store_id', storeId),
-    supabase.from('missing_items').select('id', { count: 'exact', head: true }).eq('store_id', storeId).eq('priority', 'urgente'),
+    supabase.from('missing_items').select('id', { count: 'exact', head: true }).eq('store_id', storeId).eq('is_missing', true),
+    supabase.from('missing_items').select('id', { count: 'exact', head: true }).eq('store_id', storeId).eq('is_missing', true).eq('priority', 'urgente'),
   ]);
   if (missing.error || urgent.error || missing.count === null || urgent.count === null) throw new Error('Não foi possível carregar o resumo de faltas.');
   return { amount, count, upcoming, missing: missing.count, urgent: urgent.count };
