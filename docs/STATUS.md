@@ -7,7 +7,8 @@
 - A validação de GTIN rejeitou os códigos sintéticos com dígito verificador incorreto; apenas os GTINs dos itens 7 e 14 são válidos nos três arquivos. Isso segue a regra de não usar código de barras inválido como evidência de equivalência.
 - **PASSOU:** lint, typecheck, build, 39 testes Vitest e 15 cenários Playwright/Chromium. A revisão NF-e foi conferida em 375 e 1280 px sem overflow; a suíte também preservou os fluxos existentes de boletos.
 - **PASSOU:** migração completa em transação revertida no Supabase conectado e cenário transacional com importação sem chave, bloqueio de duplicidade, preço retido até confirmação, confirmação idempotente, reutilização do vínculo e isolamento entre duas lojas.
-- **PENDENTE:** aplicação definitiva da migração, integração na `main`, deploy Vercel e reteste autenticado pelo gestor no endereço publicado.
+- **PASSOU:** migração aplicada ao projeto Supabase conectado em 27/10/2026 e estrutura conferida após a aplicação: três tabelas, cinco RPCs e políticas de leitura/proteção de preços presentes.
+- Código integrado à `main`. O primeiro acionamento da Vercel falhou antes do build com `Resource provisioning failed`; uma nova publicação foi solicitada pelo commit deste registro. O reteste autenticado pelo gestor no endereço publicado continua pendente.
 
 ## Importação segura e vínculo manual de produtos NF-e — 26/10/2026
 
@@ -18,7 +19,7 @@
 - Rejeições são registradas por par de origem e candidato. GTIN ambíguo deixa de gerar sugestão e o banco bloqueia a confirmação do mesmo GTIN para produtos diferentes. O vínculo confirmado pode ser desfeito pela tela, removendo somente os preços gerados pelos itens NF-e vinculados.
 - **LIMITES DESTA ENTREGA:** histórico ainda não tem tela de comparação; faltas ainda não exibem os preços associados. O navegador usa serviços simulados e não comprova sessão real, embora as RPCs tenham sido exercitadas em transação no banco conectado.
 - Importações feitas antes desta migração não são reclassificadas automaticamente: o esquema anterior não permite distinguir com segurança quais preços foram associados por nome. Esses registros históricos exigem revisão separada antes de serem usados como equivalências confirmadas.
-- Próximo passo: aplicar a migração, integrar e publicar a `main`, então repetir a importação autenticada com os três XMLs enviados.
+- Próximo passo: confirmar a nova execução do deploy e repetir a importação autenticada com os três XMLs enviados.
 
 Atualizado em 27/10/2026.
 
