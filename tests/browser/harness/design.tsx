@@ -8,6 +8,13 @@ import '../../../src/app/login/login.css';
 import '../../../src/app/globals.css';
 const bill = { id: 'fixture', supplier: 'Fornecedor de teste com nome extenso', description: 'Material de construção — exemplo para teste', amount: 123456, dueDate: '2026-10-20', code: '12345.67890 12345.678901 12345.678901 1 12345678901234', hasDocument: true, status: 'pending' as const };
 const params = new URLSearchParams(location.search);
+document.addEventListener('submit', (event) => {
+  const form = event.target;
+  if (!(form instanceof HTMLFormElement) || form.id !== 'missing-filters') return;
+  event.preventDefault();
+  const query = new URLSearchParams([...new FormData(form)].map(([key, value]) => [key, String(value)]));
+  history.pushState(null, '', `/tests/browser/harness/design.html?path=/faltas&${query}`);
+});
 if (params.has('absent')) Object.assign(bill, {code:null,hasDocument:false});
 const path = params.get('path');
 async function mount() {

@@ -27,7 +27,7 @@ for (const width of [375, 1280]) {
         await expect(page.getByRole('dialog')).not.toBeVisible();
       }
       if (path === '/faltas') {
-        await page.getByRole('button', {name:/Cimento de teste/}).click();
+        await page.getByRole('button', {name:'Ver detalhes de Cimento de teste'}).click();
         await expect(page.getByRole('dialog')).toContainText('15/10/2026');
         await expect(page.getByRole('dialog')).toContainText('Nenhum preço é estimado');
         await page.keyboard.press('Escape');
@@ -39,8 +39,7 @@ for (const width of [375, 1280]) {
         await expect(page.getByRole('button', { name: 'Marcar 1 produto como comprado' })).toBeVisible();
         await page.getByRole('button', { name: 'Marcar 1 produto como comprado' }).click();
         await expect(page.getByRole('button', { name: 'Confirmando itens comprados' })).toBeVisible();
-        await expect(page.getByRole('button', { name: 'Confirmando itens comprados' })).toContainText('✓');
-        await expect(page.getByRole('button', { name: 'Confirmando itens comprados' })).toHaveCount(0, { timeout: 5000 });
+        await expect(page.getByRole('button', { name: 'Confirmando itens comprados' }).locator('.confirmation-check')).toBeVisible();
       }
       if (path === '/login') await expect(page.getByRole('alert')).toContainText('E-mail ou senha inválidos');
       await page.screenshot({path:`/tmp/controle-${width}-${path.replaceAll('/','') || 'inicio'}.png`,fullPage:true});

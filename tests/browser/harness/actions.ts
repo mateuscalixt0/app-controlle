@@ -3,6 +3,15 @@ const state = globalThis as typeof globalThis & { saves?: string[]; uploadAttemp
 export async function createBill(input: { id: string }) { state.saves ??= []; state.saves.push(input.id); return { billId: input.id, storeId: '00000000-0000-0000-0000-000000000001' }; }
 export async function attachBillDocument() { return; }
 export function useRouter() { return { push: () => {}, refresh: () => {} }; }
+export function redirect() { return; }
+export function revalidatePath() { return; }
+export async function importNfeXml() { return { importId: 'fixture' }; }
+export async function confirmNfeProductAssociation() { return; }
+export async function createProductFromNfeSource() { return; }
+export async function rejectNfeProductAssociation() { return; }
+export async function resetNfeProductAssociation() { return; }
+export async function addMissingItemInline() { return; }
+export async function markMissingItemsBought() { return; }
 export function createClient() { return { storage: { from: () => ({ upload: async () => { state.uploadAttempts = (state.uploadAttempts ?? 0) + 1; return { error: state.uploadAttempts === 1 ? { statusCode: '503' } : null }; } }) } }; }
 
 export function usePathname() { return new URLSearchParams(location.search).get('path') || '/'; }

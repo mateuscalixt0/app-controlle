@@ -1,6 +1,26 @@
 # Andamento
 
-Atualizado em 16/10/2026.
+## Reteste da leitura XML e revisão de produtos — 27/10/2026
+
+- Corrigida a expressão de abertura do XML, que rejeitava `<NFe>` sem prefixo de namespace.
+- Os três arquivos fictícios enviados pelo gestor (`nota_teste_1_alfa.xml`, `nota_teste_2_beta.xml` e `nota_teste_3_gama.xml`) foram lidos com 20 itens em cada nota, chaves ausentes aceitas e cabeçalhos/totais preservados. A migração amplia `unit_price` para `numeric(20,10)` para conservar as dez casas decimais permitidas em `vUnCom`.
+- A validação de GTIN rejeitou os códigos sintéticos com dígito verificador incorreto; apenas os GTINs dos itens 7 e 14 são válidos nos três arquivos. Isso segue a regra de não usar código de barras inválido como evidência de equivalência.
+- **PASSOU:** lint, typecheck, build, 39 testes Vitest e 15 cenários Playwright/Chromium. A revisão NF-e foi conferida em 375 e 1280 px sem overflow; a suíte também preservou os fluxos existentes de boletos.
+- **PASSOU:** migração completa em transação revertida no Supabase conectado e cenário transacional com importação sem chave, bloqueio de duplicidade, preço retido até confirmação, confirmação idempotente, reutilização do vínculo e isolamento entre duas lojas.
+- **PENDENTE:** aplicação definitiva da migração, integração na `main`, deploy Vercel e reteste autenticado pelo gestor no endereço publicado.
+
+## Importação segura e vínculo manual de produtos NF-e — 26/10/2026
+
+- Parser passou a aceitar NF-e com ou sem declaração XML e tags com namespace; preserva número do item, código do fornecedor, descrição original, GTIN válido, NCM, unidade e valores decimais. Normalização textual é determinística e serve apenas para sugerir candidatos; unidades e medidas incompatíveis não entram nas sugestões.
+- Chave de acesso deixou de ser obrigatória: o parser lê a chave do atributo `Id` ou do protocolo quando presente. Se estiver ausente, a importação usa CNPJ do fornecedor, modelo, série, número e data como impressão digital de duplicidade.
+- A migração `20261026120000_associacao_manual_produtos_nfe.sql` cria a identidade do item por loja/fornecedor, guarda itens importados sem produto principal e libera preços no catálogo somente após confirmação. Código do fornecedor não é global. Vínculos confirmados são reutilizados nas próximas importações; mudanças incompatíveis criam uma nova origem pendente e preservam o histórico anterior.
+- `/compras` apresenta itens pendentes, sugestões textuais sem seleção automática, associação a produto existente, cadastro como produto separado ou rejeição. A RPC deriva a loja da sessão, checa os vínculos no banco e preserva a importação transacional e a unicidade por chave de acesso.
+- Rejeições são registradas por par de origem e candidato. GTIN ambíguo deixa de gerar sugestão e o banco bloqueia a confirmação do mesmo GTIN para produtos diferentes. O vínculo confirmado pode ser desfeito pela tela, removendo somente os preços gerados pelos itens NF-e vinculados.
+- **LIMITES DESTA ENTREGA:** histórico ainda não tem tela de comparação; faltas ainda não exibem os preços associados. O navegador usa serviços simulados e não comprova sessão real, embora as RPCs tenham sido exercitadas em transação no banco conectado.
+- Importações feitas antes desta migração não são reclassificadas automaticamente: o esquema anterior não permite distinguir com segurança quais preços foram associados por nome. Esses registros históricos exigem revisão separada antes de serem usados como equivalências confirmadas.
+- Próximo passo: aplicar a migração, integrar e publicar a `main`, então repetir a importação autenticada com os três XMLs enviados.
+
+Atualizado em 27/10/2026.
 
 ## Lista local de fornecedores no cadastro de boleto — 16/10/2026
 
