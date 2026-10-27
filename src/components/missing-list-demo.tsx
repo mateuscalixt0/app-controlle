@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductPicker } from "./product-picker";
+import { ProductPriceReport } from "./product-price-report";
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useActionState } from "react";
@@ -11,6 +13,7 @@ import { Icon } from "./icons";
 export type MissingListItem = {
   id: string;
   product_name: string;
+  product_id?: string | null;
   quantity: number;
   unit: string | null;
   category: string | null;
@@ -97,7 +100,7 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
       <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} ref={addDialogRef}>
         <form action={addAction} className="dialog-content add-form">
           <div className="dialog-header"><h2 id="add-missing-title">Anotar uma falta</h2><button aria-label="Fechar" className="icon-button" onClick={() => setAdding(false)} type="button"><Icon name="close" /></button></div>
-          <label>Produto<input name="product" required placeholder="Ex.: Areia fina" /></label><label>Quantidade e unidade<input name="quantity" required inputMode="decimal" type="number" min="0.001" step="0.001" placeholder="Ex.: 5 sacos" /></label><label>Prioridade<select defaultValue="normal" name="priority"><option value="normal">Normal</option><option value="media">Média</option><option value="urgente">Precisa comprar</option></select></label>
+          <ProductPicker /><label>Quantidade e unidade<input name="quantity" required inputMode="decimal" type="number" min="0.001" step="0.001" placeholder="Ex.: 5 sacos" /></label><label>Prioridade<select defaultValue="normal" name="priority"><option value="normal">Normal</option><option value="media">Média</option><option value="urgente">Precisa comprar</option></select></label>
           {addState.error && <p className="form-error">{addState.error}</p>}<button className="primary-action" disabled={addingItem} type="submit">{addingItem ? "Adicionando…" : "Adicionar à lista"}</button><p className="helper-text">Salvo na lista de faltas.</p>
         </form>
       </dialog>
@@ -113,7 +116,7 @@ function ProductDetail({ item, onClose }: { item: MissingListItem; onClose: () =
     <div className="dialog-content">
       <div className="dialog-header"><div><p className="eyebrow">DETALHES DO ITEM</p><h2 id="detail-title">{item.product_name}</h2></div><button autoFocus aria-label="Fechar detalhes" className="icon-button" onClick={onClose} type="button"><Icon name="close" /></button></div>
       <dl className="detail-grid"><div><dt>Quantidade</dt><dd>{item.quantity}{item.unit ? ` ${item.unit}` : ""}</dd></div><div><dt>Anotado em</dt><dd>{new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }).format(new Date(item.created_at))}</dd></div><div><dt>Categoria</dt><dd>{item.category ?? "Sem classificação"}</dd></div><div><dt>Empresa de referência</dt><dd>{item.reference_company ?? "Não informada"}</dd></div></dl>
-      <section className="empty-state comparison-empty"><h3>Comparação de preços</h3><p>As lojas e o menor preço aparecerão após vincular este item a produtos equivalentes do histórico. Nenhum preço é estimado.</p></section><p className="helper-text">Empresa de referência é uma anotação, não uma confirmação de venda ou disponibilidade. Preço histórico não garante uma oferta atual.</p>
+      <ProductPriceReport key={item.id} productId={item.product_id} />
     </div>
   );
 }

@@ -1,5 +1,11 @@
 # Andamento
 
+## Seleção de produto nas faltas e relatório de preços — 27/10/2026
+
+- Implementada a busca no catálogo tanto em `/faltas/novo` quanto na janela de anotar falta. A gravação valida o produto na loja da sessão e salva `product_id`, nome e unidade do catálogo. Nome livre continua disponível para itens sem cadastro.
+- Detalhes da falta consultam preços reais do produto, na mesma unidade, nos últimos 90 dias, ordenados por preço unitário (até 100 registros), com fornecedor, data e menor preço histórico. A API exige sessão, filtra por loja e não permite cache público.
+- PASSOU: lint, tipos, build, 39 testes unitários e 17 cenários Playwright. Cenários de catálogo e relatório no navegador em 375/1280 px usam respostas simuladas; validação de persistência com conta real e publicação continuam pendentes. Nenhuma migração necessária.
+
 ## Revisão somente para produtos realmente parecidos — 27/10/2026
 
 - Implementada a regra de três resultados para itens de NF-e: GTIN/descrição exata/erro de uma letra reaproveitam o produto; variações próximas de qualificador pedem decisão; medida, unidade ou modelo diferentes criam outro produto automaticamente.

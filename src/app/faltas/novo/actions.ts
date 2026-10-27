@@ -17,9 +17,13 @@ export async function addMissingItem(formData: FormData) {
   if (!session) redirect("/login");
   if (!session.storeId) redirect("/configurar-loja");
 
+  const product = await resolveProduct(session, formData);
+  if (product.error) redirect("/faltas/novo?erro=produto");
   const { error } = await session.supabase.from("missing_items").insert({
+    product_id: product.id,
+    unit: product.unit,
     store_id: session.storeId,
-    product_name: productName,
+    product_name: product.name ?? productName,
     quantity,
     priority,
   });
@@ -37,7 +41,9 @@ export async function addMissingItemInline(_previousState: InlineMissingItemStat
   if (!productName || productName.length > 200 || !Number.isFinite(quantity) || quantity <= 0 || !["normal", "media", "urgente"].includes(priority)) return { error: "Confira os dados informados.", success: false };
   const session = await getCurrentSession();
   if (!session?.storeId) return { error: "Sua sessão não está pronta para salvar o item.", success: false };
-  const { error } = await session.supabase.from("missing_items").insert({ store_id: session.storeId, product_name: productName, quantity, priority });
+  const product = await resolveProduct(session, formData);
+  if (product.error) return { error: product.error, success: false };
+  const { error } = await session.supabase.from("missing_items").insert({ store_id: session.storeId, product_id: product.id, unit: product.unit, product_name: product.name ?? productName, quantity, priority });
   if (error) return { error: "Não foi possível salvar o item.", success: false };
   revalidatePath("/faltas");
   return { error: "", success: true };
@@ -52,4 +58,13 @@ export async function markMissingItemsBought(formData: FormData) {
   if (error) throw new Error("Não foi possível atualizar os produtos.");
   revalidatePath("/faltas");
   redirect("/faltas");
+}
+
+async function resolveProduct(session: NonNullable<Awaited<ReturnType<typeof getCurrentSession>>>, formData: FormData): Promise<{ id: string | null; name: string | null; unit: string | null; error: string }> {
+  const id = String(formData.get("product_id") ?? "").trim();
+  if (!id) return { id: null, name: null, unit: null, error: "" };
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return { id: null, name: null, unit: null, error: "Selecione um produto válido." };
+  const { data, error } = await session.supabase.from("products").select("id,name,unit").eq("store_id", session.storeId!).eq("id", id).maybeSingle();
+  if (error || !data) return { id: null, name: null, unit: null, error: "Não foi possível confirmar o produto selecionado. Busque novamente." };
+  return { ...data, error: "" };
 }

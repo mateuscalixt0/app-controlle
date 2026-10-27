@@ -29,7 +29,7 @@ for (const width of [375, 1280]) {
       if (path === '/faltas') {
         await page.getByRole('button', {name:'Ver detalhes de Cimento de teste'}).click();
         await expect(page.getByRole('dialog')).toContainText('15/10/2026');
-        await expect(page.getByRole('dialog')).toContainText('Nenhum preço é estimado');
+        await expect(page.getByRole('dialog')).toContainText('sem selecionar um produto do catálogo');
         await page.keyboard.press('Escape');
         await page.getByLabel('Ordenação').selectOption('oldest');
         await expect(page).toHaveURL(/sort=oldest/);
@@ -79,4 +79,24 @@ test('download do original, código ausente e cancelamento', async ({page}) => {
   await page.getByRole('button',{name:/Ver detalhes de/}).click();
   await expect(page.getByRole('button',{name:'Baixar boleto'})).toBeDisabled();
   await expect(page.getByRole('dialog')).toContainText('Nenhum documento anexado');
+});
+
+for (const width of [375,1280]) test(`selecionar produto do catálogo e consultar preços em ${width}px`, async ({ page }) => {
+  await page.setViewportSize({ width,height:900 });
+  await page.route('**/api/produtos?*', route => {
+    const id = new URL(route.request().url()).searchParams.get('id');
+    return route.fulfill({ json: id ? { prices: [{ id:'price-1',unit_price:'12.3456',unit:'UN',recorded_on:'2026-10-27',supplier_name:'Fornecedor de teste' }] } : { products:[{id:'catalog-1',name:'Serrote de teste',unit:'UN'}] } });
+  });
+  await page.goto(`${url}?path=/faltas`);
+  await page.getByRole('button',{name:'Anotar produto faltante'}).click();
+  await page.getByLabel('Produto cadastrado').fill('Serrote');
+  await page.getByRole('button',{name:'Serrote de teste · UN'}).click();
+  await expect(page.locator('input[name="product_id"]')).toHaveValue('catalog-1');
+  await expect(page.getByRole('status')).toContainText('Selecionado: Serrote de teste');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button',{name:'Ver detalhes de Areia de teste'}).click();
+  await expect(page.getByRole('dialog')).toContainText('Fornecedor de teste');
+  await expect(page.getByRole('dialog')).toContainText('Menor preço registrado');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
