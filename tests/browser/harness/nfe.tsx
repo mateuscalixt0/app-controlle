@@ -15,5 +15,5 @@ const confirmedSources = [{ id: 'source-2', description_original: 'TORNEIRA PIA 
 
 createRoot(document.getElementById('root')!).render(<main style={{ maxWidth: 760, padding: 16, margin: 'auto' }}>
   <NfeImport />
-  <NfeAssociationReview pendingSources={pendingSources} confirmedSources={confirmedSources} confirmedGtins={{ '7894900011517': 'product-1' }} conflictingGtins={[]} rejectedPairs={[]} suppliers={{ 'supplier-1': 'Fornecedor Beta' }} products={products} />
+  <NfeAssociationReview pendingSources={pendingSources} confirmedSources={confirmedSources} candidatesBySource={{ 'source-1': [{ product: products[0], score: 100, reason: 'gtin' }] }} suppliers={{ 'supplier-1': 'Fornecedor Beta' }} />
 </main>);

@@ -9,9 +9,10 @@ for (const width of [375, 1280]) test(`revisão NF-e sem overflow em ${width}px`
   await expect(page.getByText('A chave de acesso não veio no arquivo')).toBeVisible();
   await expect(page.getByRole('listitem').getByText('TORN P/PIA PRETO 1/2', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /TORNEIRA PRETA PIA 1\/2 · 100%/ })).toBeVisible();
-  await page.getByRole('button', { name: /TORNEIRA PRETA PIA 1\/2 · 100%/ }).click();
+  await expect(page.getByText(/Encontrei o produto.*TORNEIRA PRETA PIA 1\/2.*É o mesmo produto/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'É o mesmo produto' })).toBeEnabled();
-  await page.getByRole('button', { name: 'Não é o mesmo' }).click();
-  await expect(page.getByRole('button', { name: 'É o mesmo produto' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Não é o mesmo — cadastrar separado' })).toBeVisible();
+  await page.getByRole('button', { name: 'Analisar depois' }).click();
+  await expect(page.getByRole('status')).toHaveText('Item mantido para analisar depois.');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

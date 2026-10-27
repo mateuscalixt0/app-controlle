@@ -1,5 +1,15 @@
 # Andamento
 
+## Revisão somente para produtos realmente parecidos — 27/10/2026
+
+- Implementada a regra de três resultados para itens de NF-e: GTIN/descrição exata/erro de uma letra reaproveitam o produto; variações próximas de qualificador pedem decisão; medida, unidade ou modelo diferentes criam outro produto automaticamente.
+- A tela consulta e exibe somente até três candidatos persistidos para cada origem. Com um candidato, pergunta diretamente se o produto recebido é o mesmo produto encontrado. Itens sem candidato não aparecem na revisão.
+- A primeira nota de uma loja sem catálogo forma a base inicial automaticamente. Pendências posteriores passam pela mesma classificação; desfazer um vínculo recalcula os candidatos e uma associação automática por erro de digitação continua disponível para correção.
+- **PASSOU:** matriz transacional no PostgreSQL com os 12 exemplos definidos pelo gestor, incluindo `arco/aro`, `profissional`, `costa`, medidas, unidades, `sold/soldável`, `bisnaga` e GTIN. A migração completa passou em transação revertida; teste com registros sintéticos confirmou persistência de candidatos, reaproveitamento de erro de digitação e separação por medida.
+- **PASSOU:** lint, typecheck, build Next.js, 39 testes Vitest, 15 cenários Playwright/Chromium em 375/1280 px e revisão NF-e sem overflow.
+- **PASSOU:** migração aplicada ao Supabase atual. Conferência posterior: 23 produtos preservados, nenhuma origem pendente e nenhum candidato pendente.
+- **PENDENTE:** confirmar o deploy Git e testar a importação autenticada no site publicado.
+
 ## Preparação e correção do deploy Netlify — 27/10/2026
 
 - Projeto Netlify criado pelo gestor em `controle-app.netlify.app`, conectado ao GitHub sem alterar o domínio de produção da Vercel nem o banco Supabase atual.
