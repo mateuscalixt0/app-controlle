@@ -4,6 +4,7 @@ out/
 dist/
 coverage/
 .vercel/
+.netlify/
 .env
 .env.*
 !.env.example

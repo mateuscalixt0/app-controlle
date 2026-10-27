@@ -1,5 +1,14 @@
 # Andamento
 
+## Preparação e correção do deploy Netlify — 27/10/2026
+
+- Projeto Netlify criado pelo gestor em `controle-app.netlify.app`, conectado ao GitHub sem alterar o domínio de produção da Vercel nem o banco Supabase atual.
+- Corrigido o conflito do adaptador OpenNext entre as rotas `/api/boletos/[billId]/documentos/[documentId]` e `/api/boletos/[id]/download`: ambas agora usam o mesmo slug dinâmico `[billId]`.
+- Adicionado `netlify.toml` com `npm run build`, saída `.next` e Node 22.13.0. O diretório local `.netlify/` foi incluído no `.gitignore`.
+- O código precisa somente de `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Credenciais Postgres e chaves administrativas da integração Vercel não devem ser copiadas para a Netlify.
+- **PASSOU:** lint, typecheck, build Next.js, 39 testes Vitest, 15 cenários Playwright/Chromium em 375/1280 px e `git diff --check`.
+- **PENDENTE:** confirmar o novo deploy Git da Netlify como `Ready`, configurar as duas variáveis públicas nos escopos Builds e Functions se a rota continuar em `/configurar-supabase`, entrar novamente no domínio Netlify e testar `/compras` com um XML sintético enviado anteriormente.
+
 ## Reteste da leitura XML e revisão de produtos — 27/10/2026
 
 - Corrigida a expressão de abertura do XML, que rejeitava `<NFe>` sem prefixo de namespace.
