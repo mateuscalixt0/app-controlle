@@ -1,5 +1,10 @@
 # Andamento
 
+## Espaçamento do catálogo nas faltas — 29/10/2026
+
+- Lista de produtos com 12px entre opções, preenchimento interno e texto que quebra em linhas. Duas colunas no desktop e uma até 600px; rolagem interna limitada a 320/260px para preservar os demais campos do formulário.
+- PASSOU: lint, typecheck, 39 testes unitários e dois cenários de seleção/relatório em 375/1280px. Publicação Netlify ainda depende de confirmação do deploy Git.
+
 ## Seleção de produto nas faltas e relatório de preços — 27/10/2026
 
 - Implementada a busca no catálogo tanto em `/faltas/novo` quanto na janela de anotar falta. A gravação valida o produto na loja da sessão e salva `product_id`, nome e unidade do catálogo. Nome livre continua disponível para itens sem cadastro.

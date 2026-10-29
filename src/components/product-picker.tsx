@@ -22,14 +22,14 @@ export function ProductPicker() {
     },250);
     return () => { clearTimeout(timer); controller.abort(); };
   },[query]);
-  return <div>
+  return <div className="product-picker">
     <input type="hidden" name="product_id" value={selected?.id ?? ''} />
     <label htmlFor={id}>Produto cadastrado</label>
     <input id={id} name="product" required maxLength={200} value={query} onChange={e => { setQuery(e.target.value); setSelected(null); setProducts([]); setLoading(true); }} placeholder="Digite para buscar no catálogo" autoComplete="off" />
     {selected ? <p className="helper-text" role="status">Selecionado: {selected.name}{selected.unit ? ` · ${selected.unit}` : ''}. O histórico de preços ficará disponível nos detalhes da falta.</p> : <>
       {loading && <p role="status">Buscando produtos…</p>}
       {error && <p className="form-error" role="alert">{error}</p>}
-      {!loading && !error && <div aria-label="Produtos encontrados">{products.map(p => <button type="button" className="secondary-action" key={p.id} onClick={() => { setSelected(p); setQuery(p.name); }}>{p.name}{p.unit ? ` · ${p.unit}` : ''}</button>)}<p className="helper-text">{products.length ? 'Selecione um produto para consultar seus preços. Refine a busca se ele não aparecer.' : 'Nenhum produto encontrado. Você pode anotar esse nome como uma nova falta, sem histórico de preços.'}</p></div>}
+      {!loading && !error && <><div className="product-picker-results" aria-label="Produtos encontrados">{products.map(p => <button type="button" className="secondary-action" key={p.id} onClick={() => { setSelected(p); setQuery(p.name); }}>{p.name}{p.unit ? ` · ${p.unit}` : ''}</button>)}</div><p className="helper-text">{products.length ? 'Selecione um produto para consultar seus preços. Refine a busca se ele não aparecer.' : 'Nenhum produto encontrado. Você pode anotar esse nome como uma nova falta, sem histórico de preços.'}</p></>}
     </>}
   </div>;
 }

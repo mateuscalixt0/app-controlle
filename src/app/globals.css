@@ -187,3 +187,12 @@ h3{font-size:16px;line-height:1.4;letter-spacing:-.25px}
  .missing-card .chevron{height:40px}
 }
 @media(prefers-reduced-motion:no-preference){button,.primary-action,.secondary-action{transition:background-color .15s,transform .15s}}
+
+/* Catálogo na anotação de faltas: opções separadas e rolagem interna. */
+.product-picker{display:grid;gap:10px;min-width:0}
+.product-picker>label{font-size:15px;font-weight:600}
+.product-picker-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-height:320px;overflow-y:auto;padding:4px;scrollbar-gutter:stable;overscroll-behavior:contain}
+.product-picker-results:empty{display:none}
+.product-picker-results>.secondary-action{width:100%;min-width:0;min-height:52px;height:auto;margin:0;padding:14px 16px;border-radius:16px;text-align:left;justify-content:flex-start;white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+.product-picker>.helper-text{margin:0}
+@media(max-width:600px){.product-picker-results{grid-template-columns:minmax(0,1fr);gap:10px;max-height:260px}.product-picker-results>.secondary-action{padding:12px 14px}}
