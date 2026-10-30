@@ -73,7 +73,7 @@ O protótipo usa exemplos; o aplicativo não deve importar seus números, nomes,
 
 Registrar um boleto como pago é apenas registro gerencial, sem transação bancária. Downloads continuam passando pela rota autenticada e por arquivos privados existentes.
 
-A comparação entre lojas ainda não está conectada à lista de faltas: não exibir vendedores ou menor preço inventados. O filtro atual usa a **empresa de referência anotada**, não uma confirmação de que ela vende o produto. O botão XML abre a importação já existente; nenhuma nova associação automática foi criada. Comparação futura exige equivalência, unidade, fonte e data, sem apresentar preço histórico como oferta atual.
+A lista de faltas exibe e filtra somente fornecedores realmente vinculados ao produto por registros do histórico de preços da própria loja. Isso indica onde o produto já foi comprado, não uma oferta ou disponibilidade atual; não inventar vendedores nem apresentar preço histórico como cotação garantida. Faltas antigas sem produto associado podem manter o texto legado de empresa de referência. O botão XML abre a importação já existente. Comparação futura exige equivalência, unidade, fonte e data.
 
 ## Manutenção e verificação
 

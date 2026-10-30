@@ -31,10 +31,15 @@ for (const width of [375, 1280]) {
         await expect(page.getByRole('dialog')).toContainText('15/10/2026');
         await expect(page.getByRole('dialog')).toContainText('sem selecionar um produto do catálogo');
         await page.keyboard.press('Escape');
+        const pageHeading = page.locator('h1');
         await page.getByLabel('Ordenação').selectOption('oldest');
         await expect(page).toHaveURL(/sort=oldest/);
+        await expect(pageHeading).toBeVisible();
+        await expect(page.locator('.missing-card h2').first()).toHaveText('Areia de teste');
         await page.getByLabel('Empresa').selectOption('Empresa de teste');
         await expect(page).toHaveURL(/company=Empresa\+de\+teste|company=Empresa%20de%20teste/);
+        await expect(page.getByRole('heading',{name:'Cimento de teste'})).toBeVisible();
+        await expect(page.getByRole('heading',{name:'Areia de teste'})).toHaveCount(0);
         await page.getByLabel('Marcar Cimento de teste como comprado').check();
         await expect(page.getByRole('button', { name: 'Marcar 1 produto como comprado' })).toBeVisible();
         await page.getByRole('button', { name: 'Marcar 1 produto como comprado' }).click();
@@ -85,7 +90,7 @@ for (const width of [375,1280]) test(`selecionar produto do catálogo e consulta
   await page.setViewportSize({ width,height:900 });
   await page.route('**/api/produtos?*', route => {
     const id = new URL(route.request().url()).searchParams.get('id');
-    return route.fulfill({ json: id ? { prices: [{ id:'price-1',unit_price:'12.3456',unit:'UN',recorded_on:'2026-10-27',supplier_name:'Fornecedor de teste' }] } : { products:[{id:'catalog-1',name:'Serrote de teste',unit:'UN'}] } });
+    return route.fulfill({ json: id ? { prices: [{ id:'price-1',unit_price:'12.3456',unit:'UN',recorded_on:'2026-10-27',supplier_name:'Fornecedor de teste' }] } : { products:[{id:'catalog-1',name:'Serrote de teste',unit:'UN',suppliers:['Fornecedor de teste','Materiais Silva']}] } });
   });
   await page.goto(`${url}?path=/faltas`);
   await page.getByRole('button',{name:'Anotar produto faltante'}).click();
@@ -93,6 +98,7 @@ for (const width of [375,1280]) test(`selecionar produto do catálogo e consulta
   await page.getByRole('button',{name:'Serrote de teste · UN'}).click();
   await expect(page.locator('input[name="product_id"]')).toHaveValue('catalog-1');
   await expect(page.getByRole('status')).toContainText('Selecionado: Serrote de teste');
+  await expect(page.getByRole('status')).toContainText('Vendido por Fornecedor de teste, Materiais Silva');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.keyboard.press('Escape');
   await page.getByRole('button',{name:'Ver detalhes de Areia de teste'}).click();

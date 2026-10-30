@@ -26,5 +26,23 @@ export async function GET(request: Request) {
   if (q) query = query.ilike('name',`%${q}%`);
   const { data,error } = await query;
   if (error) return NextResponse.json({ error: 'Não foi possível buscar produtos.' }, { status: 500, headers });
-  return NextResponse.json({ products: data ?? [] }, { headers });
+  const productIds = (data ?? []).map(product => product.id);
+  const supplierIdsByProduct = new Map<string, Set<string>>();
+  if (productIds.length) {
+    for (let offset = 0; ; offset += 500) {
+      const prices = await session.supabase.from('price_entries').select('product_id,supplier_id').eq('store_id',session.storeId).in('product_id',productIds).order('id').range(offset,offset + 499);
+      if (prices.error) return NextResponse.json({ error: 'Não foi possível consultar as empresas dos produtos.' }, { status: 500, headers });
+      (prices.data ?? []).forEach(price => {
+        const ids = supplierIdsByProduct.get(price.product_id) ?? new Set<string>();
+        ids.add(price.supplier_id);
+        supplierIdsByProduct.set(price.product_id,ids);
+      });
+      if (!prices.data || prices.data.length < 500) break;
+    }
+  }
+  const supplierIds = [...new Set([...supplierIdsByProduct.values()].flatMap(ids => [...ids]))];
+  const suppliers = supplierIds.length ? await session.supabase.from('suppliers').select('id,name').eq('store_id',session.storeId).in('id',supplierIds) : { data: [], error: null };
+  if (suppliers.error) return NextResponse.json({ error: 'Não foi possível consultar as empresas dos produtos.' }, { status: 500, headers });
+  const supplierNames = new Map((suppliers.data ?? []).map(supplier => [supplier.id,supplier.name]));
+  return NextResponse.json({ products: (data ?? []).map(product => ({ ...product, suppliers: [...(supplierIdsByProduct.get(product.id) ?? [])].map(id => supplierNames.get(id)).filter(Boolean).sort((a,b) => String(a).localeCompare(String(b),'pt-BR')) })) }, { headers });
 }

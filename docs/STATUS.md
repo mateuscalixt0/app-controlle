@@ -1,5 +1,14 @@
 # Andamento
 
+## Filtros estáveis e empresas vinculadas aos produtos nas faltas — 30/10/2026
+
+- Os filtros de busca, prioridade, ordem e empresa agora atuam localmente sobre a seção de produtos; a tela não é mais substituída pelo estado global de carregamento ao escolher “Mais recentes” ou outra opção. A URL continua refletindo os filtros para preservar o estado ao recarregar ou compartilhar a página.
+- A lista de empresas passou a usar os fornecedores realmente vinculados a cada produto pelo histórico de preços. Um item pode exibir “Vendido por” várias empresas e ser encontrado pelo filtro de qualquer uma delas; o texto antigo de empresa de referência continua como compatibilidade para faltas sem produto associado.
+- Ao selecionar um produto para anotar a falta, o catálogo informa as empresas vinculadas antes da gravação. Produtos sem preço/fornecedor confirmado mostram claramente que ainda não possuem empresa vinculada.
+- Nenhuma migração foi necessária: a relação existente entre `price_entries`, `products` e `suppliers` é a fonte única, sempre limitada à loja da sessão.
+- **PASSOU:** lint, typecheck, build, 39 testes Vitest e 6 cenários Playwright/Chromium em 375/1280 px, incluindo troca de ordem sem sumir com a tela, filtro por empresa e exibição de múltiplos fornecedores no produto selecionado. Capturas das duas larguras foram inspecionadas sem overflow.
+- **PENDENTE:** conferir em sessão autenticada que os produtos reais possuem preços/fornecedores confirmados e que essas empresas aparecem no ambiente publicado.
+
 ## Espaçamento do catálogo nas faltas — 29/10/2026
 
 - Lista de produtos com 12px entre opções, preenchimento interno e texto que quebra em linhas. Duas colunas no desktop e uma até 600px; rolagem interna limitada a 320/260px para preservar os demais campos do formulário.
