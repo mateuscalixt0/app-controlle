@@ -1,5 +1,10 @@
 # Andamento
 
+## Detalhes e comparação de produtos — 30/10/2026
+
+- Diálogo de falta reorganizado com quantidade, empresas com histórico e destaque para o menor preço registrado. Nova página de comparação apresenta produto, menor e maior preço e registros por fornecedor dos últimos 90 dias, sem foto ou dados fictícios.
+- PASSOU: lint, typecheck, 39 testes unitários, build e 6 cenários de navegador existentes em 375/1280 px. PENDENTE: validar a nova página e seus estados com dados reais em sessão autenticada e conferir o visual em dispositivos reais. A página usa a API autenticada existente e limita os dados à loja.
+
 ## Correção visual do catálogo de produtos — 30/10/2026
 
 - Os cartões de produto no diálogo de anotação agora reservam altura suficiente para o nome, unidade e empresas vinculadas. A linha “Vendido por” permanece dentro da borda, inclusive no layout de duas colunas, e o catálogo continua com rolagem interna em telas estreitas.

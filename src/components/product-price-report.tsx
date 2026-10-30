@@ -13,8 +13,8 @@ export function ProductPriceReport({ productId }: { productId?: string | null })
     }).catch(reason => { if (!controller.signal.aborted) setError(reason.message); });
     return () => controller.abort();
   },[productId]);
-  return <section className="comparison-empty"><h3>Relatório de preços</h3>
-    {!productId ? <p>Esta falta foi anotada sem selecionar um produto do catálogo.</p> : error ? <p role="alert" className="form-error">{error}</p> : !result ? <p role="status">Carregando preços…</p> : !result.prices.length ? <p>Este produto ainda não tem preços registrados na mesma unidade nos últimos 90 dias.</p> : <><p>Últimos 90 dias · até 100 registros, do menor para o maior preço unitário.</p><ul>{result.prices.map((price,index) => <li key={price.id}><strong>{new Intl.NumberFormat('pt-BR',{ style:'currency',currency:'BRL',maximumFractionDigits:10 }).format(Number(price.unit_price))} / {price.unit}</strong>{index === 0 ? ' · Menor preço registrado' : ''}<br />{price.supplier_name} · {price.recorded_on.split('-').reverse().join('/')}</li>)}</ul></>}
+  return <section className="price-highlight"><h3>Menor preço registrado</h3>
+    {!productId ? <p>Esta falta foi anotada sem selecionar um produto do catálogo.</p> : error ? <p role="alert" className="form-error">{error}</p> : !result ? <p role="status">Carregando preços…</p> : !result.prices.length ? <p>Este produto ainda não tem preços registrados na mesma unidade nos últimos 90 dias.</p> : <><strong className="price-highlight-value">{new Intl.NumberFormat('pt-BR',{ style:'currency',currency:'BRL',maximumFractionDigits:10 }).format(Number(result.prices[0].unit_price))} <small>/ {result.prices[0].unit}</small></strong><p>{result.prices[0].supplier_name} · {result.prices[0].recorded_on.split('-').reverse().join('/')}</p></>}
     <p className="helper-text">Preços históricos não garantem oferta ou disponibilidade atual. Frete e condições de pagamento não estão incluídos.</p>
   </section>;
 }

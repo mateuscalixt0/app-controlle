@@ -2,6 +2,7 @@
 
 import { ProductPicker } from "./product-picker";
 import { ProductPriceReport } from "./product-price-report";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
@@ -141,8 +142,10 @@ function ProductDetail({ item, onClose }: { item: MissingListItem; onClose: () =
   return (
     <div className="dialog-content">
       <div className="dialog-header"><div><p className="eyebrow">DETALHES DO ITEM</p><h2 id="detail-title">{item.product_name}</h2></div><button autoFocus aria-label="Fechar detalhes" className="icon-button" onClick={onClose} type="button"><Icon name="close" /></button></div>
-      <dl className="detail-grid"><div><dt>Quantidade</dt><dd>{item.quantity}{item.unit ? ` ${item.unit}` : ""}</dd></div><div><dt>Anotado em</dt><dd>{new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }).format(new Date(item.created_at))}</dd></div><div><dt>Categoria</dt><dd>{item.category ?? "Sem classificação"}</dd></div><div><dt>Empresas que vendem</dt><dd>{getReferenceCompanies(item).join(", ") || "Nenhuma vinculada"}</dd></div></dl>
+      <div className="product-detail-intro"><span>{item.category ?? "Sem classificação"}</span><p>{item.quantity} {item.unit ?? "unidades"} necessárias</p></div>
+      <dl className="detail-grid"><div><dt>Anotado em</dt><dd>{new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }).format(new Date(item.created_at))}</dd></div><div><dt>Empresas com histórico</dt><dd>{getReferenceCompanies(item).join(", ") || "Nenhuma vinculada"}</dd></div></dl>
       <ProductPriceReport key={item.id} productId={item.product_id} />
+      {item.product_id && <Link className="primary-action full-action" href={`/produtos/${encodeURIComponent(item.product_id)}`}> <Icon name="prices" /> Ver comparação de preços</Link>}
     </div>
   );
 }
