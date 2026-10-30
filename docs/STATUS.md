@@ -1,5 +1,16 @@
 # Andamento
 
+## Preservação dos dados impressos divergentes — 30/10/2026
+
+- Retorno real do webhook fornecido pelo gestor confirmou que a IA identificou data/valor, mas o parser os apagava por divergência com o código. Não era erro de formato: o campo de data recebe ISO e exibe a data no formato local.
+- Conforme pedido do gestor, valor e vencimento impressos válidos permanecem como sugestões editáveis mesmo quando divergem do código, com um único aviso de conferência. A origem impressa acompanha a extração para evitar que o valor inferido do código substitua o impresso na combinação entre leitores. Múltiplos boletos/códigos diferentes continuam sem combinação automática, e datas impossíveis continuam rejeitadas.
+- Verificação: lint, typecheck, testes unitários, build e cenários Chromium incluindo regressão de divergência em 375/1280px. Testes usam dados sintéticos; retorno real fornecido pelo gestor comprova recebimento do webhook da versão anterior. Nova leitura real após publicação permanece pendente.
+
+## Publicação das correções de leitura — 30/10/2026
+
+- Commit `e99c3f0` enviado à `main` com autorização do gestor. Deploy de produção `dpl_41VhrSGL99cELx53t6UrZDzyVosA` confirmado como READY na Vercel, com alias `app-controlle.vercel.app` e sem erro de atribuição de domínio.
+- Inclui correção do vencimento complementar e eventos por webhook. Permanecem pendentes leitura autenticada real com OpenAI e confirmação do recebimento no n8n; o status READY comprova a publicação, não a execução desse fluxo.
+
 ## Vencimento complementar e log das chamadas à IA — 30/10/2026
 
 - Corrigida a combinação entre leitura local e IA: aviso de ciclo ambíguo não descarta vencimento impresso válido; divergência de valor deixa somente o valor para conferência. Códigos equivalentes em 44/47 dígitos são reconhecidos; documentos diferentes não são combinados. Falha do leitor local ainda permite tentar a IA, preservando os dados parciais e o cancelamento.

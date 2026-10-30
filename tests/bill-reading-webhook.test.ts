@@ -9,6 +9,15 @@ function request(type = 'image/jpeg') { const form = new FormData(); form.append
 beforeEach(() => { vi.resetAllMocks(); vi.stubEnv('OPENAI_API_KEY', 'fixture-key'); vi.stubEnv('BILL_READING_WEBHOOK_URL', url); mocks.session.mockResolvedValue({ storeId: 'store-fixture' }); });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 describe('notificação da leitura de boleto', () => {
+  it('retorna ao formulário os dados impressos mesmo quando divergem do código', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json({ output: [{ content: [{ type: 'output_text', text: 'Vencimento: 30/10/2026\nValor do documento: 307,06\nCódigo: 23793100000000129560123456789012345678901234' }] }] })).mockResolvedValueOnce(new Response(null, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const response = await POST(request('application/pdf'));
+    const { extraction } = await response.json();
+    expect(extraction).toMatchObject({ amount: '307,06', dueDate: '2026-10-30' });
+    expect(extraction.warnings).toHaveLength(1);
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).leitura.dados_validados).toEqual(extraction);
+  });
   it.each(['application/pdf', 'image/jpeg', 'image/png'])('envia a data e o valor identificados de %s sem enviar arquivo ou chave', async (type) => {
     const fetchMock = vi.fn().mockResolvedValueOnce(Response.json({ output: [{ content: [{ type: 'output_text', text: 'Vencimento: 30/10/2026\nValor do documento: 307,06' }] }] })).mockResolvedValueOnce(new Response(null, { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { extractBoletoText } from '../../src/lib/boleto-text';
 
 function pdf(pages: string[][]) {
   const objects: string[] = ['<< /Type /Catalog /Pages 2 0 R >>', '', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];
@@ -17,6 +18,21 @@ function pdf(pages: string[][]) {
   return Buffer.from(source + `trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
 }
 const fields = ['Cedente: FORNECEDOR FICTICIO', 'Valor do documento: 123,45', 'Vencimento: 11/10/2026'];
+for (const width of [375, 1280]) {
+  test(`mantém valor e data impressos divergentes com apenas um aviso em ${width}px`, async ({ page }) => {
+    const code = '23793100000000129560123456789012345678901234';
+    await page.setViewportSize({ width, height: 900 });
+    await page.route('**/api/boletos/extract', route => route.fulfill({ json: { extraction: extractBoletoText('Valor do documento: 307,06\nVencimento: 30/10/2026', [code]) } }));
+    await page.goto('/tests/browser/harness/');
+    await page.locator('input[type=file]').setInputFiles({ name: 'divergente-ficticio.pdf', mimeType: 'application/pdf', buffer: pdf([[code]]) });
+    await expect(page.locator('.read-notice')).toContainText('Confira os dados lidos', { timeout: 80_000 });
+    await expect(page.getByLabel('Valor (R$)')).toHaveValue('307,06');
+    await expect(page.getByLabel('Vencimento')).toHaveValue('2026-10-30');
+    await expect(page.getByText(/Há divergência/)).toHaveCount(1);
+    await expect(page.getByText(/dois ciclos/)).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}
 test('IA completa vencimento ausente mesmo com aviso de dois ciclos no PDF', async ({ page }) => {
   await page.route('**/api/boletos/extract', route => route.fulfill({ json: { extraction: { supplier: '', beneficiaryDocument: '', description: '', amount: '129,56', dueDate: '2025-02-22', line: '', warnings: [] } } }));
   await page.goto('/tests/browser/harness/');

@@ -52,10 +52,13 @@ describe('extração assistida', () => {
   it('preserva a data válida quando há conflito no valor', () => {
     const local = extractBoletoText('', [barcode()]);
     const ai = extractBoletoText('Vencimento: 22/02/2025\nValor do documento: 307,06', [barcode()]);
-    expect(mergeBillExtractions(local, ai)).toMatchObject({ dueDate: '2025-02-22', amount: '' });
+    expect(mergeBillExtractions(local, ai)).toMatchObject({ dueDate: '2025-02-22', amount: '307,06' });
   });
-  it('não preenche data incompatível com o código local', () => {
-    expect(mergeBillExtractions(extractBoletoText('', [barcode()]), extractBoletoText('Vencimento: 30/10/2026')).dueDate).toBe('');
+  it('preserva data impressa divergente para conferência', () => {
+    const result = mergeBillExtractions(extractBoletoText('', [barcode()]), extractBoletoText('Vencimento: 30/10/2026\nValor do documento: 307,06', [barcode()]));
+    expect(result).toMatchObject({ dueDate: '2026-10-30', amount: '307,06' });
+    expect(result.warnings).toHaveLength(1);
+    expect(result.warnings[0]).toContain('divergência');
   });
   it('compara código de barras e linha digitável equivalentes', () => {
     expect(mergeBillExtractions(extractBoletoText('', [barcode()]), extractBoletoText('Vencimento: 22/02/2025', [line(barcode())])).dueDate).toBe('2025-02-22');
@@ -75,8 +78,8 @@ describe('extração assistida', () => {
     const result = extractBoletoText('', [barcode()]);
     expect(result.supplier).toBe(''); expect(result.dueDate).toBe(''); expect(result.warnings.length).toBeGreaterThan(0);
   });
-  it('deixa divergências vazias', () => {
-    expect(extractBoletoText('Valor do documento: 10,00\nVencimento: 01/01/2020', [barcode()])).toMatchObject({ amount: '', dueDate: '' });
+  it('mantém dados impressos divergentes visíveis para revisão', () => {
+    expect(extractBoletoText('Valor do documento: 10,00\nVencimento: 01/01/2020', [barcode()])).toMatchObject({ amount: '10,00', dueDate: '2020-01-01' });
   });
   it('não combina dados de vários boletos', () => {
     expect(extractBoletoText('Beneficiário: TESTE\nValor do documento: 129,56', [barcode(), barcode('1001')])).toMatchObject({ supplier: '', amount: '', line: '' });
@@ -84,8 +87,8 @@ describe('extração assistida', () => {
   it('não confunde endereço ou CPF do beneficiário com seu nome', () => {
     expect(extractBoletoText('Endereço Beneficiário\nRUA FICTICIA\nCPF/CNPJ do Beneficiário: 00000000000').supplier).toBe('');
   });
-  it('mantém divergência de data vazia mesmo com ciclo único', () => {
-    expect(extractBoletoText('Vencimento: 01/01/2020', [barcode('0999')]).dueDate).toBe('');
+  it('mantém data impressa mesmo com ciclo único divergente', () => {
+    expect(extractBoletoText('Vencimento: 01/01/2020', [barcode('0999')]).dueDate).toBe('2020-01-01');
   });
   it('preserva desconhecidos vazios', () => expect(extractBoletoText('texto sem dados')).toMatchObject({ supplier: '', amount: '', dueDate: '', line: '' }));
 });
