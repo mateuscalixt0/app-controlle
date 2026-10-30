@@ -1,5 +1,10 @@
 # Andamento
 
+## Correção visual do catálogo de produtos — 30/10/2026
+
+- Os cartões de produto no diálogo de anotação agora reservam altura suficiente para o nome, unidade e empresas vinculadas. A linha “Vendido por” permanece dentro da borda, inclusive no layout de duas colunas, e o catálogo continua com rolagem interna em telas estreitas.
+- **PASSOU:** lint, typecheck, 39 testes Vitest, build e 6 cenários Playwright/Chromium em 375/1280 px.
+
 ## Filtros estáveis e empresas vinculadas aos produtos nas faltas — 30/10/2026
 
 - Os filtros de busca, prioridade, ordem e empresa agora atuam localmente sobre a seção de produtos; a tela não é mais substituída pelo estado global de carregamento ao escolher “Mais recentes” ou outra opção. A URL continua refletindo os filtros para preservar o estado ao recarregar ou compartilhar a página.
