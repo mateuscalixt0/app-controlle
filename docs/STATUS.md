@@ -1,5 +1,10 @@
 # Andamento
 
+## Navegação com cache temporário — 30/10/2026
+
+- Ativado o cache de navegação do próprio Next.js para páginas dinâmicas por 30 segundos no navegador. Ao retornar a uma página nesse intervalo, o aplicativo pode reutilizar o conteúdo, reduzindo novos carregamentos. Alterações feitas em outras sessões podem levar até 30 segundos para aparecer; operações locais continuam usando revalidação e atualização existentes.
+- O cache não é compartilhado entre usuários nem armazenado no servidor. A configuração `staleTimes` é experimental no Next.js. Pendente validar navegação, saída de sessão e atualização após alterações com contas reais em ambiente de homologação.
+
 ## Detalhes e comparação de produtos — 30/10/2026
 
 - Diálogo de falta reorganizado com quantidade, empresas com histórico e destaque para o menor preço registrado. Nova página de comparação apresenta produto, menor e maior preço e registros por fornecedor dos últimos 90 dias, sem foto ou dados fictícios.
