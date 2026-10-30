@@ -2,6 +2,30 @@ import { parseBoletoCode, validCivilDate } from './boleto-code';
 
 export type BillExtraction = { supplier: string; beneficiaryDocument: string; description: string; amount: string; dueDate: string; line: string; warnings: string[] };
 export const emptyExtraction = (): BillExtraction => ({ supplier: '', beneficiaryDocument: '', description: '', amount: '', dueDate: '', line: '', warnings: [] });
+// Reconcile fields independently: an ambiguous barcode date must not discard a
+// printed date found by the second reader, nor may an amount conflict erase it.
+export function mergeBillExtractions(local: BillExtraction, ai: BillExtraction): BillExtraction {
+  const warnings = [...new Set([...local.warnings, ...ai.warnings])];
+  if (warnings.some(w => w.includes('mais de um boleto'))) return { ...emptyExtraction(), warnings };
+  if (local.line && ai.line && parseBoletoCode(local.line).barcode !== parseBoletoCode(ai.line).barcode) {
+    return { ...emptyExtraction(), warnings: [...warnings, 'As leituras identificaram códigos diferentes. Confira o documento.'] };
+  }
+  const result = { ...local, supplier: '', line: local.line || ai.line, warnings };
+  for (const field of ['amount', 'dueDate'] as const) {
+    const label = field === 'amount' ? 'valor' : 'vencimento';
+    const conflict = local[field] && ai[field] && local[field] !== ai[field];
+    const previouslyConflicting = warnings.some(w => w.includes(`${label} impresso difere`));
+    result[field] = conflict || previouslyConflicting ? '' : local[field] || ai[field];
+    if (conflict) warnings.push(`As leituras divergem no ${label}. Confirme o dado impresso.`);
+  }
+  const date = result.dueDate.split('-').reverse().join('/');
+  const checked = extractBoletoText(`Vencimento: ${date}\nValor do documento: ${result.amount}`, result.line ? [result.line] : []);
+  // Validation can clear conflicts, but must not refill an intentionally empty field.
+  if (result.dueDate) result.dueDate = checked.dueDate;
+  if (result.amount) result.amount = checked.amount;
+  result.warnings = [...new Set([...warnings, ...checked.warnings])].filter(w => !result.dueDate || !w.includes('dois ciclos de vencimento'));
+  return result;
+}
 export function extractBoletoText(text: string, detectedCodes: string[] = []): BillExtraction {
   const result = emptyExtraction();
   // Retain line breaks: they separate beneficiary/payer and document value/discount labels.

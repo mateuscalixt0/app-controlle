@@ -17,6 +17,14 @@ function pdf(pages: string[][]) {
   return Buffer.from(source + `trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
 }
 const fields = ['Cedente: FORNECEDOR FICTICIO', 'Valor do documento: 123,45', 'Vencimento: 11/10/2026'];
+test('IA completa vencimento ausente mesmo com aviso de dois ciclos no PDF', async ({ page }) => {
+  await page.route('**/api/boletos/extract', route => route.fulfill({ json: { extraction: { supplier: '', beneficiaryDocument: '', description: '', amount: '129,56', dueDate: '2025-02-22', line: '', warnings: [] } } }));
+  await page.goto('/tests/browser/harness/');
+  await page.locator('input[type=file]').setInputFiles({ name: 'data-ausente.pdf', mimeType: 'application/pdf', buffer: pdf([['23793100000000129560123456789012345678901234']]) });
+  await expect(page.locator('.read-notice')).toContainText('Confira os dados lidos', { timeout: 80_000 });
+  await expect(page.getByLabel('Vencimento')).toHaveValue('2025-02-22');
+  await expect(page.getByLabel('Valor (R$)')).toHaveValue('129,56');
+});
 for (const width of [375, 1280]) {
   test(`PDF digital e formulário sem overflow em ${width}px; upload recuperável`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mod10, parseBoletoCode, validCivilDate } from '../src/lib/boleto-code';
-import { extractBoletoText } from '../src/lib/boleto-text';
+import { extractBoletoText, mergeBillExtractions } from '../src/lib/boleto-text';
 import { validateBillFile } from '../src/lib/bill-file';
 
 // Synthetic values; independent check digit generation for test fixtures.
@@ -44,6 +44,25 @@ describe('código de boleto', () => {
   });
 });
 describe('extração assistida', () => {
+  it('preenche a data da IA apesar do aviso local sobre dois ciclos', () => {
+    const local = extractBoletoText('', [barcode()]);
+    const ai = extractBoletoText('Vencimento: 22/02/2025');
+    expect(mergeBillExtractions(local, ai)).toMatchObject({ dueDate: '2025-02-22', amount: '129,56', warnings: [] });
+  });
+  it('preserva a data válida quando há conflito no valor', () => {
+    const local = extractBoletoText('', [barcode()]);
+    const ai = extractBoletoText('Vencimento: 22/02/2025\nValor do documento: 307,06', [barcode()]);
+    expect(mergeBillExtractions(local, ai)).toMatchObject({ dueDate: '2025-02-22', amount: '' });
+  });
+  it('não preenche data incompatível com o código local', () => {
+    expect(mergeBillExtractions(extractBoletoText('', [barcode()]), extractBoletoText('Vencimento: 30/10/2026')).dueDate).toBe('');
+  });
+  it('compara código de barras e linha digitável equivalentes', () => {
+    expect(mergeBillExtractions(extractBoletoText('', [barcode()]), extractBoletoText('Vencimento: 22/02/2025', [line(barcode())])).dueDate).toBe('2025-02-22');
+  });
+  it('não mistura documentos diferentes entre leitores', () => {
+    expect(mergeBillExtractions(extractBoletoText('', [barcode()]), extractBoletoText('Vencimento: 23/02/2025', [barcode('1001')]))).toMatchObject({ dueDate: '', amount: '', line: '' });
+  });
   it('lê valor, vencimento e linha, deixando o fornecedor para seleção manual', () => {
     const result = extractBoletoText(`Beneficiário: LOJA FICTICIA\nPagador: CLIENTE TESTE\nValor do documento: R$ 129,56\nVencimento: 22/02/2025\n${line(barcode())}`);
     expect(result).toMatchObject({ supplier: '', amount: '129,56', dueDate: '2025-02-22', line: line(barcode()) });

@@ -1,5 +1,18 @@
 # Andamento
 
+## Vencimento complementar e log das chamadas à IA — 30/10/2026
+
+- Corrigida a combinação entre leitura local e IA: aviso de ciclo ambíguo não descarta vencimento impresso válido; divergência de valor deixa somente o valor para conferência. Códigos equivalentes em 44/47 dígitos são reconhecidos; documentos diferentes não são combinados. Falha do leitor local ainda permite tentar a IA, preservando os dados parciais e o cancelamento.
+- Webhook para PDF/JPG/PNG inclui identificador estável da chamada, modelo, duração, resultado, dados identificados e avisos. Erros HTTP, rede/timeout e resposta vazia geram evento de falha. Há uma repetição em erro temporário; o receptor deve deduplicar por `chamada_id`/`X-Event-Id`. Falhas de entrega/configuração geram log local sem endereço secreto ou dados financeiros.
+- PASSOU: lint, typecheck, 52 testes unitários e 10 cenários Chromium, incluindo vencimento completado pela IA simulada, PDF/foto, cancelamento e formulário em 375/1280px. Build validado. Nenhuma mudança em persistência ou permissões.
+- PENDENTE: código ainda não publicado; validar uma leitura autenticada com OpenAI e entrega real ao n8n após publicação. Sem fila durável: encerramento abrupto do servidor ou indisponibilidade persistente do webhook ainda podem perder o evento. Arquivos rejeitados pela plataforma antes de chegar à rota não executam IA nem geram esse log. Modelo permanece `gpt-4.1-mini`.
+
+## Diagnóstico da leitura por webhook — 30/10/2026
+
+- A rota autenticada de leitura por IA envia eventos JSON de sucesso e falha ao webhook configurado no servidor para imagens e PDFs. O evento contém identificador da loja, horário, tipo de arquivo, data e valor identificados, código validado e avisos; não contém a imagem nem a chave da OpenAI. Falha ou demora no webhook não impede a conferência do boleto. Não há fila ou garantia de entrega; falhas anteriores à chamada da rota não geram evento.
+- O endereço do webhook foi cadastrado como segredo de produção na Vercel. A alteração de código ainda não foi publicada. A troca para o modelo solicitado “6 Luna” depende de confirmação do identificador e acesso pela API; permanece o modelo atual.
+- PASSOU: lint, typecheck, build e 43 testes unitários, incluindo sucesso, falha da IA, webhook indisponível e acesso sem sessão. PENDENTE: envio real ao webhook e leitura autenticada após publicação.
+
 ## Leitura assistida de boletos com OpenAI — 30/10/2026
 
 - Preparada leitura complementar por `gpt-4.1-mini` em rota autenticada, com chave somente no servidor, validação de arquivo, sem armazenamento pela API e fornecedor escolhido manualmente. Divergências entre leituras exigem conferência e não são preenchidas automaticamente. A câmera aguarda a foto do usuário e mantém o original para anexação privada após confirmação.

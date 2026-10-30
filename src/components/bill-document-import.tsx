@@ -6,7 +6,7 @@ import { Spinner } from './loading-indicator';
 import { createClient } from '@/lib/supabase/client';
 import { extractBillDocument, emptyExtraction, validateBillFile, type BillExtraction } from '@/lib/boleto-extractor';
 import { parseBoletoCode } from '@/lib/boleto-code';
-import { extractBoletoText } from '@/lib/boleto-text';
+import { extractBoletoText, mergeBillExtractions } from '@/lib/boleto-text';
 import { attachBillDocument, createBill, createSupplier } from '@/app/boletos/novo/actions';
 import { BillBarcodeScanner } from './bill-barcode-scanner';
 import { Icon } from '@/components/icons';
@@ -58,6 +58,7 @@ export function BillDocumentImport() {
     if (controller.signal.aborted) return;
     setScanning(false); setFile(value); setSaved(false); saveId.current = crypto.randomUUID(); pathId.current = crypto.randomUUID();
     const seed = extractBoletoText('', code ? [code] : []);
+    let localResult = seed;
     setData(seed); setProcessing(true); setNotice('Preparando leitura…');
     // A bound on total work protects mobile devices; original and partial results stay available.
     const timeout = setTimeout(() => controller.abort(), 180_000);
@@ -67,20 +68,19 @@ export function BillDocumentImport() {
       }
     };
     try {
-      const result = await extractBillDocument(value, { initialCode: code, signal: controller.signal, onPartial: merge, onProgress: message => { if (!controller.signal.aborted) setNotice(message); } });
+      const result = await extractBillDocument(value, { initialCode: code, signal: controller.signal, onPartial: partial => { localResult = partial; merge(partial); }, onProgress: message => { if (!controller.signal.aborted) setNotice(message); } }).catch(reason => {
+        if (controller.signal.aborted) throw reason;
+        return localResult;
+      });
       merge(result); setNotice('Conferindo documento com IA…');
       try {
         const form = new FormData(); form.append('file', value);
         const response = await fetch('/api/boletos/extract', { method: 'POST', body: form, signal: controller.signal });
         if (!response.ok) throw new Error();
         const { extraction } = await response.json() as { extraction: BillExtraction };
-        if (result.warnings.length || extraction.warnings.length) merge({ ...result, warnings: [...new Set([...result.warnings, ...extraction.warnings])] });
-        else {
-          const conflicts = (result.amount && extraction.amount && result.amount !== extraction.amount) || (result.dueDate && extraction.dueDate && result.dueDate !== extraction.dueDate) || (result.line && extraction.line && result.line !== extraction.line);
-          merge(conflicts ? { ...result, amount: '', dueDate: '', line: '', warnings: ['As leituras apresentaram divergências. Confira os dados impressos antes de salvar.'] } : { ...result, amount: result.amount || extraction.amount, dueDate: result.dueDate || extraction.dueDate, line: result.line || extraction.line, supplier: '' });
-        }
+        merge(mergeBillExtractions(result, extraction));
         setNotice('Confira os dados lidos e preencha os campos que faltam. O original será guardado ao salvar.');
-      } catch { if (!controller.signal.aborted) setNotice('Não foi possível usar a IA. Confira os dados da leitura e preencha os campos que faltam.'); }
+      } catch { if (!controller.signal.aborted) setNotice('Não foi possível usar a IA. O arquivo foi mantido; confira os dados da leitura e preencha os campos que faltam.'); }
     } catch {
       if (operation.current === controller) setNotice(controller.signal.aborted ? 'Leitura interrompida. O arquivo foi mantido; complete os dados abaixo.' : 'Não foi possível ler todos os dados. O arquivo foi mantido; preencha os campos abaixo. PDFs protegidos precisam de uma cópia sem senha para leitura automática.');
     } finally { clearTimeout(timeout); if (operation.current === controller) setProcessing(false); }
