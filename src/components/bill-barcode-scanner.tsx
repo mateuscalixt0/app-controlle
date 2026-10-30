@@ -41,7 +41,7 @@ export function BillBarcodeScanner({ onCapture, onClose }: { onCapture: (file: F
         if (disposed) { stop(); return; }
         controls = await reader.decodeFromStream(stream, video.current!, result => {
           if (!result || disposed || captured) return;
-          try { parseBoletoCode(result.getText()); void capture(result.getText()); } catch { /* Keep scanning invalid codes. */ }
+          try { parseBoletoCode(result.getText()); } catch { /* Keep scanning invalid codes. */ }
         });
         if (disposed) { stop(); return; }
         setReady(true);
@@ -55,11 +55,11 @@ export function BillBarcodeScanner({ onCapture, onClose }: { onCapture: (file: F
   }, [onCapture]);
 
   return <section className="barcode-scanner" aria-label="Leitor de código de barras">
-    <p role="status">{ready ? 'Alinhe o código inteiro dentro da faixa. A leitura é automática.' : 'Abrindo câmera…'}</p>
+    <p role="status">{ready ? 'Enquadre o boleto inteiro e toque em Fotografar.' : 'Abrindo câmera…'}</p>
     <div className="scanner-view"><video ref={video} muted playsInline autoPlay /><div className="scanner-guide" aria-hidden="true"><span /></div></div>
     <p className="helper-text">A foto capturada será anexada. Para guardar o boleto inteiro, enquadre toda a folha ou envie o PDF.</p>
     {error && <p className="form-error" role="alert">{error}</p>}
-    <button type="button" className="primary-action" disabled={!ready || capturing} onClick={() => captureRef.current()}>{capturing ? 'Capturando…' : 'Fotografar sem leitura do código'}</button>
+    <button type="button" className="primary-action" disabled={!ready || capturing} onClick={() => captureRef.current()}>{capturing ? 'Capturando…' : 'Fotografar boleto'}</button>
     <button type="button" className="secondary-action" onClick={onClose}>Fechar câmera</button>
   </section>;
 }

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { Spinner } from './loading-indicator';
 import { createClient } from '@/lib/supabase/client';
 import { extractBillDocument, emptyExtraction, validateBillFile, type BillExtraction } from '@/lib/boleto-extractor';
 import { parseBoletoCode } from '@/lib/boleto-code';
@@ -67,7 +68,19 @@ export function BillDocumentImport() {
     };
     try {
       const result = await extractBillDocument(value, { initialCode: code, signal: controller.signal, onPartial: merge, onProgress: message => { if (!controller.signal.aborted) setNotice(message); } });
-      merge(result); setNotice('Confira os dados lidos e preencha os campos que faltam. O original será guardado ao salvar.');
+      merge(result); setNotice('Conferindo documento com IA…');
+      try {
+        const form = new FormData(); form.append('file', value);
+        const response = await fetch('/api/boletos/extract', { method: 'POST', body: form, signal: controller.signal });
+        if (!response.ok) throw new Error();
+        const { extraction } = await response.json() as { extraction: BillExtraction };
+        if (result.warnings.length || extraction.warnings.length) merge({ ...result, warnings: [...new Set([...result.warnings, ...extraction.warnings])] });
+        else {
+          const conflicts = (result.amount && extraction.amount && result.amount !== extraction.amount) || (result.dueDate && extraction.dueDate && result.dueDate !== extraction.dueDate) || (result.line && extraction.line && result.line !== extraction.line);
+          merge(conflicts ? { ...result, amount: '', dueDate: '', line: '', warnings: ['As leituras apresentaram divergências. Confira os dados impressos antes de salvar.'] } : { ...result, amount: result.amount || extraction.amount, dueDate: result.dueDate || extraction.dueDate, line: result.line || extraction.line, supplier: '' });
+        }
+        setNotice('Confira os dados lidos e preencha os campos que faltam. O original será guardado ao salvar.');
+      } catch { if (!controller.signal.aborted) setNotice('Não foi possível usar a IA. Confira os dados da leitura e preencha os campos que faltam.'); }
     } catch {
       if (operation.current === controller) setNotice(controller.signal.aborted ? 'Leitura interrompida. O arquivo foi mantido; complete os dados abaixo.' : 'Não foi possível ler todos os dados. O arquivo foi mantido; preencha os campos abaixo. PDFs protegidos precisam de uma cópia sem senha para leitura automática.');
     } finally { clearTimeout(timeout); if (operation.current === controller) setProcessing(false); }
@@ -148,7 +161,7 @@ export function BillDocumentImport() {
         <details><summary>Outros dados (opcional)</summary><label>CPF/CNPJ do beneficiário<input inputMode="numeric" value={data.beneficiaryDocument} onChange={event => change('beneficiaryDocument', event.target.value)} /></label><label>Descrição<input maxLength={240} value={data.description} onChange={event => change('description', event.target.value)} /></label></details>
       </fieldset>
       {saved && <p role="status" className="helper-box">Boleto cadastrado. Se o anexo falhar, tente novamente aqui para concluir sem duplicar o boleto.</p>}
-      <button className="primary-action" disabled={pending || processing || scanning} type="submit">{pending ? 'Salvando boleto e arquivo…' : saved ? 'Tentar guardar arquivo novamente' : 'Confirmar e salvar boleto'}</button>
+      <button className="primary-action" disabled={pending || processing || scanning} type="submit">{pending && <Spinner />}{pending ? 'Salvando boleto e arquivo…' : saved ? 'Tentar guardar arquivo novamente' : 'Confirmar e salvar boleto'}</button>
     </form>}
   </section>;
 }

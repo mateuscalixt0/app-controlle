@@ -8,6 +8,8 @@ import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { addMissingItemInline, markMissingItemsBought } from "@/app/faltas/novo/actions";
 import { priorityMeta, type Priority } from "@/lib/demo-data";
+import { isBackdropClick } from "@/lib/dialog-backdrop";
+import { Spinner } from "./loading-indicator";
 import { Icon } from "./icons";
 
 export type MissingListItem = {
@@ -124,14 +126,14 @@ export function MissingList({ items, total, queryText, priority, sort = "newest"
       </section>
       {checkedItems.size > 0 && <form action={markMissingItemsBought} className="missing-cart-form" id="mark-missing-bought"><input name="ids" type="hidden" value={[...checkedItems].join(",")} /><button aria-label={confirmingBought ? "Confirmando itens comprados" : `Marcar ${checkedItems.size} ${checkedItems.size === 1 ? "produto" : "produtos"} como comprados`} className={`missing-cart-action${confirmingBought ? " is-confirming" : ""}`} disabled={confirmingBought || isMarkingBought} onClick={(event) => { event.preventDefault(); markSelectedAsBought(); }} type="submit"><span className="missing-cart-icon" aria-hidden="true">{confirmingBought ? <svg aria-hidden="true" className="confirmation-check" viewBox="0 0 28 28"><path d="M4 14.5 10.5 21 24 6.5" /></svg> : <Icon name="cart" />}</span><span className="missing-cart-count">{checkedItems.size}</span></button></form>}
       <button className="primary-action full-action missing-bottom-action" onClick={() => setAdding(true)} type="button"><Icon name="plus" /> Anotar produto</button>
-      <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} ref={addDialogRef}>
+      <dialog aria-labelledby="add-missing-title" className="detail-dialog add-dialog" onClose={() => setAdding(false)} onClick={event => { if (!addingItem && isBackdropClick(event)) event.currentTarget.close(); }} ref={addDialogRef}>
         <form action={addAction} className="dialog-content add-form">
           <div className="dialog-header"><h2 id="add-missing-title">Anotar uma falta</h2><button aria-label="Fechar" className="icon-button" onClick={() => setAdding(false)} type="button"><Icon name="close" /></button></div>
           <ProductPicker /><label>Quantidade e unidade<input name="quantity" required inputMode="decimal" type="number" min="0.001" step="0.001" placeholder="Ex.: 5 sacos" /></label><label>Prioridade<select defaultValue="normal" name="priority"><option value="normal">Normal</option><option value="media">Média</option><option value="urgente">Precisa comprar</option></select></label>
-          {addState.error && <p className="form-error">{addState.error}</p>}<button className="primary-action" disabled={addingItem} type="submit">{addingItem ? "Adicionando…" : "Adicionar à lista"}</button><p className="helper-text">Salvo na lista de faltas.</p>
+          {addState.error && <p className="form-error">{addState.error}</p>}<button className="primary-action" disabled={addingItem} type="submit">{addingItem && <Spinner />}{addingItem ? "Adicionando…" : "Adicionar à lista"}</button><p className="helper-text">Salvo na lista de faltas.</p>
         </form>
       </dialog>
-      <dialog aria-labelledby="detail-title" className="detail-dialog" onClose={() => setSelected(null)} ref={dialogRef}>
+      <dialog aria-labelledby="detail-title" className="detail-dialog" onClose={() => setSelected(null)} onClick={event => { if (isBackdropClick(event)) event.currentTarget.close(); }} ref={dialogRef}>
         {selected && <ProductDetail item={selected} onClose={closeDialog} />}
       </dialog>
     </>

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useId, useState } from 'react';
+import { LoadingIndicator } from './loading-indicator';
 type Product = { id: string; name: string; unit: string | null; suppliers?: string[] };
 export function ProductPicker() {
   const id = useId();
@@ -27,7 +28,7 @@ export function ProductPicker() {
     <label htmlFor={id}>Produto cadastrado</label>
     <input id={id} name="product" required maxLength={200} value={query} onChange={e => { setQuery(e.target.value); setSelected(null); setProducts([]); setLoading(true); }} placeholder="Digite para buscar no catálogo" autoComplete="off" />
     {selected ? <p className="helper-text" role="status">Selecionado: {selected.name}{selected.unit ? ` · ${selected.unit}` : ''}. {selected.suppliers?.length ? `Vendido por ${selected.suppliers.join(', ')}.` : 'Ainda não há empresa vinculada a este produto.'}</p> : <>
-      {loading && <p role="status">Buscando produtos…</p>}
+      {loading && <LoadingIndicator label="Buscando produtos…" />}
       {error && <p className="form-error" role="alert">{error}</p>}
       {!loading && !error && <><div className="product-picker-results" aria-label="Produtos encontrados">{products.map(p => <button aria-label={`${p.name}${p.unit ? ` · ${p.unit}` : ''}`} type="button" className="secondary-action" key={p.id} onClick={() => { setSelected(p); setQuery(p.name); }}><strong>{p.name}{p.unit ? ` · ${p.unit}` : ''}</strong><small>{p.suppliers?.length ? `Vendido por ${p.suppliers.join(', ')}` : 'Sem empresa vinculada'}</small></button>)}</div><p className="helper-text">{products.length ? 'Selecione um produto para consultar seus preços. Refine a busca se ele não aparecer.' : 'Nenhum produto encontrado. Você pode anotar esse nome como uma nova falta, sem histórico de preços.'}</p></>}
     </>}

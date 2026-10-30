@@ -1,5 +1,22 @@
 import { test, expect } from '@playwright/test';
 const url = '/tests/browser/harness/design.html';
+for (const width of [375, 1280]) test(`fechar janelas pelo fundo em ${width}px`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 900 });
+  await page.goto(`${url}?path=/faltas`);
+  for (const name of ['Anotar produto faltante', 'Ver detalhes de Cimento de teste']) {
+    await page.getByRole('button', { name }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await dialog.locator('.dialog-content').click({ position: { x: 10, y: 10 } });
+    await expect(dialog).toBeVisible();
+    await page.mouse.click(2, 2);
+    await expect(dialog).not.toBeVisible();
+  }
+  await page.goto(`${url}?path=/boletos`);
+  await page.getByRole('button', { name: /Ver detalhes de/ }).click();
+  await page.mouse.click(2, 2);
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+});
 for (const width of [375, 1280]) {
   test(`visual, teclado e detalhes em ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });

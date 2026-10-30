@@ -1,6 +1,7 @@
 export default function Loading() {
   return (
     <div className="stack" aria-busy="true" aria-label="Carregando boletos">
+      <LoadingIndicator label="Carregando boletos…" />
       <div className="page-heading"><p className="eyebrow">BOLETOS</p><h1>&nbsp;</h1><p>&nbsp;</p></div>
       <div className="card" aria-hidden="true">
         <div className="field-skeleton"><span>&nbsp;</span><div /></div>
@@ -10,3 +11,4 @@ export default function Loading() {
     </div>
   );
 }
+import { LoadingIndicator } from "@/components/loading-indicator";

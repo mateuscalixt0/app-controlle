@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { Spinner } from './loading-indicator';
 import { useRouter } from 'next/navigation';
 import { updateBill } from '@/app/boletos/novo/actions';
 
@@ -18,6 +19,6 @@ export function BillEditForm({ bill }: { bill: { id: string; supplier: string; d
     <label>Valor (R$)<input required inputMode="decimal" value={form.amount} onChange={event => change('amount', event.target.value)} /></label>
     <label>Vencimento<input required type="date" value={form.dueDate} onChange={event => change('dueDate', event.target.value)} /></label>
     <label>Código de barras ou linha digitável<input inputMode="numeric" value={form.line} onChange={event => change('line', event.target.value)} /></label>
-    <button className="primary-action" disabled={pending} type="submit">{pending ? 'Salvando…' : 'Salvar alterações'}</button>
+    <button className="primary-action" disabled={pending} type="submit">{pending && <Spinner />}{pending ? 'Salvando…' : 'Salvar alterações'}</button>
   </form>;
 }

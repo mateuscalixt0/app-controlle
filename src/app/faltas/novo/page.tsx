@@ -1,6 +1,7 @@
 import { ProductPicker } from "@/components/product-picker";
 import { PageHeading } from "@/components/page-heading";
 import { addMissingItem } from "./actions";
+import { SubmitButton } from "@/components/submit-button";
 
 export default async function NewMissingItemPage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
   const { erro } = await searchParams;
@@ -13,7 +14,7 @@ export default async function NewMissingItemPage({ searchParams }: { searchParam
         <fieldset><legend>Prioridade <small>(opcional)</small></legend><p className="helper-text">Sem escolha, será usada a prioridade Normal.</p><div className="priority-options"><label className="option-normal"><input defaultChecked name="priority" type="radio" value="normal" />Normal</label><label className="option-medium"><input name="priority" type="radio" value="media" />Média</label><label className="option-urgent"><input name="priority" type="radio" value="urgente" />Precisa comprar</label></div></fieldset>
         {erro && <p className="form-error" role="alert">Não foi possível salvar. Confira os dados e tente novamente.</p>}
         <p className="helper-box">Você poderá conferir as informações registradas nos detalhes do produto.</p>
-        <button className="primary-action" type="submit">Salvar na lista</button>
+        <SubmitButton className="primary-action" pendingLabel="Salvando…">Salvar na lista</SubmitButton>
       </form>
     </>
   );

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { LoadingIndicator } from "./loading-indicator";
 
 type Price = { id: string; unit_price: string | number; unit: string; recorded_on: string; supplier_name: string };
 type Result = { product: { name: string; unit: string | null }; prices: Price[] };
@@ -17,7 +18,7 @@ export function ProductComparison({ productId }: { productId: string }) {
     return () => controller.abort();
   }, [productId]);
   if (error) return <p className="form-error" role="alert">{error}</p>;
-  if (!result) return <p role="status">Carregando detalhes do produto…</p>;
+  if (!result) return <LoadingIndicator label="Carregando detalhes do produto…" />;
   const prices = result.prices;
   return <div className="product-comparison"><header><p className="eyebrow">HISTÓRICO DE PREÇOS</p><h1>Comparação de preços</h1><p>{result.product.name}</p></header>
     <section className="comparison-product"><span>PRODUTO</span><h2>{result.product.name}</h2><p>Unidade: {result.product.unit ?? "não informada"}</p></section>

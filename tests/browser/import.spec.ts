@@ -84,7 +84,7 @@ test('foto com OCR real preenche os campos', async ({ page }) => {
   await expect(page.getByLabel('Vencimento')).toHaveValue('2026-10-11');
 });
 
-test('câmera lê ITF automaticamente, guarda captura e encerra vídeo', async ({ page }) => {
+test('câmera fotografa boleto, lê ITF e encerra vídeo', async ({ page }) => {
   await page.addInitScript(() => {
     const code = '23793100000000129560123456789012345678901234';
     const patterns = ['00110', '10001', '01001', '11000', '00101', '10100', '01100', '00011', '10010', '01010'];
@@ -101,6 +101,7 @@ test('câmera lê ITF automaticamente, guarda captura e encerra vídeo', async (
   });
   await page.goto('/tests/browser/harness/');
   await page.getByRole('button', { name: 'Câmera', exact: true }).click();
+  await page.getByRole('button', { name: 'Fotografar boleto' }).click();
   await expect(page.getByText(/Arquivo: boleto-.*jpg/)).toBeVisible({ timeout: 30_000 });
   await expect(page.getByLabel('Código de barras ou linha digitável')).toHaveValue('23793100000000129560123456789012345678901234');
   expect(await page.evaluate(() => (globalThis as typeof globalThis & { cameraTrack: MediaStreamTrack }).cameraTrack.readyState)).toBe('ended');

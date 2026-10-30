@@ -10,6 +10,7 @@ function LoadingCard({ compact = false }: { compact?: boolean }) {
 export default function Loading() {
   return (
     <div className="stack" aria-busy="true" aria-label="Carregando">
+      <LoadingIndicator />
       <div className="page-heading"><p className="eyebrow">&nbsp;</p><h1>&nbsp;</h1><p>&nbsp;</p></div>
       <LoadingCard />
       <LoadingCard compact />
@@ -17,3 +18,4 @@ export default function Loading() {
     </div>
   );
 }
+import { LoadingIndicator } from "@/components/loading-indicator";

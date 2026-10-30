@@ -1,5 +1,20 @@
 # Andamento
 
+## Leitura assistida de boletos com OpenAI — 30/10/2026
+
+- Preparada leitura complementar por `gpt-4.1-mini` em rota autenticada, com chave somente no servidor, validação de arquivo, sem armazenamento pela API e fornecedor escolhido manualmente. Divergências entre leituras exigem conferência e não são preenchidas automaticamente. A câmera aguarda a foto do usuário e mantém o original para anexação privada após confirmação.
+- PASSOU: lint, typecheck, build, 39 testes unitários e 9 testes de navegador da importação com serviços simulados. PENDENTE: testes reais da API e da câmera física, isolamento de acesso, custo e deploy; a chave cadastrada na Vercel não está disponível no ambiente local. A integração ainda não está publicada.
+
+## Indicadores de carregamento — 30/10/2026
+
+- Indicador giratório e mensagem acessível adicionados ao carregamento das páginas e consultas de produtos, ao login, criação da loja, saída da conta e salvamento de faltas, boletos e XML. Os formulários de ação no servidor impedem novo envio durante a operação; preferência por movimento reduzido é respeitada.
+- Pendente: conferir o login e os salvamentos com sessão real no ambiente publicado.
+
+## Fechamento de janelas ao clicar fora — 30/10/2026
+
+- Os diálogos de detalhes de boletos, detalhes de faltas e anotação de falta fecham ao clicar no fundo fora da janela. O clique fora não fecha enquanto uma gravação ou download está em andamento; o fechamento por botão e Escape permanece disponível.
+- Pendente: validação com sessão real no ambiente publicado. Páginas inteiras continuam com sua navegação normal.
+
 ## Navegação com cache temporário — 30/10/2026
 
 - Ativado o cache de navegação do próprio Next.js para páginas dinâmicas por 30 segundos no navegador. Ao retornar a uma página nesse intervalo, o aplicativo pode reutilizar o conteúdo, reduzindo novos carregamentos. Alterações feitas em outras sessões podem levar até 30 segundos para aparecer; operações locais continuam usando revalidação e atualização existentes.

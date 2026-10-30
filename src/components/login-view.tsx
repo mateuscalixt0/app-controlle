@@ -10,9 +10,10 @@ export function LoginView({ erro, action }: { erro?: string; action: (form: Form
         <label htmlFor="password">Senha</label>
         <input id="password" name="password" type="password" autoComplete="current-password" required maxLength={128} />
         {erro && <p className="form-error" role="alert">E-mail ou senha inválidos.</p>}
-        <button className="primary-action full-action" type="submit">Entrar</button>
+        <SubmitButton className="primary-action full-action" pendingLabel="Entrando…">Entrar</SubmitButton>
       </form>
       <p className="helper-box">Use o e-mail e a senha cadastrados para acessar sua loja.</p>
     </main>
   );
 }
+import { SubmitButton } from "./submit-button";
